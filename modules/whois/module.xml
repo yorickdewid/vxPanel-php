@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+    <name>Whois</name>
+    <version>100</version>
+    <defaultcat>Domain Management</defaultcat>
+    <desc>This module displays whois information for a domain.</desc>
+    <authorname>Deyron</authorname>
+    <authoremail>info@deyron.nl</authoremail>
+    <authorurl>http://www.deyron.nl/</authorurl>
+</module>
