@@ -185,7 +185,8 @@ apt-get -y install sudo wget vim make zip unzip git debconf-utils at
 
 # We now clone the software from GitHub
 echo "Downloading QPanel, Please wait, this may take several minutes, the installer will continue after this is complete!"
-git clone https://bitbucket.org/qpanel/qpanel
+# commented out git clone, because already checked out.
+# git clone https://bitbucket.org/qpanel/qpanel
 cd qpanel/
 mkdir ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
