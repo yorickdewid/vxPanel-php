@@ -187,7 +187,7 @@ apt-get -y install zip unzip git debconf-utils at
 echo "Downloading QPanel, Please wait, this may take several minutes, the installer will continue after this is complete!"
 # commented out git clone, because already checked out.
 # git clone https://bitbucket.org/qpanel/qpanel
-cd qpanel/
+# cd qpanel/
 mkdir ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
 cd ../qp_install_cache/
