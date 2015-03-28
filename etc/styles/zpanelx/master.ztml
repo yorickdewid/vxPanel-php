@@ -267,7 +267,7 @@
 
       </div><!--/page-content-->
     </div>
-    <div id="footer" >Copyright &copy; 2004-<# ui_tpl_year #> <a href="http://www.zpanelcp.com/" target="_blank">ZPanel Project</a>.</div>
+    <div id="footer" >Copyright &copy; 2014-<# ui_tpl_year #> qPanel</div>
     </div><!-- END CONTAINER -->
 
     <!-- javascript
