@@ -181,7 +181,7 @@ EOF
 apt-get update
 
 # Install some standard utility packages required by the installer
-apt-get -y install sudo wget vim make zip unzip git debconf-utils at
+apt-get -y install zip unzip git debconf-utils at
 
 # We now clone the software from GitHub
 echo "Downloading QPanel, Please wait, this may take several minutes, the installer will continue after this is complete!"
@@ -199,7 +199,7 @@ apt-get upgrade -yqq
 # Install required software and dependencies required by QPanel.
 # We disable the DPKG prompts before we run the software install to enable fully automated install.
 export DEBIAN_FRONTEND=noninteractive
-apt-get install -qqy mysql-server mysql-server postgresql postgresql-contrib apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl php5-pgsql db4.7-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql bind9 bind9utils
+apt-get install -qqy mysql-server postgresql postgresql-contrib apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl php5-pgsql db4.7-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql bind9 bind9utils
 
 # Generation of random passwords
 password=`passwordgen`;
