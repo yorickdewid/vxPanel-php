@@ -1,20 +1,75 @@
 <?php
 
+require 'provider/domainNameSpace.php';
+
 class domain extends domainNameSpace{
 
-	public function __construct(){
-		$this->setType(''); //only domain
+	public function getVersion(){
+		$connect_api = XML_RPC2_Client::create(self::LINK,
+  		array('prefix' => 'version.','sslverify'=>false));
+		$result = $connect_api->info(self::API_KEY);
+		return $result['api_version'];
+	}
+	/**
+	* @param $domains array of domain names
+	* @return array keys are domain
+	*/
+	public function checkDomainAvailable(array $domains){
+		$conn = $this->createConnection();
+		print parent::API_KEY;
+		$result = $conn->available(parent::API_KEY,$domains);
+		print_r($result);
+
+		while ( $result[$domain] == 'pending') {
+			usleep(700000);
+			$result = $conn->available(array(parent::API_KEY, $domains));
+		}
+		print_r($result);
 	}
 
+	/**
+	* @param $opts options to retrieve result by
+	* e.g array(id => 2304)
+	* @return integer number of domains
+	*/
+	public function getCount($opts)
+	{
+		return $this->__getCount(null,$opts);
+	}
 
-/*
-* currency
-* lang ISO-639-2
-* phase -> default = golive
-*/
-public function getPrice(array $domains,$opts){
+	/**
+	* @param $domain the domain name
+	* @param $duration number of years 1-10
+	*/
+	public function createDomain($domain,$duration = 1){  // check state with operation.info?
+		if($domain_spec = null)
+		{
+			$domain_spec = array(
+			'owner' => 'FLN123-GANDI', //load from somwheree?
+			'admin' => 'FLN123-GANDI',
+			'bill' => 'FLN123-GANDI',
+			'tech' =>'FLN123-GANDI',
+			'nameservers' => array('a.dns.gandi-ote.net', 'b.dns.gandi-ote.net',
+			'c.dns.gandi-ote.net'),
+			'duration' => $duration);
+		}
+		$conn = $this->createConnection();
+		$result = $conn->create(self::API_KEY,$domain,$domain_spec);
+	}
 
-}
+	/**
+	* @param $currency 
+	* @param $lang
+	* @param $phase 
+	* currency
+	* lang ISO-639-2
+	* phase -> default = golive
+	*/
+	public function getPrice(array $domains,$currency,$lang = null,$phase = null){
+		$conn = $this->createConnection();
+		$result = $conn->price(parent::API_KEY, $domains,array($currency,$lang,$phase));
+		print_r($result);
+	}
 
 
 /*
@@ -59,32 +114,7 @@ public function listALLTLDByRegion(){
 	$domain_api->region($apikey);
 }
 
-public function checkDomainAvailabe(){
 
-	$domain = "mydomain.net";
-	$domain_api = XML_RPC2_Client::create(
-		'https://rpc.gandi.net/xmlrpc/',
-		array( 'prefix' => 'domain.' )
-		);
-	$result = $domain_api->available($apikey, array($domain));
-	print_r($result);
-/*
-Array
-(
-    [mydomain.net] => pending
-)
-*/
-while ( $result[$domain] == 'pending') {
-	usleep(700000);
-	$result = $domain_api->available($apikey, array($domain));
-}
-/*
-Array
-(
-    [mydomain.net] => unavailable
-)
-*/
-}
 
 public function checkCanAssociateDomainContact()
 {
@@ -98,40 +128,18 @@ public function checkCanAssociateDomainContact()
 		$association_spec) );
 	// 1
 	// OR
-	print_r( $contact_api->can_associate_domain($apikey, 'FLN123-GANDI',
-		$association_spec) )
-	/*
-	[{'error': 'EC_INVALIDPARAM1+!EC_ENUMIN',
-        'field': 'birth_country',
-        'field_type': 'Enum',
-        'reason': 'BirthCountryIso:  not in list ...
-	},... ]	
-	*/
+
 }
 
-public function createDomain(){  // check state with operation.info?
-	$domain_spec = array(
-		'owner' => 'FLN123-GANDI',
-		'admin' => 'FLN123-GANDI',
-		'bill' => 'FLN123-GANDI',
-		'tech' =>'FLN123-GANDI',
-		'nameservers' => array('a.dns.gandi-ote.net', 'b.dns.gandi-ote.net',
-			'c.dns.gandi-ote.net'),
-		'duration' => 1);
-	$op = $domain_api->__call('create', array($apikey, 'mydomain.net',
-		$domain_spec));
-}
 
 
 public function checkDomainRegisterState(){
 
-	$op = $operation_api->info($apikey, $op['id'])
-	echo $op['step']
+	$op = $operation_api->info($apikey, $op['id']);
 //'BILL'
 
 // and later...
-	$op = $operation_api->info($apikey, $op['id'])
-	echo $op['step']
+	$op = $operation_api->info($apikey, $op['id']);
 //'DONE'
 }
 
@@ -140,7 +148,7 @@ public function checkDomainRegisterState(){
 public function updateDomainContacts(){
 	$domain_contacts_api = XML_RPC2_Client::create($api_uri,
 		array('prefix' => 'domain.contacts.'));
-	contacts_spec = array(
+	$contacts_spec = array(
 		'admin' => 'FLN123-GANDI',
 		'tech' => 'FLN123-GANDI',
 		'bill'=> 'FLN123-GANDI');
@@ -185,8 +193,8 @@ public function transferDomain(){
 		'bill' => 'FLN123-GANDI',
 		'nameservers' => array('a.dns.gandi.net', 'b.dns.gandi.net', 'c.dns.gandi.net'),
 		'authinfo' => 'xxx',
-		'duration' => 1)
-	$domain_transferin_api->proceed($apikey, 'mydomain.net', transfer_spec);
+		'duration' => 1);
+		$domain_transferin_api->proceed($apikey, 'mydomain.net', $transfer_spec);
 }
 
 
