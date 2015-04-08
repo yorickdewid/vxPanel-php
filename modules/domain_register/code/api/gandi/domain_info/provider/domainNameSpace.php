@@ -18,36 +18,5 @@ abstract class domainNameSpace {
   		array('prefix' => 'domain.'.$prefix,'sslverify'=>false));
   		return $connect_api;
 	}
-
-	public final function __getInfo($prefix,$params){
-		$conn = $this->createConnection($prefix);
-		$conn->info($apikey, 'mydomain.net');
-	}
-
-	public final function __getList($prefix,$params){
-		$conn = $this->createConnection($prefix);
-		$conn->list($apikey, 'mydomain.net');
-	}
-
-	public final function __getCount($prefix,$params){
-		$conn = $this->createConnection($prefix);
-		return $conn->count(array_merge(self::API_KEY,$params));
-	}
-
-	public final function __create($prefix,$params){
-		$conn = $this->createConnection($prefix);
-		$conn->create($apikey, 'mydomain.net',$webredir_specs);
-	}
-
-	public final function __delete($prefix,$params){
-		$conn = $this->createConnection($prefix);
-		$conn->delete($apikey,"mydomain.net", $webredir_specs);
-	}
-
-	public final function __update()
-	{
-		$conn = $this->createConnection($prefix);
-		$conn->update($apikey,"mydomain.net", $webredir_specs);
-	}
 }
 ?>
