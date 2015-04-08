@@ -1,5 +1,10 @@
 <?php
 
+
+	/*
+	Paid version of the mailbox
+	 */
+	
 class packmail{
 	
 
