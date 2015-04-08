@@ -204,7 +204,7 @@ class domain extends domainNameSpace{
  	 * @param array
  	 */
 	public function setDomainContacts($domain,$admin,$bill,$tech,$extra){
-			$domain_owner = array(
+		$domain_owner = array(
 		'admin' => $admin,
 		'bill' => $bill,
 		'old_owner' => $old_owner,
@@ -213,6 +213,28 @@ class domain extends domainNameSpace{
 		'extra' => $extra);
 		$conn = $this->createConnection('owner.');
 		$result = $conn->set(parent::API_KEY,$domain,$restore_spec);
+		return $result;
+	}
+
+	/**
+	 * [lockDomain description]
+	 * @param string $domain
+	 * @return array DomainStatusUpdateOperationReturn
+	 */
+	public function lockDomain($domain){
+		$conn = $this->createConnection('status.');
+		$result = $conn->restore(parent::API_KEY,$domain);
+		return $result;
+	}
+
+	/**
+	 * [unlockDomain description]
+	 * @param string $domain
+	 * @return array DomainStatusUpdateOperationReturn
+	 */
+	public function unlockDomain(string $domain){
+		$conn = $this->createConnection('status.');
+		$result = $conn->restore(parent::API_KEY,$domain);
 		return $result;
 	}
 
@@ -340,6 +362,7 @@ class domain extends domainNameSpace{
 	/**
 	 * DNS SEC
 	 */
+	
 	/**
 	 * [createDNSSec description]
 	 * @param  string $domain
@@ -360,9 +383,10 @@ class domain extends domainNameSpace{
 	 */
 	public function deleteDNSSec($keyId){
 		$conn = $this->createConnection('dnssec.');
-		$result = $conn->deleteparent::API_KEY, $keyId);
+		$result = $conn->delete(parent::API_KEY, $keyId);
 		return $result;
 	}
+
 	/**
 	 * list keys of the associated domain
 	 * @param  string $domain
@@ -371,6 +395,321 @@ class domain extends domainNameSpace{
 	public function listDNSSec($domain){
 		$conn = $this->createConnection('dnssec.');
 		$result = $conn->list(parent::API_KEY, $domain);
+		return $result;
+	}
+
+	/**
+	 * [setReseller description
+	 * @param string $domain
+	 * @return array see param operationreturn gandi docs
+	 */
+	public function setReseller($domain){
+		$conn = $this->createConnection('reseller.');
+		$result = $conn->set(parent::API_KEY, $domain);
+		return $result;
+	}
+
+
+	/* Expression of Interest
+	*/
+
+	/**
+	 * [getCountEOI description]
+	 * @param  array $opts see EOIListOptions gandi doc
+	 * @return int number of eoi
+	 */
+	public function getCountEOI($opts = null){
+		$conn = $this->createConnection('eoi.');
+		if($opts != null)
+		{
+			$result = $conn->count(parent::API_KEY, $opts);
+		}
+		else{
+			$result = $conn->count(parent::API_KEY);
+		}
+		return $result;
+	}
+	/**
+	 * [createEOI description]
+	 * @param  string $domain
+	 * @return array EOIReturn gandi doc
+	 */
+	public function createEOI($domain){
+		$conn = $this->createConnection('eoi.');
+		$result = $conn->create(parent::API_KEY,$domain);
+		return $result;
+	}
+
+	/**
+	 * [deleteEOI description]
+	 * @param  string $domain
+	 * @return boolean 
+	 */
+	public function deleteEOI($domain){
+		$conn = $this->createConnection('eoi.');
+		$result = $conn->delete(parent::API_KEY,$domain);
+		return $result;
+	}
+
+	/**
+	 * [getInfoEOI description]
+	 * @param  string $domain
+	 * @return array EOIReturn gandi doc
+	 */
+	public function getInfoEOI($domain){
+		$conn = $this->createConnection('eoi.');
+		$result = $conn->info(parent::API_KEY,$domain);
+		return $result;
+	}
+	/**
+	 * [getListEOI description]
+	 * @param  array $opts see EOIListOptions gandi doc
+	 * @return array EOIReturn gandi doc
+	 */
+	public function getListEOI($opts)
+	{
+		$conn = $this->createConnection('eoi.');
+		if($opts != null)
+		{
+			$result = $conn->list(parent::API_KEY, $opts);
+		}
+		else{
+			$result = $conn->list(parent::API_KEY);
+		}
+		return $result;
+	}
+
+	/**
+	 * AUTORENEW
+	 */
+	
+	/**
+	 * [activateAutoRenew description]
+	 * @param string $domain
+	 * @param int $duration (1-10) years
+	 * @return array Autorenewreturn gandi doc
+	 */
+	public function activateAutoRenew($domain,$duration = null)
+	{
+		$conn = $this->createConnection('autorenew.');
+		if($duration != null)
+		{
+			$result = $conn->activate(parent::API_KEY,$domain,$duration);
+		}
+		else{
+			$result = $conn->activate(parent::API_KEY,$domain);
+		}
+		return $result;
+	}
+	/**
+	 * [deactivateAutoRenew description]
+	 * @param string $domain
+	 * @return array Autorenewreturn gandi doc
+	 */
+	public function deactivateAutoRenew($domain)
+	{
+		$conn = $this->createConnection('autorenew.');
+		$result = $conn->deactivate(parent::API_KEY,$domain);
+		return $result;
+	}	
+
+	/**
+	 *  CLAIMS
+	 */
+	
+	/**
+	 * [acceptClaim description]
+	 * @param  string $noticeId retrieve with getClaimInfo
+	 * @return boolean
+	 */
+	public function acceptClaim($noticeId)
+	{
+		$conn = $this->createConnection('claims.');
+		$result = $conn->deactivate(parent::API_KEY,$noticeId);
+		return $result;
+	}
+
+	//
+	/**
+	 *  useful first 90 days? some last forever some shorter..
+	 * [checkClaims description]
+	 * @param  array $domains
+	 * @return array Struct mapping a domain name with its claims status (boolean)
+	 */
+	public function checkClaims($domains){
+		$conn = $this->createConnection('claims.');
+		$result = $conn->deactivate(parent::API_KEY,$domains);
+		return $result;
+	}
+	/**
+	 * do checkclaims first
+	 * @param  string $domain
+	 * @return array claimsrequestreturn
+	 */
+	public function getClaimInfo($domain)
+	{
+		$conn = $this->createConnection('claims.');
+		$result = $conn->deactivate(parent::API_KEY,$domain);
+		return $result;
+	}
+
+	/**
+	 * [countSMD description]
+	 * @param  array $options SMDListOptions
+	 * @return int count
+	 */
+	public function countSMD(array $options = null)
+	{
+		$conn = $this->createConnection('smd.');
+		if($options != null)
+		{
+			$result = $conn->count(parent::API_KEY,$options);
+		}
+		else{
+			$result = $conn->count(parent::API_KEY;
+		}
+		return $result;
+	}
+
+	/**
+	 * [createSMD description]
+	 * @param  string $MD
+	 * @return array SMDReturn
+	 */
+	public function createSMD($SMD)
+	{
+		$conn = $this->createConnection('smd.');
+		$result = $conn->create(parent::API_KEY,$SMD);
+		return $result;
+	}
+
+	/**
+	 * [deleteSMD description]
+	 * @param  int $smdId
+	 * @return null 
+	 */
+	public function deleteSMD($smdId)
+	{
+		$conn = $this->createConnection('smd.');
+		$result = $conn->delete(parent::API_KEY,$smdId);
+		return $result;
+	}
+
+	/**
+	 * [createSMD description]
+	 * @param  string $MD
+	 * @return array domainInformation
+	 */
+	public function extractSMD($SMD)
+	{
+		$conn = $this->createConnection('smd.');
+		$result = $conn->extract(parent::API_KEY,$SMD);
+		return $result;
+	}
+	/**
+	 * [getSMDInfo description]
+	 * @param  int $smdId
+	 * @return array SMD information
+	 */
+	public function getSMDInfo($smdId)
+	{
+		$conn = $this->createConnection('smd.');
+		$result = $conn->info(parent::API_KEY,$smdId);
+		return $result;
+	}
+
+	/**
+	 *  list
+	 * @param  array $options SMDListOptions
+	 * @return array SMDListreturn gandi doc
+	 */
+	public function getSMDList(array $options = null)
+	{
+		$conn = $this->createConnection('smd.');
+		if($options != null)
+		{
+			$result = $conn->list(parent::API_KEY,$options);
+		}
+		else{
+			$result = $conn->list(parent::API_KEY;
+		}
+		return $result;
+	}
+
+	/**
+	 * [checkUkRights description]
+	 * @param  array $domains 
+	 * @param  string $owner
+	 * @return array domain -> status (bool allowed,string reason)
+	 */
+	public function checkUkRights($domains,$owner)
+	{
+		$conn = $this->createConnection('misc.');
+		$result = $conn->ukrights(parent::API_KEY,$domains,$owner);
+		return $result;
+	}
+
+	/**
+	 * [acceptDelete description]
+	 * @param  string $fqdn
+	 * @param  string $authcode
+	 * @return boolean status
+	 */
+	public function acceptDelete(string $fqdn,string $authcode)
+	{
+		$conn = $this->createConnection('delete.');
+		$result = $conn->accept(parent::API_KEY,$fqdn,$authcode);
+		return $result;
+	}
+
+	/**
+	 * [getDeleteAvailable description]
+	 * @param  string $domain
+	 * @return boolean 
+	 */
+	public function getDeleteAvailable($domain)
+	{
+		$conn = $this->createConnection('delete.');
+		$result = $conn->available(parent::API_KEY,$domain);
+		return $result;
+	}
+
+	/**
+	 * [acceptDelete description]
+	 * @param  string $fqdn
+	 * @param  string $authcode
+	 * @return boolean status
+	 */
+	public function declineDelete($fqdn,$authcode)
+	{
+		$conn = $this->createConnection('delete.');
+		$result = $conn->decline(parent::API_KEY,$fqdn,$authcode);
+		return $result;
+	}
+
+	/**
+	 * [acceptDelete description]
+	 * @param  string $fqdn
+	 * @param  string $authcode
+	 * @return array TransferinReturn
+	 */
+	public function getDeleteInfo($fqdn,$authcode)
+	{
+		$conn = $this->createConnection('delete.');
+		$result = $conn->info(parent::API_KEY,$fqdn,$authcode);
+		return $result;
+	}
+
+	/**
+	 * [getDeleteAvailable description]
+	 * @param  string $domain
+	 * @return array DomainDeleteOperationReturn
+	 * 	
+	 */
+	public function proceedWithDelete($domain)
+	{
+		$conn = $this->createConnection('delete.');
+		$result = $conn->proceed(parent::API_KEY,$domain);
 		return $result;
 	}
 
@@ -415,13 +754,7 @@ class domain extends domainNameSpace{
 
 	}
 
-	public function lockDomain(){
-		$domain_status_api->lock($apikey, 'mydomain.net');
-	}
 
-	public function unlockDomain(){
-		$domain_status_api->unlock($apikey, 'mydomain.net');
-	}
 
 	public function updateDomainNameServers(){
 		$domain_nameservers_api = XML_RPC2_Client::create($api_uri,
@@ -446,124 +779,21 @@ class domain extends domainNameSpace{
 
 	}
 
+
 	
-	/* DNSSEC */
 
-
-
-	/* Reseller */
-
-	public function setReseller($domain){
-
-	}
-
-
-	/* Expression of Interest
-	*/
-
-	public function setCountEOI($opts = null){
-
-	}
-
-	public function createEOI($domain){
-
-	}
-
-
-	public function deleteEOI($domain){
-
-	}
-
-	public function getInfoEOI($domain){
-
-	}
-
-	public function getListEOI($opts)
-	{
-		
-	}
-
-	public function activateAutoRenew($domain)
-	{
-
-	}
-
-	public function deactivateAutoRenew($domain)
-	{
-
-	}	
 /*
 	PREORDER/sunrise/landurhs etc
 */
 
-	// not is valid 48 hours
-	// show customer trademark clame info method
-	public function acceptClaims($noticeId)
-	{
-
-	}
-
-	// useful first 90 days? some last forever some shorter..
-	public function checkClaims($domains){
-
-	}
-
-	public function getClaimInfo($domain)
-	{
-
-	}
 
 
-	public function countSMD($options = null){
-
-	}
-
-	public function deleteSMD($smdId)
-	{
-
-	}
-	public function extractSMD($smd)
-	{
-		
-	}
-
-	public function getSMDInfo($smdId){
-
-	}
-
-	public function getSMDList($options = null){
-
-	}
 
 	/*
 	MISC
 	*/
 
-	// limitation no subdomains e.g co.uk
-	public function checkUkRights($params)
-	{
+	
 
-	}
 
-	public function acceptDelete($fqdn,$authcode){
-
-	}
-
-	public function declineDelete($fqdn,$authcode)
-	{
-
-	}
-
-	public function getDeleteAvailable($domain){
-
-	}
-
-	public function getDeleteInfo($fqdn,$authcode = null){
-
-	}
-
-	//restricted
-	public function proceedWithDelete($domain){
-
-	}
 }
