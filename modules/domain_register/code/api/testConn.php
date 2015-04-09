@@ -14,6 +14,6 @@ $dom = new domain();
 //$dom->setDomainOwner();
 //$dom->setDomainContacts();
 // tld
-//print_r($dom->listAllTLD());
-//print_r($dom->listALLTLDByRegion());
+//print_r($dom->listAllTLD()); works
+//print_r($dom->listALLTLDByRegion()); works
 ?>
