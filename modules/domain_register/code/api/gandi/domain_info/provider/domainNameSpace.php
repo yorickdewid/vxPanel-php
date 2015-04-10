@@ -18,5 +18,16 @@ abstract class domainNameSpace {
   		array('prefix' => 'domain.'.$prefix,'sslverify'=>false));
   		return $connect_api;
 	}
+
+		/**
+ 	* [getVersion description]
+	 * @return string version
+ 	*/
+	public function getVersion(){
+		$conn = XML_RPC2_Client::create(self::LINK,
+  		array('prefix' => '.'.$prefix,'sslverify'=>false));
+		$result = $conn->info(self::API_KEY);
+		return $result['api_version'];
+	}
 }
 ?>
