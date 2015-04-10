@@ -49,13 +49,13 @@ class ContactCreateFormDescription extends params{
 		self::PHONE => '',
 		self::STREETADDR => '',
 		self::TYPE => '',
-		self::ACCEPT_CONTRACT => false,
+		self::ACCEPT_CONTRACT => '',
 		self::BRAND_NUMBER => '',
 		self::COMMUNITY => '',
 		self::COMMUNITY_HASH => '',
 		self::COMMUNITY_REFERER => '',
-		self::DATA_OBFUSCATED => false,
-		self::EXTRA_PARAMETERS => array(),
+		self::DATA_OBFUSCATED => '', //boolean
+		self::EXTRA_PARAMETERS => '', //array
 		self::FAX => '',
 		self::JO_ANNOUNCE_NUMBER => '',
 		self::JO_ANNOUNCE_PAGE => '',
@@ -73,6 +73,14 @@ class ContactCreateFormDescription extends params{
 		self::THIRD_PART_RESELL => '',
 		self::VAT_NUMBER => '',
 		self::ZIP => '');
+
+	public static function cleanArrayKeys(&$params){
+		foreach($params as $key => $value)
+		{
+			if($value == '')
+       			unset($params[$key]);
+		}
+	}
 }
 
 ?>
