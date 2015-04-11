@@ -8,7 +8,7 @@ abstract class contactNameSpace {
 
 	const API_KEY = "MxhsiVu1qy58kgpnXbVDnFiX";
 	const LINK = 'https://rpc.ote.gandi.net/xmlrpc/';
-
+	const HANDLE = 'DP6238-GANDI';
 
 	/**
 	* @param $prefix string //e.g 'host.'

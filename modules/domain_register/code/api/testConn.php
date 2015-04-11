@@ -29,6 +29,26 @@ function createContact(){
 	print_r($result);
 }
 
+function updateContact($contactHandle){
+	$contact = new contact();
+	$contactParams = ContactCreateFormDescription::getParams();
+	$contactParams[ContactCreateFormDescription::ZIP] = '3333 LL'; 
+	ContactCreateFormDescription::cleanArrayKeys($contactParams);
+	$result = $contact->update($contactHandle,$contactParams);
+	print_r($result);
+}
+
+function countContact($opts = null){
+	try{
+		$contact = new contact();
+		return $contact->getCount($opts);
+	}
+	catch(Exception $e)
+	{
+		echo $e->getMessage();
+	}	
+}
+
 function createDomain($domain){
 	try{
 		$dom = new domain();
@@ -43,7 +63,46 @@ function createDomain($domain){
 	}	
 }
 
-createDomain('ariekaas.nl');
+function countDomain($opts = null)
+{
+	try{
+		$dom = new domain();
+		return $dom->getCount($opts);
+	}
+	catch(Exception $e)
+	{
+		echo $e->getMessage();
+	}	
+}
+
+function infoDomain($domain){
+	try{
+		$dom = new domain();
+		return $dom->getInfo($domain);
+	}
+	catch(Exception $e)
+	{
+		echo $e->getMessage();
+	}
+}
+
+function checkAssociateDomain($domain,$contactHandle)
+{
+	$contact = new contact();
+	$result = $contact->checkCanAssociateDomainContact($domain,$contactHandle);
+	print_r($result);
+}
+//checkAssociateDomain('ariekaas.nl','WN9-GANDI');
+//updateContact('WN9-GANDI');
+// if(checkAssociateDomain('ariekaas.nl','WN9-GANDI')){
+// 	createDomain('ariekaas.nl');
+// }
+print_r(countContact());
+print_r(countDomain());
+print_r(infoDomain('ariekaas.nl'));
+
+
+//createDomain('ariekaas.nl');
 
 //print_r(ContactCreateFormDescription::getParams());
 //print_r($result);
