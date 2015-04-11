@@ -14,9 +14,9 @@ class domain extends domainNameSpace{
 		$conn = $this->createConnection();
 		$result = $conn->available(parent::API_KEY,$domains);
 
-		while ( $result[$domain] == 'pending') {
+		while ( $result[$domains[0]] == 'pending') {
 			usleep(700000);
-			$result = $conn->available(array(parent::API_KEY, $domains));
+			$result = $conn->available(parent::API_KEY, $domains);
 		}
 		return $result;
 	}
