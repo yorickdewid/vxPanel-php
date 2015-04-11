@@ -5,25 +5,55 @@ require_once __DIR__ .'/../../provider/contactNameSpace.php';
 class contact extends contactNameSpace {
 
 	
-	public function checkCanAssociateDomainContact()
+	public function checkCanAssociateDomainContact($domain,$contactHandle)
 	{
-		$contact_api = XML_RPC2_Client::create($api_uri,
-			array('prefix' => 'contact.'));
-		$association_spec = array(
-			'domain' => 'mydomain.fr',
+		try{
+			$conn = $this->createConnection();
+			$association_spec = array(
+			'domain' => $domain,
 			'owner' => true,
 			'admin' => true );
-		print_r( $contact_api->can_associate_domain($apikey, 'FLN123-GANDI',
-			$association_spec) );
-		// 1
-		// OR
+			$result = $conn->can_associate_domain(self::API_KEY, 
+			$contactHandle,
+			$association_spec);
+			return $result;
+		}
+		catch(XML_RPC2_FaultException $e)
+		{
+			echo $e->getMessage() . "\n\n";
+		}
+	}
 
+	public function getCount($opts =  null)
+	{
+		try{
+			$conn = $this->createConnection();
+			$result = $conn->__call('count',array(self::API_KEY,$opts));
+			return $result;
+		}
+		catch(XML_RPC2_FaultException $e)
+		{
+			echo $e->getMessage() . "\n\n";
+		}
 	}
 
 	public function create($params){
 		try{
 			$conn = $this->createConnection();
 			$result = $conn->__call('create',array(self::API_KEY,$params));
+			return $result;
+		}
+		catch(XML_RPC2_FaultException $e)
+		{
+			echo $e->getMessage() . "\n\n";
+		}
+	}
+
+	public function update($contactHandle,$params)
+	{
+		try{
+			$conn = $this->createConnection();
+			$result = $conn->__call('update',array(self::API_KEY,$contactHandle,$params));
 			return $result;
 		}
 		catch(XML_RPC2_FaultException $e)

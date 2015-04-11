@@ -72,7 +72,7 @@ class ContactCreateFormDescription extends params{
 		self::STATE => '',
 		self::THIRD_PART_RESELL => '',
 		self::VAT_NUMBER => '',
-		self::ZIP => '');
+		self::ZIP => '');  // required for NL , needs to be format 3333 LL
 
 	public static function cleanArrayKeys(&$params){
 		foreach($params as $key => $value)

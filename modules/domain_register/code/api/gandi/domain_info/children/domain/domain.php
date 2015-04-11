@@ -28,7 +28,15 @@ class domain extends domainNameSpace{
 	*/
 	public function getCount($opts)
 	{
-		return $this->__getCount(null,$opts);
+		$conn = $this->createConnection();
+		if($opts != null)
+		{
+			$result = $conn->count(self::API_KEY,$opts);
+		}
+		else{
+			$result = $conn->count(self::API_KEY);
+		}
+		return $result;
 	}
 
 	/**
@@ -53,7 +61,9 @@ class domain extends domainNameSpace{
 	 * @return array
 	 */
 	public function getInfo($domain){
-		return $this->__getInfo($domain);
+		$conn = $this->createConnection();
+		$result = $conn->info(self::API_KEY,$domain);
+		return $result;
 	}
 
 
