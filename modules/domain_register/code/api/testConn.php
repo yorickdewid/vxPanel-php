@@ -3,6 +3,7 @@ require_once('gandi/domain_info/children/domain/domain.php');
 require_once('gandi/domain_info/children/domain/params/DomainCreate.php');
 require_once('gandi/domain_info/children/contact/contact.php');
 require_once('gandi/domain_info/children/contact/params/ContactCreateFormDescription.php');
+require_once('gandi/domain_info/children/operation/operation.php');
 
 
 
@@ -49,13 +50,11 @@ function countContact($opts = null){
 	}	
 }
 
-function createDomain($domain){
+function createDomain($domain,$params){
 	try{
 		$dom = new domain();
-		createContact();
-		$params = DomainCreate::getParams();
-		DomainCreate::cleanArrayKeys($params);
-		$result = $dom->createDomain('ariekaas.nl',$params); // backend a does not exist ?
+		$result = $dom->createDomain('ariekaas.nl',$params); 
+		return $result;
 	}
 	catch(Exception $e)
 	{
@@ -90,18 +89,54 @@ function checkAssociateDomain($domain,$contactHandle)
 {
 	$contact = new contact();
 	$result = $contact->checkCanAssociateDomainContact($domain,$contactHandle);
-	print_r($result);
+	return $result;
 }
 //checkAssociateDomain('ariekaas.nl','WN9-GANDI');
 //updateContact('WN9-GANDI');
-// if(checkAssociateDomain('ariekaas.nl','WN9-GANDI')){
-// 	createDomain('ariekaas.nl');
-// }
-print_r(countContact());
+// print_r(infoDomain('ariekaas.nl'));
+// print "checking domain first..";
+// $dom  = new domain();
+// $result = $dom->checkDomainAvailable(array('ariekaas.nl'));
+// 	if(checkAssociateDomain('ariekaas.nl','WN9-GANDI')){
+// 		print "creating domain...";
+// 		$params = DomainCreate::getParams();
+// 		DomainCreate::cleanArrayKeys($params);
+// 		$params['owner'] = 'WN9-GANDI';
+// 		$params['admin'] = 'WN9-GANDI';
+// 		$params['bill'] = 'WN9-GANDI';
+// 		$params['tech'] = 'WN9-GANDI';
+// 		$result = createDomain('ariekaas.nl',$params);
+// 		print_r($result);
+//	}	
+	//print_r(countContact());
 print_r(countDomain());
-print_r(infoDomain('ariekaas.nl'));
+
+function testCreateDomain(){
+		checkAssociateDomain('ariekaas.nl','DP6238');
+		if(checkAssociateDomain('ariekaas.nl','WN9') == true){
+		print "we can associate";
+		$params = DomainCreate::getParams();
+		DomainCreate::cleanArrayKeys($params);
+		print "overwriting admin and tech keys..";
+		$params['owner'] = 'WN9-GANDI'; // keep default we are the owner
+		$params['admin'] = 'WN9-GANDI';
+		$params['bill'] = 'WN9-GANDI'; // keep default we are billed
+		$params['tech'] = 'WN9-GANDI';
+		print_r($params);
+		print "creating domain...";
+		$result = createDomain('ariekaas.nl',$params);
+		print_r($result);
+		return $result;
+	}else{
+	print "kutt";
+	}
+}
 
 
+testCreateDomain();
+//print_r(checkAssociateDomain('ariekaas.nl','WN9-GANDI'));
+$operation = new operation();
+//print_r($operation->getInfo(array($result['id'])));
 //createDomain('ariekaas.nl');
 
 //print_r(ContactCreateFormDescription::getParams());

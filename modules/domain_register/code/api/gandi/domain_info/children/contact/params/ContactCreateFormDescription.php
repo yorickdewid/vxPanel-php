@@ -8,8 +8,8 @@ class ContactCreateFormDescription extends params{
 	const CITY = 'city'; // required
 	const COUNTRY = 'country'; // required
 	const EMAIL = 'email'; // required
-	const FAMILY = 'family'; // required
-	const GIVEN = 'given'; // required
+	const FAMILY = 'family'; // required //last name
+	const GIVEN = 'given'; // required // first name
 	const PASSWORD = 'password'; // required
 	const PHONE = 'phone'; // required
 	const STREETADDR = 'streetaddr'; // required

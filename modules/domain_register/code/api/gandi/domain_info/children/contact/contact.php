@@ -1,10 +1,13 @@
 <?php
 
-require_once __DIR__ .'/../../provider/contactNameSpace.php';
+require_once __DIR__ .'/../../provider/genericNameSpace.php';
 
-class contact extends contactNameSpace {
+class contact extends genericNameSpace {
 
-	
+	public function __construct(){
+		$this->setPrefix('contact.');
+	}
+
 	public function checkCanAssociateDomainContact($domain,$contactHandle)
 	{
 		try{
