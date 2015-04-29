@@ -15,7 +15,9 @@ class contact extends genericNameSpace {
 			$association_spec = array(
 			'domain' => $domain,
 			'owner' => true,
-			'admin' => true );
+			'admin' => true,
+			'bill' => true,
+			'tech' => true);
 			$result = $conn->can_associate_domain(self::API_KEY, 
 			$contactHandle,
 			$association_spec);
@@ -31,7 +33,13 @@ class contact extends genericNameSpace {
 	{
 		try{
 			$conn = $this->createConnection();
-			$result = $conn->__call('count',array(self::API_KEY,$opts));
+			if($opts != null)
+			{
+				$result = $conn->__call('count',array(self::API_KEY,$opts));
+			}
+			else{
+				$result = $conn->__call('count',array(self::API_KEY));
+			}
 			return $result;
 		}
 		catch(XML_RPC2_FaultException $e)
