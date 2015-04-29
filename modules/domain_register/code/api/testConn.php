@@ -23,12 +23,35 @@ function createContact(){
 	$contactParams[ContactCreateFormDescription::GIVEN] = 'wtf';
 	$contactParams[ContactCreateFormDescription::PASSWORD] = 'ariekaas';
 	$contactParams[ContactCreateFormDescription::PHONE] = '0923056969';
+	$contactParams[ContactCreateFormDescription::ZIP] = '3333 LL'; 
 	$contactParams[ContactCreateFormDescription::STREETADDR] = 'koekkoekstraat';
-	$contactParams[ContactCreateFormDescription::TYPE] = '0';
+	$contactParams[ContactCreateFormDescription::TYPE] = '0'; // 0,1,2,3,4 
 	ContactCreateFormDescription::cleanArrayKeys($contactParams);
 	$result = $contact->create($contactParams);
 	print_r($result);
+	return $result;
 }
+
+function createContactReseller(){
+	$contact = new contact();
+	$contactParams = ContactCreateFormDescription::getParams();
+	$contactParams[ContactCreateFormDescription::CITY] = 'koekkoekcity';
+	$contactParams[ContactCreateFormDescription::COUNTRY] = 'NL';
+	$contactParams[ContactCreateFormDescription::EMAIL] = 'koek@thecook.com';
+	$contactParams[ContactCreateFormDescription::FAMILY] = 'nope';
+	$contactParams[ContactCreateFormDescription::GIVEN] = 'wtf';
+	$contactParams[ContactCreateFormDescription::PASSWORD] = 'ariekaas';
+	$contactParams[ContactCreateFormDescription::PHONE] = '0923056969';
+	$contactParams[ContactCreateFormDescription::ZIP] = '3333 LL'; 
+	$contactParams[ContactCreateFormDescription::STREETADDR] = 'koekkoekstraat';
+	$contactParams[ContactCreateFormDescription::TYPE] = '4'; // 0,1,2,3,4 
+	$contactParams[ContactCreateFormDescription::ORGNAME] = 'QUENZA';
+	ContactCreateFormDescription::cleanArrayKeys($contactParams);
+	$result = $contact->create($contactParams);
+	print_r($result);
+	return $result;
+}
+
 
 function updateContact($contactHandle){
 	$contact = new contact();
@@ -108,34 +131,53 @@ function checkAssociateDomain($domain,$contactHandle)
 // 		$result = createDomain('ariekaas.nl',$params);
 // 		print_r($result);
 //	}	
-	//print_r(countContact());
-print_r(countDomain());
+//print_r(countContact());
+//print_r(countDomain());
 
 function testCreateDomain(){
-		checkAssociateDomain('ariekaas.nl','DP6238');
-		if(checkAssociateDomain('ariekaas.nl','WN9') == true){
+		//checkAssociateDomain('ariekaas.nl','WN9');
+		//$result = createContact();
+		//$handle = $result['handle'];
+		$handle = 'WN13-GANDI';
+	if(checkAssociateDomain('ariekaassssssss.nl','WN10-GANDI') == true){
 		print "we can associate";
 		$params = DomainCreate::getParams();
 		DomainCreate::cleanArrayKeys($params);
 		print "overwriting admin and tech keys..";
-		$params['owner'] = 'WN9-GANDI'; // keep default we are the owner
-		$params['admin'] = 'WN9-GANDI';
-		$params['bill'] = 'WN9-GANDI'; // keep default we are billed
-		$params['tech'] = 'WN9-GANDI';
+		//$params['owner'] = 'WN10-GANDI'; // keep default we are the owner
+		// $params['reseller'] = '';
+		// owne and admin example?
+
+		$params['owner'] = 'WN10-GANDI';
+        $params['admin'] = 'WN13-GANDI';
+		$params['bill'] = 'WN13-GANDI'; // keep default we are billed
+		$params['tech'] = 'WN13-GANDI';
+		//admin tech and owner must differ?
+		// $params['admin'] = 'WN11-GANDI';
+		// $params['bill'] = 'WN13-GANDI'; // keep default we are billed
+		// $params['tech'] = 'WN12-GANDI';
+		/*$params['nameservers'] = array('a.dns.gandi-ote.net', 'b.dns.gandi-ote.net',
+                           'c.dns.gandi-ote.net');*/
 		print_r($params);
 		print "creating domain...";
-		$result = createDomain('ariekaas.nl',$params);
+		$result = createDomain('ariekaassssssss.nl',$params);
 		print_r($result);
 		return $result;
 	}else{
-	print "kutt";
+		print "kutt";
 	}
 }
 
 
+// wn9,wn10,wn11,wn12 private customer
+// reseller wn13
+//createContactReseller();
 testCreateDomain();
-//print_r(checkAssociateDomain('ariekaas.nl','WN9-GANDI'));
-$operation = new operation();
+print_r(checkAssociateDomain('ariekaas.nl','WN10-GANDI'));
+print_r(checkAssociateDomain('ariekaas.nl','WN11-GANDI'));
+print_r(checkAssociateDomain('ariekaas.nl','WN12-GANDI'));
+print_r(checkAssociateDomain('ariekaas.nl','WN13-GANDI'));
+//$operation = new operation();
 //print_r($operation->getInfo(array($result['id'])));
 //createDomain('ariekaas.nl');
 

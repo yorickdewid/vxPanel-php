@@ -29,7 +29,7 @@ class DomainCreate extends params {
 		self::ADMIN => self::HANDLE,  //required
 		self::BILL => self::HANDLE, // required
 		self::DURATION => 1, // required
-		self::OWNER => self::HANDLE, //required 
+		self::OWNER => 'does not compute', //required 
 		self::TECH =>self::HANDLE, //required
 		self::ACCEPT_CONTRACT => false, // default true if not given
 		self::AUTHINFO => '',
