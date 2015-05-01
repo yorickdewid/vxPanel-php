@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+    <name>Credit Funds/name>
+    <version>001</version>
+    <defaultcat>credits</defaultcat>
+    <desc>With credits you can pay for your services.</desc>
+    <authorname>Qpanel</authorname>
+    <authoremail>developers@zpanelcp.com</authoremail>
+    <authorurl>http://www.zpanelcp.com/</authorurl>
+    <updateurl>http://www.zpanelcp.com/uds/core.xml</updateurl>
+</module>
