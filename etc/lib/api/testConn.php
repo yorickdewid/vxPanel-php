@@ -134,12 +134,24 @@ function checkAssociateDomain($domain,$contactHandle)
 //print_r(countContact());
 //print_r(countDomain());
 
+function testListContacts(){
+	$contact = new contact();
+	$result = $contact->getList();
+	return $result;
+}
+
+function testInfoContact(){
+	$contact = new contact();
+	$result = $contact->info();
+	return $result;
+}
+
 function testCreateDomain(){
 		//checkAssociateDomain('ariekaas.nl','WN9');
 		//$result = createContact();
 		//$handle = $result['handle'];
 		$handle = 'WN13-GANDI';
-	if(checkAssociateDomain('ariekaassssssss.nl','WN10-GANDI') == true){
+	if(checkAssociateDomain('ariekaassssssss.nl','DP39-GANDI') == true){
 		print "we can associate";
 		$params = DomainCreate::getParams();
 		DomainCreate::cleanArrayKeys($params);
@@ -148,10 +160,10 @@ function testCreateDomain(){
 		// $params['reseller'] = '';
 		// owne and admin example?
 
-		$params['owner'] = 'WN10-GANDI';
-        $params['admin'] = 'WN13-GANDI';
-		$params['bill'] = 'WN13-GANDI'; // keep default we are billed
-		$params['tech'] = 'WN13-GANDI';
+		$params['owner'] = 'DP39-GANDI';
+        $params['admin'] = 'DP39-GANDI';
+		$params['bill'] = 'DP39-GANDI'; // keep default we are billed
+		$params['tech'] = 'DP39-GANDI';
 		//admin tech and owner must differ?
 		// $params['admin'] = 'WN11-GANDI';
 		// $params['bill'] = 'WN13-GANDI'; // keep default we are billed
@@ -168,15 +180,19 @@ function testCreateDomain(){
 	}
 }
 
+//updateContact();
+
 
 // wn9,wn10,wn11,wn12 private customer
 // reseller wn13
 //createContactReseller();
 testCreateDomain();
-print_r(checkAssociateDomain('ariekaas.nl','WN10-GANDI'));
-print_r(checkAssociateDomain('ariekaas.nl','WN11-GANDI'));
-print_r(checkAssociateDomain('ariekaas.nl','WN12-GANDI'));
-print_r(checkAssociateDomain('ariekaas.nl','WN13-GANDI'));
+//print_r(testInfoContact());
+//print_r(testListContacts(),true);
+// print_r(checkAssociateDomain('ariekaas.nl','WN10-GANDI'));
+// print_r(checkAssociateDomain('ariekaas.nl','WN11-GANDI'));
+// print_r(checkAssociateDomain('ariekaas.nl','WN12-GANDI'));
+// print_r(checkAssociateDomain('ariekaas.nl','WN13-GANDI'));
 //$operation = new operation();
 //print_r($operation->getInfo(array($result['id'])));
 //createDomain('ariekaas.nl');

@@ -12,14 +12,14 @@
     <div>
         <@ currentCreditBalance @>
     </div>
-    
-
     <div>
-        <table>
-            <tr>
-                <td><a href=#>Add Funds</a></td>
-            </tr>
-        </table>
+        <form action="./?module=credits&action=AddFunds" method="post">
+            <table>
+                <tr valign="top">
+                    <td><button class="button-loader btn btn-primary" type="submit" id="button" name="inAdd" value="1">Add Funds</button>
+                </tr>
+            </table>
+        </form>
     </div>
 </div>
 
