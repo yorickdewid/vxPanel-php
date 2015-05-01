@@ -24,12 +24,13 @@
  *
  */
 
+require_once(__DIR__.'/../../../etc/lib/paymentwall-php/lib/paymentwall.php');
+require_once(__DIR__.'/creditRemover.php');
+
 class module_controller extends ctrl_module
 {
-
     public static function getCurrentCreditBalance(){
         global $zdbh;
-        global $controller;
         $currentuser = ctrl_users::GetUserDetail();
 
         $sql = "SELECT total FROM credits.wallet WHERE user_id=:userid";
@@ -44,6 +45,89 @@ class module_controller extends ctrl_module
             }
         }
         return $display;
+    }
+
+    private static function addCredit(){
+        $currentuser = ctrl_users::GetUserDetail();
+
+        $sql = "SELECT total FROM credits.wallet WHERE user_id=:userid";
+        $numrows = $zdbh->prepare($sql);
+        $numrows->bindParam(':userid', $currentuser['userid']);
+
+        if ($numrows->execute()) {
+            if ($numrows->fetchColumn() == 0) {
+                $display = "<p>You currently do not have any balance.</p>";
+            } else {
+                $display = "<p>You currently have 10 credits</p>";
+            }
+        }
+        return $display;
+    }
+
+    /**
+     * Should be executed just after user registration?
+     * @return [type] [description]
+     */
+    private static function createWallet(){
+        $currentuser = ctrl_users::GetUserDetail();
+
+        $sql = "INSERT INTO credits.wallet COLUMNS(`user_id`) VALUES(:userid);";
+        $numrows = $zdbh->prepare($sql);
+        $numrows->bindParam(':userid', $currentuser['userid']);
+
+        if ($numrows->execute()) {
+            if ($numrows->fetchAll() != null) {
+                $display = "<p>You currently do not have any balance.</p>";
+            } else {
+                $display = "<p>You currently have 10 credits</p>";
+            }
+        }
+        return $display;
+    }
+
+
+    public static function doAddFunds(){
+        self::getPayWall();
+        //create paywall
+        //
+        //
+        //if the paywall api returns correct
+        //add credit to transaction
+        //count credit towards wallet
+        //report to user
+    }
+
+    private static function getPayWall(){
+    // Paymentwall PHP Library: https://www.paymentwall.com/lib/php
+
+        Paymentwall_Config::getInstance()->set(array(
+            'api_type' => Paymentwall_Config::API_VC,
+            'public_key' => 't_b33418984f3a03964caa978de9012e',
+            'private_key' => 't_a9bd5d122bb9dd392e6f22a118c344'
+            ));
+
+        $widget = new Paymentwall_Widget(
+            'user40012', 
+            'p10',
+            array(), 
+            array('email' => 'user@hostname.com')
+            );
+        print $widget->getHtmlCode();
+    }
+
+    private static function pingwall(){
+        $pingback = new Paymentwall_Pingback($_GET, $_SERVER['REMOTE_ADDR']);
+        if ($pingback->validate()) {
+          $virtualCurrency = $pingback->getVirtualCurrencyAmount();
+          if ($pingback->isDeliverable()) {
+      // deliver the virtual currency
+          } else if ($pingback->isCancelable()) {
+            creditRemover::$removeCredits();
+          } 
+          echo 'OK'; 
+      } else {
+          echo $pingback->getErrorSummary();
+      }
     }
 }
 

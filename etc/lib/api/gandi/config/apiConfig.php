@@ -11,4 +11,5 @@ class apiConfig {
 	//user
 	const API_KEY = ""; //24 digits passed for every call
 	const GANDI_HANDLE = ""; // e.g 1223-GANDI usage for some of the calls
+	const GANDI_HANDLE = "DP39-GANDI"; // TEST
 }

@@ -60,6 +60,30 @@ class contact extends genericNameSpace {
 		}
 	}
 
+	public function getList(){
+		try{
+			$conn = $this->createConnection();
+			$result = $conn->__call('list',array(self::API_KEY));
+			return $result;
+		}
+		catch(XML_RPC2_FaultException $e)
+		{
+			echo $e->getMessage() . "\n\n";
+		}
+	}
+
+	public function info(){
+		try{
+			$conn = $this->createConnection();
+			$result = $conn->__call('info',array(self::API_KEY));
+			return $result;
+		}
+		catch(XML_RPC2_FaultException $e)
+		{
+			echo $e->getMessage() . "\n\n";
+		}
+	}
+
 	public function update($contactHandle,$params)
 	{
 		try{

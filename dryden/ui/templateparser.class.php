@@ -10,6 +10,8 @@
  * @link http://www.zpanelcp.com/
  * @license GPL (http://www.gnu.org/licenses/gpl.html)
  */
+require_once __DIR__.'/../ctrl/module.class.php';
+
 class ui_templateparser
 {
 

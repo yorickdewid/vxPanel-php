@@ -24,7 +24,7 @@
  *
  */
 
-require_once('api/transip/DomainService.php');
+require_once('etc/lib/api/transip/DomainService.php');
 
 class module_controller extends ctrl_module
 {
