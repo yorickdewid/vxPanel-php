@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+    <name>Whois</name>
+    <version>100</version>
+    <defaultcat>Domain management</defaultcat>
+    <desc>Whois is a tool to check if a domain is still available for registration.</desc>
+    <authorname>ZPanel Project</authorname>
+    <authoremail>developers@zpanelcp.com</authoremail>
+    <authorurl>http://www.zpanelcp.com/</authorurl>
+    <updateurl>http://www.zpanelcp.com/uds/core.xml</updateurl>
+</module>

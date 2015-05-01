@@ -1,0 +1,11 @@
+
+QUERY insert module
+
+insert into x_modules (`mo_category_fk`,`mo_name_vc`,`mo_version_in`,`mo_folder_vc`,`mo_type_en`,`mo_desc_tx`) VALUES (3,'Credit Funds','001','credit','user','With credits you can pay for your services.');
+
+update x_modules set mo_folder_vc = 'credits' WHERE mo_id_pk = 48;
+
+
+
+
+
