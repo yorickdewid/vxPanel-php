@@ -94,6 +94,7 @@ class ui_moduleloader {
                         'mo_name_vc' => $row['mo_name_vc'],
                         'mo_version_in' => $row['mo_version_in'],
                         'mo_folder_vc' => $row['mo_folder_vc'],
+                        'mo_folder_path' => $row['mo_folder_path'],
                         'mo_type_en' => $row['mo_type_en'],
                         'mo_desc_tx' => $row['mo_desc_tx'],
                         'mo_installed_ts' => $row['mo_installed_ts'],

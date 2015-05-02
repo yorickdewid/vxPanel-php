@@ -42,10 +42,19 @@ class ui_tpl_modulelist2column {
                         $cleanname = str_replace(" ", "ZP(br)", $translatename);
 
                         // Check is User Style Module Icon Exist
-                 if (file_exists('etc/styles/' . ui_template::GetUserTemplate() . '/images/'.$mod['mo_folder_vc'].'/assets/icon.png')) {
+                        if (file_exists('etc/styles/' . ui_template::GetUserTemplate() . '/images/'.$mod['mo_folder_vc'].'/assets/icon.png')) {
                             $icon = 'etc/styles/' . ui_template::GetUserTemplate() . '/images/'.$mod['mo_folder_vc'].'/assets/icon.png';
-                        } else {
-                            $icon = 'modules/' . $mod['mo_folder_vc'] . '/assets/icon.png';
+                        } else if(file_exists('etc/styles/' . ui_template::GetUserTemplate() . '/images/'.$mod['mo_folder_path'].'/'.$mod['mo_folder_vc'].'/assets/icon.png')){
+                            $icon = 'etc/styles/' . ui_template::GetUserTemplate() . '/images/'.$mod['mo_folder_path'].'/'.$mod['mo_folder_vc'].'/assets/icon.png';
+                        }
+                        else{
+                            if($mod['mo_folder_path'] != null)
+                            {
+                                $icon = 'modules/' . $mod['mo_folder_path'] .'/'. $mod['mo_folder_vc'] . '/assets/icon.png';
+                            }
+                            else{
+                                $icon = 'modules/' . $mod['mo_folder_vc'] . '/assets/icon.png';
+                            }
                         }
 
                         $line .= '              <li>';

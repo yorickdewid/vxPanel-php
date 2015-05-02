@@ -1,7 +1,5 @@
 <?php
 
-require_once('transapi/DomainService.php');
-
 /**
  *
  * ZPanel - A Cross-Platform Open-Source Web Hosting Control panel.
@@ -26,6 +24,8 @@ require_once('transapi/DomainService.php');
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+require_once(__DIR__.'/../../../../etc/lib/api/transip/DomainService.php');
+
 class module_controller extends ctrl_module
 {
     static $error;

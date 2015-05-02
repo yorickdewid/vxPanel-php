@@ -27,8 +27,14 @@ class ui_tpl_modulelistzsidebar {
                 $class_name = str_replace(array(' ', '_'), '-', strtolower($mod['mo_folder_vc']));
 		$line .= '<li>';
 		if ($mod['mo_installed_ts'] != 0) {
-			$line .= '<a href="?module=' . $mod['mo_folder_vc']. '"><i class="icon-' . $class_name . ' greyscale transparent"><img src="/modules/' . $mod['mo_folder_vc'] . '/assets/icon.png" height="16px" width="16px"></i> ';
-		} else {
+            if($mod['mo_folder_path'] != null)
+            {
+		      $line .= '<a href="?module=' . $mod['mo_folder_vc']. '"><i class="icon-' . $class_name . ' greyscale transparent"><img src="/modules/' . $mod['mo_folder_path'].'/'.$mod['mo_folder_vc'] . '/assets/icon.png" height="16px" width="16px"></i> ';
+		    }
+            else{
+                $line .= '<a href="?module=' . $mod['mo_folder_vc']. '"><i class="icon-' . $class_name . ' greyscale transparent"><img src="/modules/' . $mod['mo_folder_vc'] . '/assets/icon.png" height="16px" width="16px"></i> ';
+            }
+        } else {
 			$line .= '<a href="?module=' . $mod['mo_folder_vc']. '"><i class="icon-'.$class_name.'"></i> ';
 		}
                 $line .= '<: '.$mod['mo_name_vc'].' :>';

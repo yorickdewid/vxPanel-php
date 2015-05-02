@@ -10,6 +10,8 @@
  * @link http://www.zpanelcp.com/
  * @license GPL (http://www.gnu.org/licenses/gpl.html)
  */
+require_once(__DIR__.'/../sys/pathLoader.php');
+
 class ctrl_module
 {
 
@@ -42,7 +44,12 @@ class ctrl_module
     public static function getModuleIcon()
     {
         global $controller;
-        $mod_dir = $controller->GetControllerRequest('URL', 'module');
+        $mod_dir= $controller->GetControllerRequest('URL', 'module');
+        $path = pathLoader::getPath($mod_dir);
+        if($path != null)
+        {
+            $mod_dir = $path.'/'.$mod_dir;
+        }
         // Check if the current userland theme has a module icon override
         if (file_exists('etc/styles/' . ui_template::GetUserTemplate() . '/images/' . $mod_dir . '/assets/icon.png'))
             return './etc/styles/' . ui_template::GetUserTemplate() . '/images/' . $mod_dir . '/assets/icon.png';
@@ -57,7 +64,7 @@ class ctrl_module
     static function getModulePath()
     {
         global $controller;
-        return 'modules/' . $controller->GetControllerRequest('URL', 'module') . '/';
+        return pathLoader::createPath($controller->GetControllerRequest('URL', 'module'));
     }
 
     /**

@@ -12,67 +12,13 @@
 
     <@ Result @>
 
-    <% if isDeleteDomain %>
-    <div class="zform_wrapper alert alert-danger">
-        <h2><: Delete :>: <@ CurrentDomain @>?</h2>
-        <p><: Please confirm that you want to delete this domain. :></p>
-        <form action="./?module=domains&action=DeleteDomain" method="post">
-            <table class="none" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td colspan="2" align="right">
-                        <input type="hidden" name="inDelete" value="<@ CurrentID @>">
-                        <button class="delete btn btn-danger" type="submit" ><: Delete :></button>
-                        <button class="btn btn-default" type="button" onclick="window.location.href='./?module=domains';return false;"><: Cancel :></button>
-                    </td>
-                </tr>
-            </table>
-            <@ CSFR_Tag @>
-        </form>
-    </div>
-    <% endif %>
-
-    <div class="zgrid_wrapper">
-        <h2><: Current domains :></h2>
-        <% if DomainList %>
-        <form action="./?module=domains&action=ConfirmDeleteDomain" method="post">
-            <table class="table table-striped">
-                <tr>
-                    <th><: Domain name :></th>
-                    <th><: Home directory :></th>
-                    <th><: Status :></th>
-                    <th></th>
-                    <th>IPv6</th>
-                    <th></th>
-                </tr>
-                <% loop DomainList %>
-                <tr>
-                    <td><a href="http://<& name &>/" target="_blank"><& name &></a></td>
-                    <td><& directory &></td>
-                    <& status &>
-                    <td><a href="#" class="help_small" id="help_small_37_a" title="<& ipv6 &>"><img src="/modules/domains/assets/t_info.gif" border="0"></a></td>
-                    <td><button class="delete btn btn-danger" type="submit" id="button" name="inDelete_<& id &>" id="inDelete_<& id &>" value="inDelete_<& id &>"><: Delete :></button></td>
-                </tr>
-                <% endloop %>
-            </table>
-            <@ CSFR_Tag @>
-        </form>
-        <% else %>
-        <: You currently do not have any domains configured. Create a domain using the form below. :>
-        <% endif %>
-    </div>
-
-    <div class="alert alert-block alert-info">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        <p>This option does not register a domain. If you want so click <a href="/?module=register">here</a>. For more info see the <a href="/?module=faqs">FAQ</a>.</p>
-    </div>
-
     <div class="zform_wrapper">
         <table class="none" width="100%" cellborder="0" cellspacing="0">
         <tr valign="top">
             <td>
-                <h2>Create a hosting domain</h2>
+                <h2>Register a domain</h2>
                 <% if CreateDomain %>
-                <form action="./?module=domains&action=CreateDomain" method="post" name="CreateDomain">
+                <form action="./?module=register&action=CreateDomain" method="post" name="CreateDomain">
                     <table class="table table-striped">
                         <tr>
                             <th nowrap="nowrap"><: Domain name :>:</th>
@@ -86,14 +32,22 @@
                             </td>
                         </tr>
                         <tr>
-                            <th nowrap="nowrap"><: Home directory :>:</th>
-                            <td><input name="inAutoHome" type="radio" id="inAutoHome" value="1" onclick="hide_div('showdomainselect');" CHECKED />&nbsp;<: Create a new home directory :></td>
+                            <th nowrap="nowrap"><: Domain state :>:</th>
+                            <td><input name="inActive" type="radio" id="inAutoHome" onclick="$('.homedir').show();" value="1" CHECKED />&nbsp;<: Use domain as active service :></td>
                         </tr>
                         <tr>
                             <th>&nbsp;</th>
+                            <td><input name="inActive" type="radio" id="inAutoHome" onclick="$('.homedir').hide();" value="2" />&nbsp;<: Store domain without hosting (parked domain) :></td>
+                        </tr>
+                        <tr class="homedir">
+                            <th nowrap="nowrap"><: Home directory :>:</th>
+                            <td><input name="inAutoHome" type="radio" id="inAutoHome" value="1" onclick="hide_div('showdomainselect');" CHECKED />&nbsp;<: Create a new home directory :></td>
+                        </tr>
+                        <tr class="homedir">
+                            <th>&nbsp;</th>
                             <td><input name="inAutoHome" type="radio" id="inAutoHome" value="2" onclick="show_div('showdomainselect');" />&nbsp;<: Use existing home directory :></td>
                         </tr>
-                        <tr>
+                        <tr class="homedir">
                             <th>&nbsp;</th>
                             <td>
                                 <div id="showdomainselect" style="display:none;">
@@ -130,12 +84,18 @@
         if(e.style.display == 'none')
             e.style.display = 'block';
     }
-    //-->
-</script>
-<script type="text/javascript">
-    <!--
     function hide_div(id) {
         var e = document.getElementById(id);
+        if(e.style.display == 'block')
+            e.style.display = 'none';
+    }
+    function show_class(name) {
+        var e = document.getElementsByClassName(name);
+        if(e.style.display == 'none')
+            e.style.display = 'block';
+    }
+    function hide_class(name) {
+        var e = document.getElementsByClassName(name);
         if(e.style.display == 'block')
             e.style.display = 'none';
     }
