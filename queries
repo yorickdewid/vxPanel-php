@@ -5,7 +5,10 @@ insert into x_modules (`mo_category_fk`,`mo_name_vc`,`mo_version_in`,`mo_folder_
 
 update x_modules set mo_folder_vc = 'credits' WHERE mo_id_pk = 48;
 
+ALTER TABLE x_modules ADD mo_folder_path VARCHAR(60) AFTER mo_folder_vc;
 
+insert into x_modules (`mo_category_fk`,`mo_name_vc`,`mo_version_in`,`mo_folder_vc`,`mo_folder_path`,`mo_type_en`,`mo_desc_tx`) VALUES (5,'WHOIS','001','whois','domains','user','You can use this to check if a domain is available for registering.');
 
+insert into x_modules (`mo_category_fk`,`mo_name_vc`,`mo_version_in`,`mo_folder_vc`,`mo_folder_path`,`mo_type_en`,`mo_desc_tx`) VALUES (5,'Manage Domains','001','manage','domains','user','You can manage your domains here.');
 
 

@@ -47,7 +47,12 @@ class ui_tpl_modulelist {
                         }
                         $line .= "<td style=\"text-align:center;\" align=\"left\">";
                         $line .= "<a href=\"?module=" . $mod['mo_folder_vc'] . "\" title=\"<: " . $mod['mo_desc_tx'] . " :>\">";
-                        $line .= "<img src=\"modules/" . $mod['mo_folder_vc'] . "/assets/icon.png\" border=\"0\" />";
+                        if($mod['mo_folder_path'] != null ){
+                            $line .= "<img src=\"modules/" . $mod['mo_folder_path'] .'/'. $mod['mo_folder_vc'] . "/assets/icon.png\" border=\"0\" />";
+                        }
+                        else{
+                            $line .= "<img src=\"modules/" . $mod['mo_folder_vc'] . "/assets/icon.png\" border=\"0\" />";
+                        }   
                         $line .= "</a>";
                         $line .= "<br />";
                         $line .= "<a href=\"?module=" . $mod['mo_folder_vc'] . "\">" . $cleanname . "</a>";

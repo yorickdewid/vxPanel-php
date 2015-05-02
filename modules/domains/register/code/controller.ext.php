@@ -24,7 +24,7 @@
  *
  */
 
-require_once('etc/lib/api/transip/DomainService.php');
+require_once(__DIR__.'/../../../../etc/lib/api/transip/DomainService.php');
 
 class module_controller extends ctrl_module
 {
@@ -37,7 +37,11 @@ class module_controller extends ctrl_module
     static $badname;
     static $blank;
     static $ok;
+    static $unavailable;
     static $doterror;
+    static $notransfer;
+    static $transferimpossible;
+    static $noregister;
 
     /**
      * The 'worker' methods.
@@ -82,63 +86,6 @@ class module_controller extends ctrl_module
         }
     }
 
-    static function ReleaseIPv6Addr($id)
-    {
-        global $zdbh;
-        $sql = "UPDATE x_ipv6 SET v6_enabled_in=0 WHERE v6_id_pk=:id";
-        $sql = $zdbh->prepare($sql);
-        $sql->bindParam(':id', $id);
-        $sql->execute();
-    }
-
-    static function IPv6byId($id)
-    {
-        global $zdbh;
-        $sql = "SELECT * FROM x_ipv6 WHERE v6_id_pk=:id";
-        $sql = $zdbh->prepare($sql);
-        $sql->bindParam(':id', $id);
-        $sql->execute();
-        $row = $sql->fetch();
-        return "IPv6 address: ".$row['v6_addr_vc'];
-    }
-
-    static function ListDomains($uid = 0)
-    {
-        global $zdbh;
-        if ($uid == 0) {
-            $sql = "SELECT * FROM x_vhosts WHERE vh_deleted_ts IS NULL AND vh_type_in=1 ORDER BY vh_name_vc ASC";
-            $numrows = $zdbh->prepare($sql);
-        } else {
-            $sql = "SELECT * FROM x_vhosts WHERE vh_acc_fk=:uid AND vh_deleted_ts IS NULL AND vh_type_in=1 ORDER BY vh_name_vc ASC";
-            $numrows = $zdbh->prepare($sql);
-            $numrows->bindParam(':uid', $uid);
-        }
-        $numrows->execute();
-        if ($numrows->fetchColumn() <> 0) {
-            if ($uid == 0) {
-                $sql = $zdbh->prepare($sql);
-            } else {
-                $sql = $zdbh->prepare($sql);
-                $sql->bindParam(':uid', $uid);
-            }
-            $res = array();
-            $sql->execute();
-            while ($rowdomains = $sql->fetch()) {
-                array_push($res, array(
-                    'uid' => $rowdomains['vh_acc_fk'],
-                    'name' => $rowdomains['vh_name_vc'],
-                    'directory' => $rowdomains['vh_directory_vc'],
-                    'active' => $rowdomains['vh_active_in'],
-                    'id' => $rowdomains['vh_id_pk'],
-                    'ipv6' => self::IPv6byId($rowdomains['vh_ipv6_fk'])
-                ));
-            }
-            return $res;
-        } else {
-            return false;
-        }
-    }
-
     static function ListDomainDirs($uid)
     {
         global $controller;
@@ -161,52 +108,103 @@ class module_controller extends ctrl_module
         return $res;
     }
 
-    static function ExecuteDeleteDomain($id)
+
+    static function CheckDomainAvailability($domain)
     {
-        global $zdbh;
-        runtime_hook::Execute('OnBeforeDeleteDomain');
-        $currentuser = ctrl_users::GetUserDetail($uid);
-        $sql = $zdbh->prepare("SELECT vh_directory_vc,vh_ipv6_fk,vh_name_vc FROM x_vhosts WHERE vh_id_pk=:id");
-        $sql->bindParam(':id', $id);
-        $sql->execute();
-        $row = $sql->fetch();
-	$vhost_path = ctrl_options::GetSystemOption('hosted_dir') . $currentuser['username'] . "/public_html" . $row[0] . "/";
+        try
+        {
+            $ok = FALSE;
+            $availability = Transip_DomainService::checkAvailability($domain);
+            switch($availability)
+            {
+                case Transip_DomainService::AVAILABILITY_INYOURACCOUNT:
+                    self::$unavailable = TRUE;
+                    break;
 
-        // Delete domain directory
-	fs_director::RemoveDirectory($vhost_path);
+                case Transip_DomainService::AVAILABILITY_UNAVAILABLE:
+                    self::$notransfer = TRUE;
+                    break;
 
-        // Release ipv6 address
-        self::ReleaseIPv6Addr($row[1]);
+                case Transip_DomainService::AVAILABILITY_FREE:
+                    $ok = TRUE;
+                    break;
 
-        // Deactivate domain
-        $sql = $zdbh->prepare("UPDATE x_vhosts SET vh_deleted_ts=:time,vh_ipv6_fk=NULL WHERE vh_id_pk=:id");
-        $sql->bindParam(':id', $id);
-        $time = time();
-        $sql->bindParam(':time', $time);
-        $sql->execute();
-
-        // Delete all mailboxes
-        $sql = $zdbh->prepare("UPDATE x_mailboxes SET mb_deleted_ts=:time, proccesed_cron=0 WHERE mb_address_vc LIKE :address");
-        $time = time();
-        $address = "%".$row[2]."%";
-        $sql->bindParam(':time', $time);
-        $sql->bindParam(':address', $address);
-        $sql->execute();
-
-        self::SetWriteApacheConfigTrue();
-        $retval = TRUE;
-        runtime_hook::Execute('OnAfterDeleteDomain');
-        return $retval;
+                case Transip_DomainService::AVAILABILITY_NOTFREE:
+                    self::$transferimpossible = TRUE;
+                    break;
+            }
+            return $ok;
+        }
+        catch(SoapFault $e)
+        {
+            return FALSE;
+        }
     }
 
-    static function ExecuteAddDomain($uid, $domain, $destination, $autohome)
+    static function RegisterDomain($domain)
+    {
+        try
+        {
+            $types = array(
+                Transip_WhoisContact::TYPE_REGISTRANT,
+                Transip_WhoisContact::TYPE_ADMINISTRATIVE,
+                Transip_WhoisContact::TYPE_TECHNICAL
+            );
+
+            $contacts = array();
+            foreach($types AS $type)
+            {
+                $contact = new Transip_WhoisContact();
+                $contact->type        = $type;
+                $contact->firstName   = '';
+                $contact->lastName    = '';
+                $contact->companyName = '';
+                $contact->companyKvk  = '';
+                $contact->companyType = '';
+                $contact->street      = '';
+                $contact->number      = '';
+               $contact->postalCode  = '';
+                $contact->city        = '';
+                $contact->phoneNumber = '';
+                $contact->faxNumber   = '';
+               $contact->email       = '';
+                $contact->country     = '';
+                $contacts[] = $contact;
+            }
+
+            $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_A,     '149.210.173.97'); // for now
+            $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_AAAA,  '2a01:7c8:aab4:4a5::1'); // for now
+            $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_MX,    '10 @');
+            $dnsEntries[] = new Transip_DnsEntry('ftp', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
+            $dnsEntries[] = new Transip_DnsEntry('mail', 86400, Transip_DnsEntry::TYPE_CNAME, 'mail.deyron.nl.');
+            $dnsEntries[] = new Transip_DnsEntry('www', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
+
+            $domain = new Transip_Domain($domain, $nameservers = null, $contacts, $dnsEntries);
+//            Transip_DomainService::register($reqdomain);
+            return TRUE;
+        }
+        catch(SoapFault $f)
+        {
+	    return FALSE;
+        }
+    }
+
+    static function ExecuteAddDomain($uid, $domain, $destination, $autohome, $status)
     {
         global $zdbh;
         $retval = FALSE;
+        $active = TRUE;
+        $domaintype = 1;
         runtime_hook::Execute('OnBeforeAddDomain');
         $currentuser = ctrl_users::GetUserDetail($uid);
         $domain = strtolower(str_replace(' ', '', $domain));
         if (!fs_director::CheckForEmptyValue(self::CheckCreateForErrors($domain))) {
+            if (!self::RegisterDomain($domain)) {
+                self::$noregister = TRUE;
+                return $retval;
+            }
+            // Do we need to activate the domain //
+            if ($status == 1) {
             //** New Home Directory **//
             if ($autohome == 1) {
                 $destination = "/" . str_replace(".", "_", $domain);
@@ -239,7 +237,11 @@ class module_controller extends ctrl_module
             if ((!file_exists($vhost_path . "/index.html")) && (!file_exists($vhost_path . "/index.php")) && (!file_exists($vhost_path . "/index.htm"))) {
                 fs_filehandler::CopyFileSafe(ctrl_options::GetSystemOption('static_dir') . "pages/welcome.html", $vhost_path . "/index.html");
             }
-            // Request ipv6
+            }else{
+                $destination = "";
+                $domaintype = 3;
+            }
+            // Request ipv6 address
             $addr6 = self::AllocIPv6Addr();
             // If all has gone well we need to now create the domain in the database...
             $sql = $zdbh->prepare("INSERT INTO x_vhosts (vh_acc_fk,
@@ -247,11 +249,11 @@ class module_controller extends ctrl_module
 														 vh_directory_vc,
 														 vh_type_in,
 														 vh_created_ts,
-														 vh_ipv6_fk) VALUES (
+									 					 vh_ipv6_fk) VALUES (
 														 :userid,
 														 :domain,
 														 :destination,
-														 1,
+														 :type,
 														 :time,
 														 :addr6)"); //CLEANER FUNCTION ON $domain and $homedirectory_to_use (Think I got it?)
             $time = time();
@@ -259,6 +261,7 @@ class module_controller extends ctrl_module
             $sql->bindParam(':userid', $currentuser['userid']);
             $sql->bindParam(':domain', $domain);
             $sql->bindParam(':destination', $destination);
+            $sql->bindParam(':type', $domaintype);
             $sql->bindParam(':addr6', $addr6);
             $sql->execute();
             self::SetWriteApacheConfigTrue();
@@ -296,8 +299,7 @@ class module_controller extends ctrl_module
 
         if ($numrows->execute()) {
             if ($numrows->fetchColumn() > 0) {
-                self::$alreadyexists = TRUE;
-                return FALSE;
+                self::$alreadyexists = TRUE;                return FALSE;
             }
         }
         // Check to make sure user not adding a subdomain and blocks stealing of subdomains....
@@ -332,6 +334,10 @@ class module_controller extends ctrl_module
                     }
                 }
             }
+        }
+        // Check to see if domain is available
+        if (!self::CheckDomainAvailability($domain)) {
+            return FALSE;
         }
         return TRUE;
     }
@@ -376,11 +382,6 @@ class module_controller extends ctrl_module
         $sql->execute();
     }
 
-    static function IsvalidIP($ip)
-    {
-        return preg_match("^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}^", $ip) == 1;
-    }
-
     /**
      * End 'worker' methods.
      */
@@ -398,22 +399,12 @@ class module_controller extends ctrl_module
         return $res;
     }
 
-    static function getDomainList()
+    static function getDomainDirsList()
     {
         $currentuser = ctrl_users::GetUserDetail();
-        $res = array();
-        $domains = self::ListDomains($currentuser['userid']);
-        if (!fs_director::CheckForEmptyValue($domains)) {
-            foreach ($domains as $row) {
-                $status = self::getDomainStatusHTML($row['active'], $row['id']);
-                $res[] = array('name' => $row['name'],
-                    'directory' => $row['directory'],
-                    'active' => $row['active'],
-                    'status' => $status,
-                    'id' => $row['id'],
-                    'ipv6' => $row['ipv6']);
-            }
-            return $res;
+        $domaindirectories = self::ListDomainDirs($currentuser['userid']);
+        if (!fs_director::CheckForEmptyValue($domaindirectories)) {
+            return $domaindirectories;
         } else {
             return false;
         }
@@ -424,17 +415,6 @@ class module_controller extends ctrl_module
         $currentuser = ctrl_users::GetUserDetail();
         return ($currentuser['domainquota'] < 0) or //-1 = unlimited
                 ($currentuser['domainquota'] > ctrl_users::GetQuotaUsages('domains', $currentuser['userid']));
-    }
-
-    static function getDomainDirsList()
-    {
-        $currentuser = ctrl_users::GetUserDetail();
-        $domaindirectories = self::ListDomainDirs($currentuser['userid']);
-        if (!fs_director::CheckForEmptyValue($domaindirectories)) {
-            return $domaindirectories;
-        } else {
-            return false;
-        }
     }
 
     static function doCreateDomain()
@@ -451,49 +431,13 @@ class module_controller extends ctrl_module
             return FALSE;
         }
 
-        if (self::ExecuteAddDomain($currentuser['userid'], $domain, $formvars['inDestination'], $formvars['inAutoHome'])) {
+        if (self::ExecuteAddDomain($currentuser['userid'], $domain, $formvars['inDestination'], $formvars['inAutoHome'], $formvars['inActive'])) {
             self::$ok = TRUE;
             return true;
         } else {
             return false;
         }
         return;
-    }
-
-    static function doDeleteDomain()
-    {
-        global $controller;
-        runtime_csfr::Protect();
-        $formvars = $controller->GetAllControllerRequests('FORM');
-        if (isset($formvars['inDelete'])) {
-            if (self::ExecuteDeleteDomain($formvars['inDelete'])) {
-                self::$ok = TRUE;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    static function doConfirmDeleteDomain()
-    {
-        global $controller;
-        runtime_csfr::Protect();
-        $currentuser = ctrl_users::GetUserDetail();
-        $formvars = $controller->GetAllControllerRequests('FORM');
-        foreach (self::ListDomains($currentuser['userid']) as $row) {
-            if (isset($formvars['inDelete_' . $row['id'] . ''])) {
-                header("location: ./?module=" . $controller->GetCurrentModule() . "&show=Delete&id=" . $row['id'] . "&domain=" . $row['name'] . "");
-                exit;
-            }
-        }
-        return false;
-    }
-
-    static function getisDeleteDomain()
-    {
-        global $controller;
-        $urlvars = $controller->GetAllControllerRequests('URL');
-        return (isset($urlvars['show'])) && ($urlvars['show'] == "Delete");
     }
 
     static function getCurrentID()
@@ -554,6 +498,15 @@ class module_controller extends ctrl_module
         if (!fs_director::CheckForEmptyValue(self::$nosub)) {
             return ui_sysmessage::shout(ui_language::translate("You cannot add a Sub-Domain here. Please use the Subdomain manager to add Sub-Domains."), "zannounceerror");
         }
+        if (!fs_director::CheckForEmptyValue(self::$unavailable)) {
+            return ui_sysmessage::shout(ui_language::translate("The domain is not available for registration."), "zannounceerror");
+        }
+        if (!fs_director::CheckForEmptyValue(self::$notransfer)) {
+            return ui_sysmessage::shout(ui_language::translate("The domain cannot be transferred"), "zannounceerror");
+        }
+        if (!fs_director::CheckForEmptyValue(self::$transferimpossible)) {
+            return ui_sysmessage::shout(ui_language::translate("The domain is not available, but can be transferred if you are the owner"), "zannounceerror");
+        }
         if (!fs_director::CheckForEmptyValue(self::$error)) {
             return ui_sysmessage::shout(ui_language::translate("Please remove 'www'. The 'www' will automatically work with all Domains / Subdomains."), "zannounceerror");
         }
@@ -563,8 +516,11 @@ class module_controller extends ctrl_module
         if (!fs_director::CheckForEmptyValue(self::$writeerror)) {
             return ui_sysmessage::shout(ui_language::translate("There was a problem writting to the virtual host container file. Please contact your administrator and report this error. Your domain will not function until this error is corrected."), "zannounceerror");
         }
+        if (!fs_director::CheckForEmptyValue(self::$noregister)) {
+            return ui_sysmessage::shout(ui_language::translate("The domain could not be registered"), "zannounceerror");
+        }
         if (!fs_director::CheckForEmptyValue(self::$ok)) {
-            return ui_sysmessage::shout(ui_language::translate("Changes to your domain web hosting has been saved successfully."), "zannounceok");
+            return ui_sysmessage::shout(ui_language::translate("The domain has been requested and will be available in a few hours."), "zannounceok");
         }
         return;
     }

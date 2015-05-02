@@ -153,8 +153,9 @@ class runtime_controller
      */
     public function GetCurrentModule()
     {
-        if (isset($this->vars_get[0]['module']))
-            return $this->vars_get[0]['module'];
+        if (isset($this->vars_get[0]['module'])){
+             return $this->vars_get[0]['module'];
+        }
         return false;
     }
 

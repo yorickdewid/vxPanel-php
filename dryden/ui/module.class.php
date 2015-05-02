@@ -10,6 +10,9 @@
  * @link http://www.zpanelcp.com/
  * @license GPL (http://www.gnu.org/licenses/gpl.html)
  */
+
+require_once(__DIR__.'/../sys/pathLoader.php');
+
 class ui_module {
 
     function __construct() {
@@ -22,9 +25,9 @@ class ui_module {
      * @param string $name Name of the module to check that exists.
      * @return boolean
      */
-    static function CheckModuleExists($name) {
+    static function CheckModuleExists($path) {
         $user = ctrl_users::GetUserDetail();
-        if (file_exists("modules/" . $name . "/module.zpm"))
+        if (file_exists($path))
             if (ctrl_groups::CheckGroupModulePermissions($user['usergroupid'], self::GetModuleID()))
                 return true;
         return false;
@@ -36,9 +39,9 @@ class ui_module {
      * @param string $name Name of the module.
      * @return string
      */
-    static function GetModuleContent($name) {
-        if (self::CheckModuleExists($name)) {
-            return fs_filehandler::ReadFileContents("modules/" . $name . "/module.zpm");
+    static function GetModuleContent($path) {
+        if (self::CheckModuleExists($path)) {
+            return fs_filehandler::ReadFileContents($path);
         }
     }
 
@@ -48,9 +51,11 @@ class ui_module {
      * @param string $module The name of the module to load.
      * @return string
      */
-    static function GetModule($module) {
-        if (self::CheckModuleExists($module)) {
-            $retval = self::GetModuleContent($module);
+    static function GetModule($module) {  
+        $path = pathLoader::createPath($module);
+        if (self::CheckModuleExists($path)) {
+            $path = pathLoader::createPath($module,"/module.zpm");
+            $retval = self::GetModuleContent($path);
         } else {
             runtime_hook::Execute('OnFailedModuleLoad');
             $retval = "Unable to find requested module!";
