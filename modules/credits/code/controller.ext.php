@@ -29,72 +29,66 @@ require_once(__DIR__.'/creditRemover.php');
 
 class module_controller extends ctrl_module
 {
+    private static $hasWallet;
+    private static $wallet;
+
     public static function getCurrentCreditBalance(){
         global $zdbh;
         $currentuser = ctrl_users::GetUserDetail();
-
-        $sql = "SELECT total FROM credits.wallet WHERE user_id=:userid";
+        $sql = "SELECT id,total FROM credits.wallet WHERE user_id=:userid";
         $numrows = $zdbh->prepare($sql);
         $numrows->bindParam(':userid', $currentuser['userid']);
 
         if ($numrows->execute()) {
-            if ($numrows->fetchColumn() == 0) {
-                $display = "<p>You currently do not have any balance.</p>";
-            } else {
-                $display = "<p>You currently have 10 credits</p>";
+            $result = $numrows->fetchAll();
+            if(isset($result))
+                self::$hasWallet = true;
+                foreach($result as $res)
+                {
+                    self::$wallet = $res['id'];
+                    $display = "<p>You currently have ".$res['total']." credits</p>";
+                }
             }
-        }
+            else{
+                self::$hasWallet = true;
+                $display = "<p>You currently do not have any balance.</p>";
+            }
         return $display;
     }
 
-    private static function addCredit(){
+    public static function getHasWallet(){
+        if(self::$hasWallet)
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public static function getTransactionLog(){
+        global $zdbh;
         $currentuser = ctrl_users::GetUserDetail();
-
-        $sql = "SELECT total FROM credits.wallet WHERE user_id=:userid";
+        $sql = "SELECT date,amount,status_id FROM credits.credit_transaction WHERE wallet_id=:walletid";
         $numrows = $zdbh->prepare($sql);
-        $numrows->bindParam(':userid', $currentuser['userid']);
-
-        if ($numrows->execute()) {
-            if ($numrows->fetchColumn() == 0) {
-                $display = "<p>You currently do not have any balance.</p>";
-            } else {
-                $display = "<p>You currently have 10 credits</p>";
-            }
+        $numrows->bindValue(':walletid', self::$wallet);
+        $numrows->execute();
+        $result = $numrows->fetchAll();
+        $display = "";
+        $display = "<tr><th>Amount</th><th>Date</th><th>Status</th></tr>";
+        foreach($result as $res)
+        {
+            $display .= "<tr>";
+            $display .= "<td>".$res['amount']."</td>";
+            $display .= "<td>".$res['date']."</td>";
+            $display .= "<td>".$res['status_id']."</td>";
+            $display .= "</tr>";
         }
         return $display;
     }
 
-    /**
-     * Should be executed just after user registration?
-     * @return [type] [description]
-     */
-    private static function createWallet(){
-        $currentuser = ctrl_users::GetUserDetail();
-
-        $sql = "INSERT INTO credits.wallet COLUMNS(`user_id`) VALUES(:userid);";
-        $numrows = $zdbh->prepare($sql);
-        $numrows->bindParam(':userid', $currentuser['userid']);
-
-        if ($numrows->execute()) {
-            if ($numrows->fetchAll() != null) {
-                $display = "<p>You currently do not have any balance.</p>";
-            } else {
-                $display = "<p>You currently have 10 credits</p>";
-            }
-        }
-        return $display;
-    }
-
-
-    public static function doAddFunds(){
+    public static function doAddFunds($amount,$user){
         self::getPayWall();
-        //create paywall
-        //
-        //
-        //if the paywall api returns correct
-        //add credit to transaction
-        //count credit towards wallet
-        //report to user
     }
 
     private static function getPayWall(){
@@ -107,8 +101,7 @@ class module_controller extends ctrl_module
             ));
 
         $widget = new Paymentwall_Widget(
-            'user40012', 
-            'p10',
+            '1', // MUST BE USER ID OF OUR CUSTOMERS NOT PAYMENTWALL ACCOUNTS
             array(), 
             array('email' => 'user@hostname.com')
             );
