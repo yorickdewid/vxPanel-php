@@ -100,7 +100,8 @@ class Paymentwall_Pingback extends Paymentwall_Instance
 			'174.36.96.66',
 			'174.36.92.187',
 			'174.36.92.192',
-			'174.37.14.28'
+			'174.37.14.28',
+			'127.0.0.1'
 		);
 
 		return in_array($this->ipAddress, $ipsWhitelist);

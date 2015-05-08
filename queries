@@ -12,3 +12,5 @@ insert into x_modules (`mo_category_fk`,`mo_name_vc`,`mo_version_in`,`mo_folder_
 insert into x_modules (`mo_category_fk`,`mo_name_vc`,`mo_version_in`,`mo_folder_vc`,`mo_folder_path`,`mo_type_en`,`mo_desc_tx`) VALUES (5,'Manage Domains','001','manage','domains','user','You can manage your domains here.');
 
 
+insert into credits.status (`status`) VALUES("The transaction failed"); //id 0
+insert into credits.status (`status`) VALUES("The transaction was succesful"); //id 1

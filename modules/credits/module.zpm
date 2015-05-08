@@ -11,8 +11,18 @@
     </div>
     <div>
         <@ currentCreditBalance @>
+        <br>
+        <br>
     </div>
+    <% if hasWallet %>
     <div>
+        <p>Transaction history:<br></p>
+        <table class="table">
+            <@ TransactionLog @>
+        </table>
+    </div>
+    <% endif %>
+     <div>
         <form action="./?module=credits&action=AddFunds" method="post">
             <table>
                 <tr valign="top">

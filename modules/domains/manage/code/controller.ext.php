@@ -24,7 +24,7 @@
  *
  */
 
-require_once(__DIR__.'/../../../../etc/lib/api/transip/DomainService.php');
+require_once(__DIR__.'/../../../../etc/lib/api/config.php');
 
 class module_controller extends ctrl_module
 {
