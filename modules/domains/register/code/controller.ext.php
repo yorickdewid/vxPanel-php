@@ -242,27 +242,27 @@ class module_controller extends ctrl_module
                 $domaintype = 3;
             }
             // Request ipv6 address
-            $addr6 = self::AllocIPv6Addr();
+            //$addr6 = self::AllocIPv6Addr();
             // If all has gone well we need to now create the domain in the database...
             $sql = $zdbh->prepare("INSERT INTO x_vhosts (vh_acc_fk,
 														 vh_name_vc,
 														 vh_directory_vc,
 														 vh_type_in,
-														 vh_created_ts,
-									 					 vh_ipv6_fk) VALUES (
+														 vh_created_ts) VALUES (
 														 :userid,
 														 :domain,
 														 :destination,
 														 :type,
-														 :time,
-														 :addr6)"); //CLEANER FUNCTION ON $domain and $homedirectory_to_use (Think I got it?)
+														 :time)");
+														 //:addr6)"); //CLEANER FUNCTION ON $domain and $homedirectory_to_use (Think I got it?)
+                                                         // //vh_ipv6_fk) VALUES (
             $time = time();
             $sql->bindParam(':time', $time);
             $sql->bindParam(':userid', $currentuser['userid']);
             $sql->bindParam(':domain', $domain);
             $sql->bindParam(':destination', $destination);
             $sql->bindParam(':type', $domaintype);
-            $sql->bindParam(':addr6', $addr6);
+            //$sql->bindParam(':addr6', $addr6);
             $sql->execute();
             self::SetWriteApacheConfigTrue();
             $retval = TRUE;
