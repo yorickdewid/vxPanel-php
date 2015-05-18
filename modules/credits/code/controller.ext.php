@@ -35,7 +35,7 @@ class module_controller extends ctrl_module
     public static function getCurrentCreditBalance(){
         global $zdbh;
         $currentuser = ctrl_users::GetUserDetail();
-        $sql = "SELECT id,total FROM credits.wallet WHERE user_id=:userid";
+        $sql = "SELECT id,total FROM x_wallet WHERE user_id=:userid";
         $numrows = $zdbh->prepare($sql);
         $numrows->bindParam(':userid', $currentuser['userid']);
 
@@ -69,7 +69,7 @@ class module_controller extends ctrl_module
     public static function getTransactionLog(){
         global $zdbh;
         $currentuser = ctrl_users::GetUserDetail();
-        $sql = "SELECT date,amount,status_id FROM credits.credit_transaction WHERE wallet_id=:walletid";
+        $sql = "SELECT date,amount,status_id FROM x_credit_transaction WHERE wallet_id=:walletid";
         $numrows = $zdbh->prepare($sql);
         $numrows->bindValue(':walletid', self::$wallet);
         $numrows->execute();
