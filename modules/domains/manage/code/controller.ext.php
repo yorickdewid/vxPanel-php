@@ -130,7 +130,7 @@ class module_controller extends ctrl_module
                     'directory' => $rowdomains['vh_directory_vc'],
                     'active' => $rowdomains['vh_active_in'],
                     'id' => $rowdomains['vh_id_pk'],
-                    'ipv6' => self::IPv6byId($rowdomains['vh_ipv6_fk'])
+                    //'ipv6' => self::IPv6byId($rowdomains['vh_ipv6_fk'])
                 ));
             }
             return $res;
@@ -166,7 +166,7 @@ class module_controller extends ctrl_module
         global $zdbh;
         runtime_hook::Execute('OnBeforeDeleteDomain');
         $currentuser = ctrl_users::GetUserDetail($uid);
-        $sql = $zdbh->prepare("SELECT vh_directory_vc,vh_ipv6_fk,vh_name_vc FROM x_vhosts WHERE vh_id_pk=:id");
+        $sql = $zdbh->prepare("SELECT vh_directory_vc,vh_name_vc FROM x_vhosts WHERE vh_id_pk=:id");
         $sql->bindParam(':id', $id);
         $sql->execute();
         $row = $sql->fetch();
@@ -176,10 +176,10 @@ class module_controller extends ctrl_module
 	fs_director::RemoveDirectory($vhost_path);
 
         // Release ipv6 address
-        self::ReleaseIPv6Addr($row[1]);
+        //self::ReleaseIPv6Addr($row[1]);
 
         // Deactivate domain
-        $sql = $zdbh->prepare("UPDATE x_vhosts SET vh_deleted_ts=:time,vh_ipv6_fk=NULL WHERE vh_id_pk=:id");
+        $sql = $zdbh->prepare("UPDATE x_vhosts SET vh_deleted_ts=:time WHERE vh_id_pk=:id");
         $sql->bindParam(':id', $id);
         $time = time();
         $sql->bindParam(':time', $time);
@@ -240,26 +240,26 @@ class module_controller extends ctrl_module
                 fs_filehandler::CopyFileSafe(ctrl_options::GetSystemOption('static_dir') . "pages/welcome.html", $vhost_path . "/index.html");
             }
             // Request ipv6
-            $addr6 = self::AllocIPv6Addr();
+            //$addr6 = self::AllocIPv6Addr();
             // If all has gone well we need to now create the domain in the database...
             $sql = $zdbh->prepare("INSERT INTO x_vhosts (vh_acc_fk,
 														 vh_name_vc,
 														 vh_directory_vc,
 														 vh_type_in,
-														 vh_created_ts,
-														 vh_ipv6_fk) VALUES (
+														 vh_created_ts, VALUES (
 														 :userid,
 														 :domain,
 														 :destination,
 														 1,
-														 :time,
-														 :addr6)"); //CLEANER FUNCTION ON $domain and $homedirectory_to_use (Think I got it?)
+														 :time)");
+														 //:addr6)"); //CLEANER FUNCTION ON $domain and $homedirectory_to_use (Think I got it?)
+                                                         //vh_ipv6_fk) VALUES (
             $time = time();
             $sql->bindParam(':time', $time);
             $sql->bindParam(':userid', $currentuser['userid']);
             $sql->bindParam(':domain', $domain);
             $sql->bindParam(':destination', $destination);
-            $sql->bindParam(':addr6', $addr6);
+            //$sql->bindParam(':addr6', $addr6);
             $sql->execute();
             self::SetWriteApacheConfigTrue();
             $retval = TRUE;
@@ -410,8 +410,8 @@ class module_controller extends ctrl_module
                     'directory' => $row['directory'],
                     'active' => $row['active'],
                     'status' => $status,
-                    'id' => $row['id'],
-                    'ipv6' => $row['ipv6']);
+                    'id' => $row['id'],);
+                    //'ipv6' => $row['ipv6']);
             }
             return $res;
         } else {
