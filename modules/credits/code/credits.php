@@ -14,7 +14,7 @@ class credits{
         //self::createWallet($userId);
         $balance = self::getWalletBalance($userId);
         $newAmount = $balance + $amount;
-        $sql = "UPDATE credits.wallet SET total = :amount WHERE user_id=:userid AND id=:wallet_id";
+        $sql = "UPDATE x_wallet SET total = :amount WHERE user_id=:userid AND id=:wallet_id";
         $numrows = $zdbh->prepare($sql);
         $numrows->bindParam(':userid', $userId);
         $numrows->bindValue(':amount', $newAmount);
@@ -32,7 +32,7 @@ class credits{
 
     private static function logTransaction($walletId,$amount,$status){
     	global $zdbh;
-        $sql = "INSERT INTO credits.credit_transaction (`wallet_id`,`amount`,`status_id`) VALUES(:walletId,:amount,:status)";
+        $sql = "INSERT INTO x_credit_transaction (`wallet_id`,`amount`,`status_id`) VALUES(:walletId,:amount,:status)";
         $numrows = $zdbh->prepare($sql);
         $numrows->bindValue(':walletId', $walletId);
         $numrows->bindValue(':amount', $amount);
@@ -45,7 +45,7 @@ class credits{
 
     private static function getWalletBalance($userId){
     	global $zdbh;
-        $sql = "SELECT total FROM credits.wallet WHERE user_id=:userid";
+        $sql = "SELECT total FROM x_wallet WHERE user_id=:userid";
         $numrows = $zdbh->prepare($sql);
         $numrows->bindParam(':userid', $userId);
 
@@ -67,7 +67,7 @@ class credits{
      */
     private static function createWallet($userId){
     	global $zdbh;
-        $sql = "INSERT INTO credits.wallet (`user_id`) VALUES(:userid)";
+        $sql = "INSERT INTO x_wallet (`user_id`) VALUES(:userid)";
         $numrows = $zdbh->prepare($sql);
         $numrows->bindValue(':userid', $userId);
 

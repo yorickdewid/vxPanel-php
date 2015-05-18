@@ -6,7 +6,7 @@ class creditRemover{
 		global $zdbh;
 		$currentuser = ctrl_users::GetUserDetail();
 
-        $sql = "UPDATE credits.wallet SET total = :newAmount WHERE user_id=:userid;";
+        $sql = "UPDATE x_wallet SET total = :newAmount WHERE user_id=:userid;";
         $numrows = $zdbh->prepare($sql);
         $numrows->bindParam(':userid', $currentuser['userid']);
         $numrows->bindParam(':newAmount', $currentBalance - $minusAmount);
