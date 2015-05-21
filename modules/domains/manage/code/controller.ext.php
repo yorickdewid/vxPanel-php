@@ -246,7 +246,7 @@ class module_controller extends ctrl_module
 														 vh_name_vc,
 														 vh_directory_vc,
 														 vh_type_in,
-														 vh_created_ts, VALUES (
+														 vh_created_ts) VALUES (
 														 :userid,
 														 :domain,
 														 :destination,
@@ -442,6 +442,7 @@ class module_controller extends ctrl_module
         global $controller;
         runtime_csfr::Protect();
         $currentuser = ctrl_users::GetUserDetail();
+        print "kaas1";
         $formvars = $controller->GetAllControllerRequests('FORM');
         $domain = $formvars['inDomain'].$formvars['inTld'];
 
