@@ -103,15 +103,6 @@ echo -e ""
 fqdn=`/bin/hostname -f`
 publicip=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
 
-# Lets check that the user wants to continue first as obviously otherwise we'll be removing AppArmor for no reason.
-#while true; do
-#read -e -p "Would you like to continue (y/n)? " yn
-#    case $yn in
-#		[Yy]* ) break;;
-#		[Nn]* ) exit;
-#	esac
-#done
-
 # We need to disable and remove AppArmor...
 [ -f /etc/init.d/apparmor ]
 if [ $? = "0" ]; then
@@ -139,11 +130,7 @@ while true; do
 	echo -e "- Remember that the sub-domain ('panel' in the example) MUST be setup in your DNS nameserver."
 	read -e -p "FQDN for qpanel: " -i $fqdn fqdn
 	read -e -p "Enter the public (external) server IP: " -i $publicip publicip
-    #read -e -p "QPanel is now ready to install, do you wish to continue (y/n)" yn
-    #case $yn in
-    #    [Yy]* ) break;;
-    #    [Nn]* ) exit;
-    #esac
+	break;
 done
 
 # Start log creation.
@@ -183,11 +170,6 @@ apt-get update
 # Install some standard utility packages required by the installer
 apt-get -y install zip unzip git debconf-utils at
 
-# We now clone the software from GitHub
-# echo "Downloading QPanel, Please wait, this may take several minutes, the installer will continue after this is complete!"
-# commented out git clone, because already checked out.
-# git clone https://bitbucket.org/qpanel/qpanel
-# cd qpanel/
 mkdir ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
 cd ../qp_install_cache/
@@ -232,7 +214,7 @@ ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
 chmod +x /etc/zpanel/panel/bin/zppy
 chmod +x /etc/zpanel/panel/bin/setso
 cp -R /etc/zpanel/panel/etc/build/config_packs/ubuntu_12_04/. /etc/zpanel/configs/
-# set password after test connexion
+# set password after test connection
 cc -o /etc/zpanel/panel/bin/zsudo /etc/zpanel/configs/bin/zsudo.c
 sudo chown root /etc/zpanel/panel/bin/zsudo
 chmod +s /etc/zpanel/panel/bin/zsudo
@@ -328,6 +310,7 @@ echo "Reconfigure Apache"
 if ! grep -q "Include /etc/zpanel/configs/apache/httpd.conf" /etc/apache2/apache2.conf; then echo "Include /etc/zpanel/configs/apache/httpd.conf" >> /etc/apache2/apache2.conf; fi
 sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/apache2/apache2.conf
 sed -i 's|Include sites-enabled/||' /etc/apache2/apache2.conf
+sed -i 's|ServerTokens OS|ServerTokens Prod|' /etc/apache2/conf.d/security
 chown -R www-data:www-data /var/zpanel/temp/
 if ! grep -q "127.0.0.1 "$fqdn /etc/hosts; then echo "127.0.0.1 "$fqdn >> /etc/hosts; fi
 if ! grep -q "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" /etc/sudoers; then echo "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" >> /etc/sudoers; fi
@@ -340,6 +323,8 @@ sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php5/cli/php.ini
 sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php5/apache2/php.ini
 sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php5/cli/php.ini
 sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php5/apache2/php.ini
+sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 500M|" /etc/php5/apache2/php.ini
+sed -i "s|memory_limit = 128M|memory_limit = 256M|" /etc/php5/apache2/php.ini
 sed -i "s|expose_php = On|expose_php = Off|" /etc/php5/apache2/php.ini
 
 # Permissions fix for Apache and ProFTPD (to enable them to play nicely together!)
@@ -436,7 +421,7 @@ echo -e "##############################################################" &>/dev/
 echo -e "" &>/dev/tty
 
 # We now request that the user restarts their server...
-read -e -p "Restart your server now to complete the install (y/n)? " rsn
+read -e -p "Restart your server now to complete the install (RECOMMENDED) (y/n)? " rsn
 while true; do
 	case $rsn in
 		[Yy]* ) break;;
