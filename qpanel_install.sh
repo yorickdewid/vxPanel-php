@@ -103,15 +103,6 @@ echo -e ""
 fqdn=`/bin/hostname -f`
 publicip=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
 
-# Lets check that the user wants to continue first as obviously otherwise we'll be removing AppArmor for no reason.
-while true; do
-read -e -p "Would you like to continue (y/n)? " yn
-    case $yn in
-		[Yy]* ) break;;
-		[Nn]* ) exit;
-	esac
-done
-
 # We need to disable and remove AppArmor...
 [ -f /etc/init.d/apparmor ]
 if [ $? = "0" ]; then
@@ -139,11 +130,7 @@ while true; do
 	echo -e "- Remember that the sub-domain ('panel' in the example) MUST be setup in your DNS nameserver."
 	read -e -p "FQDN for qpanel: " -i $fqdn fqdn
 	read -e -p "Enter the public (external) server IP: " -i $publicip publicip
-    read -e -p "QPanel is now ready to install, do you wish to continue (y/n)" yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;
-    esac
+	break;
 done
 
 # Start log creation.
@@ -183,11 +170,6 @@ apt-get update
 # Install some standard utility packages required by the installer
 apt-get -y install zip unzip git debconf-utils at
 
-# We now clone the software from GitHub
-echo "Downloading QPanel, Please wait, this may take several minutes, the installer will continue after this is complete!"
-# commented out git clone, because already checked out.
-# git clone https://bitbucket.org/qpanel/qpanel
-# cd qpanel/
 mkdir ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
 cd ../qp_install_cache/
@@ -199,7 +181,8 @@ apt-get upgrade -yqq
 # Install required software and dependencies required by QPanel.
 # We disable the DPKG prompts before we run the software install to enable fully automated install.
 export DEBIAN_FRONTEND=noninteractive
-apt-get install -qqy mysql-server postgresql postgresql-contrib apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl php5-pgsql db4.7-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql bind9 bind9utils
+#apt-get install -qqy mysql-server postgresql postgresql-contrib apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl php5-pgsql db4.7-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql bind9 bind9utils
+apt-get install -qqy mysql-server apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl db4.7-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql
 
 # Generation of random passwords
 password=`passwordgen`;
@@ -231,7 +214,7 @@ ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
 chmod +x /etc/zpanel/panel/bin/zppy
 chmod +x /etc/zpanel/panel/bin/setso
 cp -R /etc/zpanel/panel/etc/build/config_packs/ubuntu_12_04/. /etc/zpanel/configs/
-# set password after test connexion
+# set password after test connection
 cc -o /etc/zpanel/panel/bin/zsudo /etc/zpanel/configs/bin/zsudo.c
 sudo chown root /etc/zpanel/panel/bin/zsudo
 chmod +s /etc/zpanel/panel/bin/zsudo
@@ -243,7 +226,7 @@ until mysql -u root -p$password -e ";" > /dev/null 2>&1 ; do
 read -s -p "enter your root mysql password : " password
 done
 sed -i "s|YOUR_ROOT_MYSQL_PASSWORD|$password|" /etc/zpanel/panel/cnf/db.php
-mysql -u root -p$password -e "DROP DATABASE test";
+#mysql -u root -p$password -e "DROP DATABASE test";
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User='root' AND Host != 'localhost'";
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User=''";
 mysql -u root -p$password -e "FLUSH PRIVILEGES";
@@ -260,6 +243,7 @@ setzadmin --set "$zadminNewPass";
 /etc/zpanel/panel/bin/setso --set apache_changed "true"
 
 # We'll store the passwords so that users can review them later if required.
+echo "Store settings in passwords.txt"
 touch /root/passwords.txt;
 echo "zadmin Password: $zadminNewPass" >> /root/passwords.txt;
 echo "MySQL Root Password: $password" >> /root/passwords.txt
@@ -268,6 +252,7 @@ echo "IP Address: $publicip" >> /root/passwords.txt
 echo "Panel Domain: $fqdn" >> /root/passwords.txt
 
 # Postfix specific installation tasks...
+echo "Setup SMTP"
 mkdir /var/zpanel/vmail
 chmod -R 770 /var/zpanel/vmail
 useradd -r -u 150 -g mail -d /var/zpanel/vmail -s /sbin/nologin -c "Virtual maildir" vmail
@@ -292,6 +277,7 @@ sed -i "s|password \= postfix|password \= $postfixpassword|" /etc/zpanel/configs
 sed -i "s|\$db_password \= 'postfix';|\$db_password \= '$postfixpassword';|" /etc/zpanel/configs/postfix/vacation.conf
 
 # Dovecot specific installation tasks (includes Sieve)
+echo "Setup IMAP/POP"
 mkdir -p /var/zpanel/sieve
 chown -R vmail:mail /var/zpanel/sieve
 mkdir -p /var/lib/dovecot/sieve/
@@ -309,6 +295,7 @@ chown vmail:mail /var/log/dovecot*
 chmod 660 /var/log/dovecot*
 
 # ProFTPD specific installation tasks
+echo "Setup FTP"
 groupadd -g 2001 ftpgroup
 useradd -u 2001 -s /bin/false -d /bin/null -c "proftpd user" -g ftpgroup ftpuser
 sed -i "s|#SQLConnectInfo  zpanel_proftpd@localhost root password_here|SQLConnectInfo   zpanel_proftpd@localhost root $password|" /etc/zpanel/configs/proftpd/proftpd-mysql.conf
@@ -319,9 +306,11 @@ chmod -R 644 /var/zpanel/logs/proftpd
 serverhost=`hostname`
 
 # Apache HTTPD specific installation tasks...
+echo "Reconfigure Apache"
 if ! grep -q "Include /etc/zpanel/configs/apache/httpd.conf" /etc/apache2/apache2.conf; then echo "Include /etc/zpanel/configs/apache/httpd.conf" >> /etc/apache2/apache2.conf; fi
 sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/apache2/apache2.conf
 sed -i 's|Include sites-enabled/||' /etc/apache2/apache2.conf
+sed -i 's|ServerTokens OS|ServerTokens Prod|' /etc/apache2/conf.d/security
 chown -R www-data:www-data /var/zpanel/temp/
 if ! grep -q "127.0.0.1 "$fqdn /etc/hosts; then echo "127.0.0.1 "$fqdn >> /etc/hosts; fi
 if ! grep -q "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" /etc/sudoers; then echo "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" >> /etc/sudoers; fi
@@ -329,10 +318,13 @@ a2enmod rewrite
 service apache2 restart
 
 # PHP specific installation tasks...
+echo "Reconfigure PHP settings"
 sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php5/cli/php.ini
 sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php5/apache2/php.ini
 sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php5/cli/php.ini
 sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php5/apache2/php.ini
+sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 500M|" /etc/php5/apache2/php.ini
+sed -i "s|memory_limit = 128M|memory_limit = 256M|" /etc/php5/apache2/php.ini
 sed -i "s|expose_php = On|expose_php = Off|" /etc/php5/apache2/php.ini
 
 # Permissions fix for Apache and ProFTPD (to enable them to play nicely together!)
@@ -342,29 +334,30 @@ usermod -a -G www-data ftpuser
 usermod -a -G ftpgroup www-data
 
 # BIND specific installation tasks...
-chmod -R 777 /etc/zpanel/configs/bind/zones/
-mkdir /var/zpanel/logs/bind
-mkdir -p /var/named/dynamic
-touch /var/named/dynamic/managed-keys.bind
-touch /var/zpanel/logs/bind/bind.log
-chown root:root /etc/bind/rndc.key
-chown -R bind:bind /var/named/
-chmod 755 /etc/bind/rndc.key
-chmod -R 777 /var/zpanel/logs/bind/bind.log
-chmod -R 777 /etc/zpanel/configs/bind/etc
-rm -rf /etc/bind/named.conf /etc/bind/rndc.conf /etc/bind/rndc.key
-rndc-confgen -a
-ln -s /etc/zpanel/configs/bind/named.conf /etc/bind/named.conf
-ln -s /etc/zpanel/configs/bind/rndc.conf /etc/bind/rndc.conf
-if ! grep -q "include \"/etc/zpanel/configs/bind/etc/log.conf\";" /etc/bind/named.conf; then echo "include \"/etc/zpanel/configs/bind/etc/log.conf\";" >> /etc/bind/named.conf; fi
-ln -s /usr/sbin/named-checkconf /usr/bin/named-checkconf
-ln -s /usr/sbin/named-checkzone /usr/bin/named-checkzone
-ln -s /usr/sbin/named-compilezone /usr/bin/named-compilezone
-cat /etc/bind/rndc.key | cat - /etc/bind/named.conf > /etc/bind/named.conf.new && mv /etc/bind/named.conf.new /etc/bind/named.conf
-cat /etc/bind/rndc.key | cat - /etc/bind/rndc.conf > /etc/bind/rndc.conf.new && mv /etc/bind/rndc.conf.new /etc/bind/rndc.conf
-rm -rf /etc/bind/rndc.key
+#chmod -R 777 /etc/zpanel/configs/bind/zones/
+#mkdir /var/zpanel/logs/bind
+#mkdir -p /var/named/dynamic
+#touch /var/named/dynamic/managed-keys.bind
+#touch /var/zpanel/logs/bind/bind.log
+#chown root:root /etc/bind/rndc.key
+#chown -R bind:bind /var/named/
+#chmod 755 /etc/bind/rndc.key
+#chmod -R 777 /var/zpanel/logs/bind/bind.log
+#chmod -R 777 /etc/zpanel/configs/bind/etc
+#rm -rf /etc/bind/named.conf /etc/bind/rndc.conf /etc/bind/rndc.key
+#rndc-confgen -a
+#ln -s /etc/zpanel/configs/bind/named.conf /etc/bind/named.conf
+#ln -s /etc/zpanel/configs/bind/rndc.conf /etc/bind/rndc.conf
+#if ! grep -q "include \"/etc/zpanel/configs/bind/etc/log.conf\";" /etc/bind/named.conf; then echo "include \"/etc/zpanel/configs/bind/etc/log.conf\";" >> /etc/bind/named.conf; fi
+#ln -s /usr/sbin/named-checkconf /usr/bin/named-checkconf
+#ln -s /usr/sbin/named-checkzone /usr/bin/named-checkzone
+#ln -s /usr/sbin/named-compilezone /usr/bin/named-compilezone
+#cat /etc/bind/rndc.key | cat - /etc/bind/named.conf > /etc/bind/named.conf.new && mv /etc/bind/named.conf.new /etc/bind/named.conf
+#cat /etc/bind/rndc.key | cat - /etc/bind/rndc.conf > /etc/bind/rndc.conf.new && mv /etc/bind/rndc.conf.new /etc/bind/rndc.conf
+#rm -rf /etc/bind/rndc.key
 
 # CRON specific installation tasks...
+echo "Setting up cron tasks"
 mkdir -p /var/spool/cron/crontabs/
 mkdir -p /etc/cron.d/
 touch /var/spool/cron/crontabs/www-data
@@ -377,9 +370,11 @@ chmod -R 644 /etc/cron.d/
 chown -R www-data:www-data /var/spool/cron/crontabs/
 
 # Webalizer specific installation tasks...
+echo "Configure webstatistics"
 rm -rf /etc/webalizer/webalizer.conf
 
 # Roundcube specific installation tasks...
+echo "Configure RoundCube"
 sed -i "s|YOUR_MYSQL_ROOT_PASSWORD|$password|" /etc/zpanel/configs/roundcube/db.inc.php
 sed -i "s|#||" /etc/zpanel/configs/roundcube/db.inc.php
 rm -rf /etc/zpanel/panel/etc/apps/webmail/config/main.inc.php
@@ -388,18 +383,20 @@ ln -s /etc/zpanel/configs/roundcube/config.inc.php /etc/zpanel/panel/etc/apps/we
 ln -s /etc/zpanel/configs/roundcube/db.inc.php /etc/zpanel/panel/etc/apps/webmail/config/db.inc.php
 
 # Enable system services and start/restart them as required.
+echo "Restarting services"
 service apache2 start
 service postfix restart
-service postgresql restart
+#service postgresql restart
 service dovecot start
 service cron reload
 service mysql start
-service bind9 start
+#service bind9 start
 service proftpd start
 service atd start
 php /etc/zpanel/panel/bin/daemon.php
 
 # We'll now remove the temporary install cache.
+echo "Cleanup..."
 cd ../
 rm -rf qp_install_cache/
 
@@ -418,11 +415,13 @@ echo -e "#                                                            #" &>/dev/
 echo -e "# QPanel Web login can be accessed using your server IP      #" &>/dev/tty
 echo -e "# inside your web browser.                                   #" &>/dev/tty
 echo -e "#                                                            #" &>/dev/tty
+echo -e "#                !!! A REBOOT IS REQUIRED !!!                #" &>/dev/tty
+echo -e "#                                                            #" &>/dev/tty
 echo -e "##############################################################" &>/dev/tty
 echo -e "" &>/dev/tty
 
 # We now request that the user restarts their server...
-read -e -p "Restart your server now to complete the install (y/n)? " rsn
+read -e -p "Restart your server now to complete the install (RECOMMENDED) (y/n)? " rsn
 while true; do
 	case $rsn in
 		[Yy]* ) break;;

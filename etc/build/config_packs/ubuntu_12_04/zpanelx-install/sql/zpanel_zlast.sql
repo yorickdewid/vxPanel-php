@@ -1,18 +1,5 @@
 
 USE zpanel_core;
-CREATE TABLE IF NOT EXISTS `x_credit_transaction` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `wallet_id` int(11) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `amount` double NOT NULL DEFAULT '5',
-  `status_id` tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `wallet` (`wallet_id`),
-  KEY `FK_credit_transaction_status` (`status_id`),
-  CONSTRAINT `FK_credit_transaction_status` FOREIGN KEY (`status_id`) REFERENCES `x_status` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `wallet` FOREIGN KEY (`wallet_id`) REFERENCES `x_wallet` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE IF NOT EXISTS `x_status` (
   `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `status` char(20) NOT NULL,
@@ -24,6 +11,19 @@ CREATE TABLE IF NOT EXISTS `x_wallet` (
   `total` double NOT NULL DEFAULT '0',
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `x_credit_transaction` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `wallet_id` int(11) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `amount` double NOT NULL DEFAULT '5',
+  `status_id` tinyint(3) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `wallet` (`wallet_id`),
+  KEY `FK_credit_transaction_status` (`status_id`),
+  CONSTRAINT `FK_credit_transaction_status` FOREIGN KEY (`status_id`) REFERENCES `x_status` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `wallet` FOREIGN KEY (`wallet_id`) REFERENCES `x_wallet` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 ALTER TABLE x_modules ADD mo_folder_path VARCHAR(60) AFTER mo_folder_vc;
