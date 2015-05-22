@@ -103,7 +103,6 @@
             <ul class="nav nav-tabs" id="stats-tab">
               <li class="active"><a href="#account"><: Account Information :></a></li>
               <li><a href="#usage"><: Account Usage :></a></li>
-              <li><a href="#server"><: Server Information :></a></li>
               <li><a href="#domain"><: Domain Information :></a></li>
             </ul>
 
@@ -200,50 +199,6 @@
                 </div>
               </div>
               <!-- END USAGE -->
-
-              <!-- BEGIN SERVERINFO -->
-              <div class="tab-pane" id="server">
-                <div class="stats-row bar-row s-top">
-                  <div class="stats-column"><strong><: Your IP :>:</strong></div>
-                  <div class="stats-column"><# ui_tpl_clientipaddress #></div>
-                </div>
-
-                <div class="stats-row">
-                  <div class="stats-column"><strong><: Server IP :>:</strong></div>
-                  <div class="stats-column"><# ui_tpl_serveripaddress #></div>
-                </div>
-
-                <div class="stats-row">
-                  <div class="stats-column"><strong><: Server OS :>:</strong></div>
-                  <div class="stats-column"><img src="<# ui_tpl_assetfolderpath #>images/os_icons/<# ui_tpl_serverosname #>.png" border="0" width="16" height="16" style="float:left;"/>&nbsp;<# ui_tpl_serverosname #></div>
-                </div>
-
-                <div class="stats-row">
-                  <div class="stats-column"><strong><: Apache Version :>:</strong></div>
-                  <div class="stats-column"><# ui_tpl_apacheversion #></div>
-                </div>
-
-                <div class="stats-row">
-                  <div class="stats-column"><strong><: PHP Version :>:</strong></div>
-                  <div class="stats-column"><# ui_tpl_phpversion #></div>
-                </div>
-
-                <div class="stats-row">
-                  <div class="stats-column"><strong><: MySQL Version :>:</strong></div>
-                  <div class="stats-column"><# ui_tpl_mysqlversion #></div>
-                </div>
-
-                <div class="stats-row">
-                  <div class="stats-column"><strong><: ZPanel Version :>:</strong></div>
-                  <div class="stats-column"><# ui_tpl_zpanelversion #></div>
-                </div>
-
-                <div class="stats-row">
-                  <div class="stats-column"><strong><: Server uptime :>:</strong></div>
-                  <div class="stats-column"><# ui_tpl_serveruptime #></div>
-                </div>
-              </div>
-              <!-- END SERVERINFO -->
 
               <!-- BEGIN DOMAININFO -->
               <div class="tab-pane" id="domain">
