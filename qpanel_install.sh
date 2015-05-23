@@ -142,10 +142,11 @@ dpkg --get-selections
 
 # We need to update the enabled Aptitude repositories
 echo -ne "\nUpdating Aptitude Repos: " >/dev/tty
- mkdir -p "/etc/apt/sources.list.d.save"
-        cp -R "/etc/apt/sources.list.d/*" "/etc/apt/sources.list.d.save" &> /dev/null
-        rm -rf "/etc/apt/sources.list/*"
-        cp "/etc/apt/sources.list" "/etc/apt/sources.list.save"
+mkdir -p "/etc/apt/sources.list.d.save"
+cp -R "/etc/apt/sources.list.d/*" "/etc/apt/sources.list.d.save" &> /dev/null
+rm -rf "/etc/apt/sources.list/*"
+cp "/etc/apt/sources.list" "/etc/apt/sources.list.save"
+apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
 cat > /etc/apt/sources.list <<EOF
 
 deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc) main restricted
@@ -163,6 +164,9 @@ deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc)-updates universe multiv
 deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc) universe multiverse
 deb-src http://security.ubuntu.com/ubuntu $(lsb_release -sc)-security universe multiverse
 deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc)-updates universe multiverse
+
+deb http://repo.percona.com/apt $(lsb_release -sc) main
+deb-src http://repo.percona.com/apt $(lsb_release -sc) main
 EOF
 
 apt-get update
@@ -182,7 +186,7 @@ apt-get upgrade -yqq
 # We disable the DPKG prompts before we run the software install to enable fully automated install.
 export DEBIAN_FRONTEND=noninteractive
 #apt-get install -qqy mysql-server postgresql postgresql-contrib apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl php5-pgsql db4.7-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql bind9 bind9utils
-apt-get install -qqy mysql-server apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl db4.7-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql
+apt-get install -qqy percona-server-server-5.6 percona-server-client-5.6 apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl db4.7-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql
 
 # Generation of random passwords
 password=`passwordgen`;
