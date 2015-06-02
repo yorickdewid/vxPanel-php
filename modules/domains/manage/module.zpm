@@ -76,11 +76,6 @@
                             <th nowrap="nowrap"><: Domain name :>:</th>
                             <td>
                                 <input name="inDomain" type="text" id="inDomain" size="30" style="width:75%;" />
-                                <select name="inTld" id="inTld" style="width:24%;">
-                                    <% loop TldList %>
-                                    <option value="<& name &>"><& name &></option>
-                                    <% endloop %>
-                                </select>
                             </td>
                         </tr>
                         <tr>

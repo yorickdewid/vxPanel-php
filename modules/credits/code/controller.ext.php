@@ -39,9 +39,10 @@ class module_controller extends ctrl_module
         $numrows = $zdbh->prepare($sql);
         $numrows->bindParam(':userid', $currentuser['userid']);
 
+        $display = '';
         if ($numrows->execute()) {
             $result = $numrows->fetchAll();
-            if(isset($result))
+            if(isset($result)){
                 self::$hasWallet = true;
                 foreach($result as $res)
                 {
@@ -53,6 +54,10 @@ class module_controller extends ctrl_module
                 self::$hasWallet = true;
                 $display = "<p>You currently do not have any balance.</p>";
             }
+        }
+        else{
+            $display = "<p>Balance never added.</p>";
+        }
         return $display;
     }
 

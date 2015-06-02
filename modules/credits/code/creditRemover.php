@@ -21,6 +21,28 @@ class creditRemover{
         return $display;
 	}
 
+    /**
+    * [getCreditBalance description]
+    * @return int amount of balance
+    */
+    public static function getCreditBalance(){
+        global $zdbh;
+        $currentuser = ctrl_users::GetUserDetail();
+        $sql = "SELECT id,total FROM x_wallet WHERE user_id=:userid";
+        $numrows = $zdbh->prepare($sql);
+        $numrows->bindParam(':userid', $currentuser['userid']);
+
+        if ($numrows->execute()) {
+            $result = $numrows->fetchAll();
+            if(isset($result)){
+                foreach($result as $res)
+                {
+                    return $res['total'];
+                }
+            }
+        }
+    }
+
 }
 
 

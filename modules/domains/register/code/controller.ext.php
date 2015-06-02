@@ -25,6 +25,7 @@
  */
 
 require_once(__DIR__.'/../../../../etc/lib/api/transip/DomainService.php');
+require_once(__DIR__.'/../../../credits/code/creditRemover.php');
 
 class module_controller extends ctrl_module
 {
@@ -42,6 +43,7 @@ class module_controller extends ctrl_module
     static $notransfer;
     static $transferimpossible;
     static $noregister;
+    static $notenough;
 
     /**
      * The 'worker' methods.
@@ -421,6 +423,15 @@ class module_controller extends ctrl_module
     {
         global $controller;
         runtime_csfr::Protect();
+        $balance = creditRemover::getCreditBalance();
+        $amount = 5; //test value
+        if(($balance-$amount) >= 0){
+            creditRemover::removeCredit($balance,$amount);
+        }
+        else{
+            self::$notenough = TRUE;
+            return FALSE; // turn off for testing
+        }
         $currentuser = ctrl_users::GetUserDetail();
         $formvars = $controller->GetAllControllerRequests('FORM');
         $domain = $formvars['inDomain'].$formvars['inTld'];
@@ -521,6 +532,9 @@ class module_controller extends ctrl_module
         }
         if (!fs_director::CheckForEmptyValue(self::$ok)) {
             return ui_sysmessage::shout(ui_language::translate("The domain has been requested and will be available in a few hours."), "zannounceok");
+        }
+        if (!fs_director::CheckForEmptyValue(self::$notenough)) {
+            return ui_sysmessage::shout(ui_language::translate("Not enough credits to proceed with registration."), "zannounceerror");
         }
         return;
     }
