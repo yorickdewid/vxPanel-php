@@ -24,7 +24,7 @@
  *
  */
 
-require_once(__DIR__.'/../../../../etc/lib/api/config.php');
+require_once(__DIR__.'/../../../../etc/lib/api/transip/DomainService.php');
 
 class module_controller extends ctrl_module
 {
@@ -165,15 +165,15 @@ class module_controller extends ctrl_module
     {
         global $zdbh;
         runtime_hook::Execute('OnBeforeDeleteDomain');
-        $currentuser = ctrl_users::GetUserDetail($uid);
+        $currentuser = ctrl_users::GetUserDetail();
         $sql = $zdbh->prepare("SELECT vh_directory_vc,vh_name_vc FROM x_vhosts WHERE vh_id_pk=:id");
         $sql->bindParam(':id', $id);
         $sql->execute();
         $row = $sql->fetch();
-	$vhost_path = ctrl_options::GetSystemOption('hosted_dir') . $currentuser['username'] . "/public_html" . $row[0] . "/";
+	    $vhost_path = ctrl_options::GetSystemOption('hosted_dir') . $currentuser['username'] . "/public_html" . $row[0] . "/";
 
         // Delete domain directory
-	fs_director::RemoveDirectory($vhost_path);
+	    fs_director::RemoveDirectory($vhost_path);
 
         // Release ipv6 address
         //self::ReleaseIPv6Addr($row[1]);
@@ -186,7 +186,7 @@ class module_controller extends ctrl_module
         $sql->execute();
 
         // Delete all mailboxes
-        $sql = $zdbh->prepare("UPDATE x_mailboxes SET mb_deleted_ts=:time, proccesed_cron=0 WHERE mb_address_vc LIKE :address");
+        $sql = $zdbh->prepare("UPDATE x_mailboxes SET mb_deleted_ts=:time WHERE mb_address_vc LIKE :address");
         $time = time();
         $address = "%".$row[2]."%";
         $sql->bindParam(':time', $time);
@@ -537,7 +537,7 @@ class module_controller extends ctrl_module
             return '<td><font color="orange">' . ui_language::translate('Pending') . '</font></td>'
                     . '<td><a href="#" class="help_small" id="help_small_' . $id . '_a"'
                     . 'title="' . ui_language::translate('Your domain will become active at the next scheduled update.  This can take up to one hour.') . '">'
-                    . '<img src="/modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/help_small.png" border="0" /></a>';
+                    . '<img src="/modules/' . 'domains/' . $controller->GetControllerRequest('URL', 'module') . '/assets/help_small.png" border="0" /></a>';
         }
     }
 
