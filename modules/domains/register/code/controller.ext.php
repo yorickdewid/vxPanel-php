@@ -44,6 +44,7 @@ class module_controller extends ctrl_module
     static $transferimpossible;
     static $noregister;
     static $notenough;
+    static $tldlist;
 
     /**
      * The 'worker' methods.
@@ -54,8 +55,10 @@ class module_controller extends ctrl_module
         {
             $res = array();
             $tldlist = Transip_DomainService::getAllTldInfos();
+            self::$tldlist = array();
             foreach ($tldlist as $idx) {
                 array_push($res, $idx->name);
+                self::$tldlist[$idx->name] = $idx->price;
             }
             return $res;
         }
@@ -493,6 +496,11 @@ class module_controller extends ctrl_module
                     . 'title="' . ui_language::translate('Your domain will become active at the next scheduled update.  This can take up to one hour.') . '">'
                     . '<img src="/modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/help_small.png" border="0" /></a>';
         }
+    }
+
+    static function getTLDPrice(){
+        $tld = $formvars['inTld'];
+        return self::$tldlist[$tld];
     }
 
     static function getResult()
