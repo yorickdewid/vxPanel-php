@@ -31,6 +31,7 @@ class module_controller extends ctrl_module
 {
     private static $hasWallet;
     private static $wallet;
+    static $showPayWall;
 
     public static function getCurrentCreditBalance(){
         global $zdbh;
@@ -93,24 +94,23 @@ class module_controller extends ctrl_module
     }
 
     public static function doAddFunds($amount,$user){
-        self::getPayWall();
+        self::$showPayWall = true;
+        return;
     }
 
-    private static function getPayWall(){
-    // Paymentwall PHP Library: https://www.paymentwall.com/lib/php
+    public static function getAddFunds()
+    {
+        if(self::$showPayWall)
+        {
+            return true;
+        }
+        return false;
+    }
 
-        Paymentwall_Config::getInstance()->set(array(
-            'api_type' => Paymentwall_Config::API_VC,
-            'public_key' => 't_b33418984f3a03964caa978de9012e',
-            'private_key' => 't_a9bd5d122bb9dd392e6f22a118c344'
-            ));
-
-        $widget = new Paymentwall_Widget(
-            '1', // MUST BE USER ID OF OUR CUSTOMERS NOT PAYMENTWALL ACCOUNTS
-            array(), 
-            array('email' => 'user@hostname.com')
-            );
-        print $widget->getHtmlCode();
+    public static function getUrl(){
+        global $controller;
+        $actual_link = 'http://'.$_SERVER['HTTP_HOST'].'/external/loadWidget.php';
+        return $actual_link;
     }
 
     private static function pingwall(){

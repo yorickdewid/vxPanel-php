@@ -21,15 +21,15 @@
             <@ TransactionLog @>
         </table>
     </div>
+    <% else %>
+        <p> No history yet </p>
     <% endif %>
      <div>
-        <form action="./?module=credits&action=AddFunds" method="post">
             <table>
                 <tr valign="top">
-                    <td><button class="button-loader btn btn-primary" type="submit" id="button" name="inAdd" value="1">Add Funds</button>
+                    <td><a href="<@ URL @>" target="_blank"><button class="button-loader btn btn-primary" type="submit" id="button" name="inAdd" value="1">Add Funds</button></a>
                 </tr>
             </table>
-        </form>
     </div>
 </div>
 
