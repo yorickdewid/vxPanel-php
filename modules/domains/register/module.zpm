@@ -103,6 +103,28 @@
 </script>
 
 <script type="text/javascript">
+            $('<div></div>').appendTo('body').html('<div><h6>Yes or No?</h6></div>').dialog({
+            modal: true,title : 'message',zIndex: 10000,autoOpen: true,
+            width: 'auto',resizable: false,
+            buttons: {
+            Yes: function()
+            {
+                alert('kaas');
+                $(this).dialog("close")
+            }
+            No: function()
+            {
+                alert('geen kaas');
+                $(this).dialog("close")
+            }
+        },
+        close: function (event,ui){
+            $(this).remove();
+        }
+        });
+<script>
+
+<script type="text/javascript">
 // Add punycode support fo national domains
 // http://stackoverflow.com/questions/183485/can-anyone-recommend-a-good-free-javascript-for-punycode-to-unicode-conversion
 //Javascript Punycode converter derived from example in RFC3492.

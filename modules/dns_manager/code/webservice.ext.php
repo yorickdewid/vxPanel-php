@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__.'/../../../etc/lib/api/transip/DomainService.php');
+
 class webservice extends ws_xmws
 {
 
@@ -63,6 +65,47 @@ class webservice extends ws_xmws
     {
         $request_data = $this->RawXMWSToArray($this->wsdata);
         $response_xml = "\n";
+
+        $uid = ws_generic::GetTagValue('uid', $request_data['content']);
+        $domainName = ws_generic::GetTagValue('domainName', $request_data['content']);
+        $hostName = ws_generic::GetTagValue('hostName', $request_data['content']);
+        $type = ws_generic::GetTagValue('type', $request_data['content']);
+        $target = ws_generic::GetTagValue('target', $request_data['content']);
+        $ttl = ws_generic::GetTagValue('ttl', $request_data['content']);
+        $domainID = self::GetDomainID($uid, $domainName);
+
+        module_controller::createDNSRecord(array(
+            "uid" => $uid,
+            "domainName" => $domainName,
+            "domainID" => $domainID,
+            "type" => $type,
+            "hostName" => $hostName,
+            "ttl" => $ttl,
+            "target" => $target
+        ));
+
+        $response_xml = $response_xml . ws_xmws::NewXMLContentSection('dns_record', array(
+                    'domainName' => $domainName,
+                    'hostName' => $hostName,
+                    'type' => $type,
+                    'target' => $target,
+                    'created' => 'true'
+        ));
+
+        $dataobject = new runtime_dataobject();
+        $dataobject->addItemValue('response', '');
+        $dataobject->addItemValue('content', $response_xml);
+        return $dataobject->getDataObject();
+    }
+
+    public function CreateDNSRecord_API()
+    {
+        $request_data = $this->RawXMWSToArray($this->wsdata);
+        $response_xml = "\n";
+        $dnsEntries
+        Transip_DomainService::setDnsEntries($domainName,$dnsEntries)
+        //Transip_DnsEntry(name,expire,type,content);
+        
 
         $uid = ws_generic::GetTagValue('uid', $request_data['content']);
         $domainName = ws_generic::GetTagValue('domainName', $request_data['content']);

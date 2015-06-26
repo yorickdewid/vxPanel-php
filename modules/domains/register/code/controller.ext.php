@@ -45,6 +45,8 @@ class module_controller extends ctrl_module
     static $noregister;
     static $notenough;
     static $tldlist;
+    static $proceed;
+    static $test_mode = true;
 
     /**
      * The 'worker' methods.
@@ -53,12 +55,37 @@ class module_controller extends ctrl_module
     {
         try
         {
+            if(!self::$test_mode)
+            {
             $res = array();
             $tldlist = Transip_DomainService::getAllTldInfos();
-            self::$tldlist = array();
+            print_r($tldlist);
             foreach ($tldlist as $idx) {
-                array_push($res, $idx->name);
-                self::$tldlist[$idx->name] = $idx->price;
+                    array_push($res, $idx->name);
+                }
+            
+            return $res;
+            }
+            else{
+                $res = array('nl','be','com');
+                return $res;
+            }
+        }
+        catch(SoapFault $f)
+        {
+            return FALSE;
+        }
+        return;
+    }
+
+    static function ListTldPrices()
+    {
+        try
+        {
+            $res = array();
+            $tldlist = Transip_DomainService::getAllTldInfos();
+            foreach ($tldlist as $idx) {
+                $res[$idx->name] = $idx->price;
             }
             return $res;
         }
@@ -177,7 +204,7 @@ class module_controller extends ctrl_module
                 $contacts[] = $contact;
             }
 
-            $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_A,     '149.210.173.97'); // for now
+            $dnsEntries[] = new Transip_DnsEntryl('@', 86400,    Transip_DnsEntry::TYPE_A,     '149.210.173.97'); // for now
             $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_AAAA,  '2a01:7c8:aab4:4a5::1'); // for now
             $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_MX,    '10 @');
             $dnsEntries[] = new Transip_DnsEntry('ftp', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
@@ -390,7 +417,6 @@ class module_controller extends ctrl_module
     /**
      * End 'worker' methods.
      */
-
     /**
      * Webinterface sudo methods.
      */
@@ -422,12 +448,15 @@ class module_controller extends ctrl_module
                 ($currentuser['domainquota'] > ctrl_users::GetQuotaUsages('domains', $currentuser['userid']));
     }
 
-    static function doCreateDomain()
+    static function doCreateDomain($price = null)
     {
         global $controller;
         runtime_csfr::Protect();
+        $formvars = $controller->GetAllControllerRequests('FORM');
         $balance = creditRemover::getCreditBalance();
-        $amount = 5; //test value
+        $tld = $formvars['inTld'];
+        $object = Transip_DomainService::getTldInfo($tld);
+        $amount = $object->price; //test value
         if(($balance-$amount) >= 0){
             creditRemover::removeCredit($balance,$amount);
         }
@@ -436,9 +465,8 @@ class module_controller extends ctrl_module
             return FALSE; // turn off for testing
         }
         $currentuser = ctrl_users::GetUserDetail();
-        $formvars = $controller->GetAllControllerRequests('FORM');
-        $domain = $formvars['inDomain'].$formvars['inTld'];
 
+        $domain = $formvars['inDomain'].$tld;
         // Check if there are dot in the domainname...
         if (strpos($formvars['inDomain'], ".") !== false) {
             self::$doterror = TRUE;
@@ -496,11 +524,6 @@ class module_controller extends ctrl_module
                     . 'title="' . ui_language::translate('Your domain will become active at the next scheduled update.  This can take up to one hour.') . '">'
                     . '<img src="/modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/help_small.png" border="0" /></a>';
         }
-    }
-
-    static function getTLDPrice(){
-        $tld = $formvars['inTld'];
-        return self::$tldlist[$tld];
     }
 
     static function getResult()
