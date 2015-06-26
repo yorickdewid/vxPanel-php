@@ -142,15 +142,17 @@ dpkg --get-selections
 
 # We need to update the enabled Aptitude repositories
 echo -ne "\nUpdating Aptitude Repos: " >/dev/tty
-#mkdir -p "/etc/apt/sources.list.d.save"
-#cp -R "/etc/apt/sources.list.d/*" "/etc/apt/sources.list.d.save" &> /dev/null
-#rm -rf "/etc/apt/sources.list/*"
 cp "/etc/apt/sources.list" "/etc/apt/sources.list.save"
 apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+cat >> /etc/apt/sources.list <<EOF
+deb http://repo.percona.com/apt $(lsb_release -sc) main
+deb-src http://repo.percona.com/apt $(lsb_release -sc) main
+EOF
+
 apt-get update
 
 # Install some standard utility packages required by the installer
-apt-get -y install zip unzip debconf-utils
+apt-get -y install gcc zip unzip debconf-utils
 
 mkdir ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
@@ -164,7 +166,6 @@ apt-get dist-upgrade -y
 # Install required software and dependencies required by QPanel.
 # We disable the DPKG prompts before we run the software install to enable fully automated install.
 export DEBIAN_FRONTEND=noninteractive
-#apt-get install -qqy mysql-server postgresql postgresql-contrib apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl php5-pgsql db4.7-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql bind9 bind9utils
 apt-get install -y percona-server-server-5.6 percona-server-client-5.6 apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl db5.3-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql
 
 # Generation of random passwords
@@ -217,6 +218,9 @@ mysql -u root -p$password -e "CREATE SCHEMA zpanel_roundcube";
 cat /etc/zpanel/configs/zpanelx-install/sql/*.sql | mysql -u root -p$password
 mysql -u root -p$password -e "UPDATE mysql.user SET Password=PASSWORD('$postfixpassword') WHERE User='postfix' AND Host='localhost';";
 mysql -u root -p$password -e "FLUSH PRIVILEGES";
+mysql -u root -p$password -e "CREATE FUNCTION fnv1a_64 RETURNS INTEGER SONAME 'libfnv1a_udf.so'"
+mysql -u root -p$password -e "CREATE FUNCTION fnv_64 RETURNS INTEGER SONAME 'libfnv_udf.so'"
+mysql -u root -p$password -e "CREATE FUNCTION murmur_hash RETURNS INTEGER SONAME 'libmurmur_udf.so'"
 sed -i "/ssl-key=/a \secure-file-priv = /var/tmp" /etc/mysql/my.cnf
 
 # Set some ZPanel custom configuration settings (using. setso and setzadmin)
@@ -229,8 +233,8 @@ setzadmin --set "$zadminNewPass";
 echo "Store settings in passwords.txt"
 touch /root/passwords.txt;
 echo "zadmin Password: $zadminNewPass" >> /root/passwords.txt;
-echo "MySQL Root Password: $password" >> /root/passwords.txt
-echo "MySQL Postfix Password: $postfixpassword" >> /root/passwords.txt
+echo "Percona Root Password: $password" >> /root/passwords.txt
+echo "Percona Postfix Password: $postfixpassword" >> /root/passwords.txt
 echo "IP Address: $publicip" >> /root/passwords.txt
 echo "Panel Domain: $fqdn" >> /root/passwords.txt
 
@@ -316,29 +320,6 @@ if ! grep -q "127.0.0.1 $serverhost" /etc/hosts; then echo "127.0.0.1 $serverhos
 usermod -a -G www-data ftpuser
 usermod -a -G ftpgroup www-data
 
-# BIND specific installation tasks...
-#chmod -R 777 /etc/zpanel/configs/bind/zones/
-#mkdir /var/zpanel/logs/bind
-#mkdir -p /var/named/dynamic
-#touch /var/named/dynamic/managed-keys.bind
-#touch /var/zpanel/logs/bind/bind.log
-#chown root:root /etc/bind/rndc.key
-#chown -R bind:bind /var/named/
-#chmod 755 /etc/bind/rndc.key
-#chmod -R 777 /var/zpanel/logs/bind/bind.log
-#chmod -R 777 /etc/zpanel/configs/bind/etc
-#rm -rf /etc/bind/named.conf /etc/bind/rndc.conf /etc/bind/rndc.key
-#rndc-confgen -a
-#ln -s /etc/zpanel/configs/bind/named.conf /etc/bind/named.conf
-#ln -s /etc/zpanel/configs/bind/rndc.conf /etc/bind/rndc.conf
-#if ! grep -q "include \"/etc/zpanel/configs/bind/etc/log.conf\";" /etc/bind/named.conf; then echo "include \"/etc/zpanel/configs/bind/etc/log.conf\";" >> /etc/bind/named.conf; fi
-#ln -s /usr/sbin/named-checkconf /usr/bin/named-checkconf
-#ln -s /usr/sbin/named-checkzone /usr/bin/named-checkzone
-#ln -s /usr/sbin/named-compilezone /usr/bin/named-compilezone
-#cat /etc/bind/rndc.key | cat - /etc/bind/named.conf > /etc/bind/named.conf.new && mv /etc/bind/named.conf.new /etc/bind/named.conf
-#cat /etc/bind/rndc.key | cat - /etc/bind/rndc.conf > /etc/bind/rndc.conf.new && mv /etc/bind/rndc.conf.new /etc/bind/rndc.conf
-#rm -rf /etc/bind/rndc.key
-
 # CRON specific installation tasks...
 echo "Setting up cron tasks"
 mkdir -p /var/spool/cron/crontabs/
@@ -369,11 +350,9 @@ ln -s /etc/zpanel/configs/roundcube/db.inc.php /etc/zpanel/panel/etc/apps/webmai
 echo "Restarting services"
 service apache2 start
 service postfix restart
-#service postgresql restart
 service dovecot start
 service cron reload
 service mysql start
-#service bind9 start
 service proftpd start
 service atd start
 php /etc/zpanel/panel/bin/daemon.php
@@ -382,6 +361,7 @@ php /etc/zpanel/panel/bin/daemon.php
 echo "Cleanup..."
 cd ../
 rm -rf qp_install_cache/
+apt-get autoremove
 
 # Advise the user that QPanel is now installed and accessible.
 echo -e "##############################################################" &>/dev/tty
