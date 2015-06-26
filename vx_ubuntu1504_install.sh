@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# OS VERSION: Ubuntu Server 12.04.x LTS
+# OS VERSION: Ubuntu Server 15.04.x LTS
 # ARCH: x32_64
 
 # QPanel Automated Installation Script
@@ -106,20 +106,20 @@ publicip=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk
 # We need to disable and remove AppArmor...
 [ -f /etc/init.d/apparmor ]
 if [ $? = "0" ]; then
-    echo -e ""
-    echo -e "Disabling and removing AppArmor, please wait..."
-    /etc/init.d/apparmor stop &> /dev/null
+	echo -e ""
+	 echo -e "Disabling and removing AppArmor, please wait..."
+	/etc/init.d/apparmor stop &> /dev/null
 	update-rc.d -f apparmor remove &> /dev/null
 	apt-get -y remove apparmor &> /dev/null
 	mv /etc/init.d/apparmor /etc/init.d/apparmpr.removed &> /dev/null
 	##after removing AppArmor reboot is not obligatory
 	echo -e "Please restart the server and run the installer again. AppArmor has been removed."
-        #exit
+	echo -e "Installer will continue..."
 fi
 
 #a selection list for the time zone is not better now?
-apt-get -yqq update &>/dev/null
-apt-get -yqq install tzdata &>/dev/null
+apt-get -y update &>/dev/null
+apt-get -y install tzdata &>/dev/null
 
 # Installer options
 while true; do
@@ -149,7 +149,10 @@ deb http://repo.percona.com/apt $(lsb_release -sc) main
 deb-src http://repo.percona.com/apt $(lsb_release -sc) main
 EOF
 
+# We now update the server software packages.
 apt-get update
+apt-get upgrade -y
+apt-get dist-upgrade -y
 
 # Install some standard utility packages required by the installer
 apt-get -y install gcc zip unzip debconf-utils
@@ -157,11 +160,6 @@ apt-get -y install gcc zip unzip debconf-utils
 mkdir ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
 cd ../qp_install_cache/
-
-# We now update the server software packages.
-apt-get update -y
-apt-get upgrade -y
-apt-get dist-upgrade -y
 
 # Install required software and dependencies required by QPanel.
 # We disable the DPKG prompts before we run the software install to enable fully automated install.
@@ -197,20 +195,20 @@ ln -s /etc/zpanel/panel/bin/setso /usr/bin/setso
 ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
 chmod +x /etc/zpanel/panel/bin/zppy
 chmod +x /etc/zpanel/panel/bin/setso
-cp -R /etc/zpanel/panel/etc/build/config_packs/ubuntu_12_04/. /etc/zpanel/configs/
+cp -R /etc/zpanel/panel/etc/build/config_packs/ubuntu_15_04/. /etc/zpanel/configs/
 # set password after test connection
 cc -o /etc/zpanel/panel/bin/zsudo /etc/zpanel/configs/bin/zsudo.c
 sudo chown root /etc/zpanel/panel/bin/zsudo
 chmod +s /etc/zpanel/panel/bin/zsudo
 
-# MySQL specific installation tasks...
+# Percona specific installation tasks...
 service mysql start
 mysqladmin -u root password "$password"
 until mysql -u root -p$password -e ";" > /dev/null 2>&1 ; do
 read -s -p "enter your root mysql password : " password
 done
 sed -i "s|YOUR_ROOT_MYSQL_PASSWORD|$password|" /etc/zpanel/panel/cnf/db.php
-#mysql -u root -p$password -e "DROP DATABASE test";
+mysql -u root -p$password -e "DROP DATABASE test";
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User='root' AND Host != 'localhost'";
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User=''";
 mysql -u root -p$password -e "FLUSH PRIVILEGES";
@@ -295,6 +293,8 @@ serverhost=`hostname`
 # Apache HTTPD specific installation tasks...
 echo "Reconfigure Apache"
 if ! grep -q "Include /etc/zpanel/configs/apache/httpd.conf" /etc/apache2/apache2.conf; then echo "Include /etc/zpanel/configs/apache/httpd.conf" >> /etc/apache2/apache2.conf; fi
+rm -rf /etc/apache2/conf-enabled/*
+rm -rf /etc/apache2/sites-enabled/*
 sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/apache2/apache2.conf
 sed -i 's|Include sites-enabled/||' /etc/apache2/apache2.conf
 sed -i 's|ServerTokens OS|ServerTokens Prod|' /etc/apache2/conf.d/security
@@ -370,8 +370,8 @@ echo -e "# server. Please review the log file left in /root/ for      #" &>/dev/
 echo -e "# any errors encountered during installation.                #" &>/dev/tty
 echo -e "#                                                            #" &>/dev/tty
 echo -e "# Save the following information somewhere safe:             #" &>/dev/tty
-echo -e "# MySQL Root Password    : $password" &>/dev/tty
-echo -e "# MySQL Postfix Password : $postfixpassword" &>/dev/tty
+echo -e "# Percona Root Password    : $password" &>/dev/tty
+echo -e "# Percona Postfix Password : $postfixpassword" &>/dev/tty
 echo -e "# QPanel Username        : zadmin                            #" &>/dev/tty
 echo -e "# QPanel Password        : $zadminNewPass" &>/dev/tty
 echo -e "#                                                            #" &>/dev/tty
