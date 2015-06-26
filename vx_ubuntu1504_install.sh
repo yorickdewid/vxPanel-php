@@ -35,18 +35,7 @@ if [ -e /usr/local/cpanel ] || [ -e /usr/local/directadmin ] || [ -e /usr/local/
     exit
 fi
 
-# Lets check for some common packages that we know will affect the installation/operating of QPanel.
-# We expect a clean OS so no apache/mySQL/bind/postfix/php!
-if dpkg -s php apache mysql bind postfix dovecot; then
-    echo "You appear to have a server with apache/mysql/bind/postfix already installed; "
-    echo "This installer is designed to install and configure QPanel on a clean OS "
-    echo "installation only!"
-    echo ""
-    echo "Please re-install your OS before attempting to install using this script."
-    exit
-fi
-
-# Ensure the installer is launched and can only be launched on Ubuntu 12.04
+# Ensure the installer is launched and can only be launched on Ubuntu 15.04
 BITS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
 if [ -f /etc/lsb-release ]; then
   OS=$(cat /etc/lsb-release | grep DISTRIB_ID | sed 's/^.*=//')
@@ -59,7 +48,7 @@ echo "Detected : $OS  $VER  $BITS"
 if [ "$OS" = "Ubuntu" ] && [ "$VER" = "15.04" ]; then
   echo "Ok."
 else
-  echo "Sorry, this installer only supports the installation of QPanel on Ubuntu 12.04."
+  echo "Sorry, this installer only supports the installation of QPanel on Ubuntu 15.04."
   exit 1;
 fi
 
@@ -83,7 +72,7 @@ passwordgen() {
 # Display the 'welcome' splash/user warning info..
 echo -e ""
 echo -e "##############################################################"
-echo -e "# Welcome to the QPanel Installer for Ubuntu                 #"
+echo -e "# Welcome to the VXpanel Installer for Ubuntu                #"
 echo -e "# Server 15.04.x LTS                                         #"
 echo -e "#                                                            #"
 echo -e "# Please make sure your VPS provider hasn't pre-installed    #"
@@ -175,7 +164,6 @@ zadminNewPass=`passwordgen`;
 mkdir /etc/zpanel
 mkdir /etc/zpanel/configs
 mkdir /etc/zpanel/panel
-mkdir /etc/zpanel/docs
 mkdir /var/zpanel
 mkdir /var/zpanel/hostdata
 mkdir /var/zpanel/hostdata/zadmin
@@ -297,7 +285,6 @@ rm -rf /etc/apache2/conf-enabled/*
 rm -rf /etc/apache2/sites-enabled/*
 sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/apache2/apache2.conf
 sed -i 's|Include sites-enabled/||' /etc/apache2/apache2.conf
-sed -i 's|ServerTokens OS|ServerTokens Prod|' /etc/apache2/conf.d/security
 chown -R www-data:www-data /var/zpanel/temp/
 if ! grep -q "127.0.0.1 "$fqdn /etc/hosts; then echo "127.0.0.1 "$fqdn >> /etc/hosts; fi
 if ! grep -q "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" /etc/sudoers; then echo "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" >> /etc/sudoers; fi
