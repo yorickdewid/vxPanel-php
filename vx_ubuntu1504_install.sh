@@ -348,7 +348,7 @@ php /etc/zpanel/panel/bin/daemon.php
 echo "Cleanup..."
 cd ../
 rm -rf qp_install_cache/
-apt-get autoremove
+apt-get -y autoremove
 
 # Advise the user that QPanel is now installed and accessible.
 echo -e "##############################################################" &>/dev/tty
