@@ -68,6 +68,34 @@ class ctrl_users {
         return $userdetail->getDataObject();
     }
 
+      /**
+     * Returns an array of infomation for the account details, package, groups and quota limits for a given UID.
+     * @author Bobby Allen (ballen@bobbyallen.me)
+     * @global db_driver $zdbh The ZPX database handle.
+     * @param int $uid The ZPanel user account ID.
+     * @return array
+     */
+    static function GetUserProfileDetail($uid = "") {
+        global $zdbh;
+        $userdetail = new runtime_dataobject();
+        if ($uid == "") {
+            $uid = ctrl_auth::CurrentUserID();
+        }
+        $rows = $zdbh->prepare("SELECT * FROM x_profiles_detail LEFT JOIN x_accounts ON user_id = ac_id_pk LEFT JOIN x_profiles ON x_accounts.ac_id_pk=x_profiles.ud_user_fk WHERE user_id = :uid");
+        $rows->bindParam(':uid', $uid);
+        $rows->execute();
+        $dbvals = $rows->fetch();
+        $userdetail->addItemValue('firstname', $dbvals['firstname']);
+        $userdetail->addItemValue('lastname', $dbvals['lastname']);
+        $userdetail->addItemValue('street', $dbvals['street']);
+        $userdetail->addItemValue('number', $dbvals['number']);
+        $userdetail->addItemValue('postcode', $dbvals['ud_postcode_vc']);
+        $userdetail->addItemValue('phone', $dbvals['ud_phone_vc']);
+        $userdetail->addItemValue('city', $dbvals['city']);
+        $userdetail->addItemValue('country', $dbvals['country']);
+        $userdetail->addItemValue('email', $dbvals['ac_email_vc']);
+        return $userdetail->getDataObject();
+    }
     /**
      * Returns the current usage of a particular resource.
      * @author Bobby Allen (ballen@bobbyallen.me)

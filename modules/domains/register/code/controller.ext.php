@@ -46,7 +46,8 @@ class module_controller extends ctrl_module
     static $notenough;
     static $tldlist;
     static $proceed;
-    static $test_mode = true;
+    static $test_mode = false;
+    static $disable_credits = true;
 
     /**
      * The 'worker' methods.
@@ -177,46 +178,65 @@ class module_controller extends ctrl_module
     {
         try
         {
+            global $controller;
+            print "reached register api";
             $types = array(
                 Transip_WhoisContact::TYPE_REGISTRANT,
                 Transip_WhoisContact::TYPE_ADMINISTRATIVE,
                 Transip_WhoisContact::TYPE_TECHNICAL
             );
+            $user = ctrl_users::GetUserProfileDetail();
+
 
             $contacts = array();
             foreach($types AS $type)
             {
+                print "foreach";
                 $contact = new Transip_WhoisContact();
                 $contact->type        = $type;
-                $contact->firstName   = '';
-                $contact->lastName    = '';
+                $contact->firstName   = $user['firstname']; //verplicht
+                $contact->lastName    = $user['lastname']; //verplicht 
                 $contact->companyName = '';
                 $contact->companyKvk  = '';
                 $contact->companyType = '';
-                $contact->street      = '';
-                $contact->number      = '';
-               $contact->postalCode  = '';
-                $contact->city        = '';
-                $contact->phoneNumber = '';
+                $contact->street      = $user['street']; //verplicht
+                $contact->number      = $user['number']; //verplicht
+                $contact->postalCode  = $user['postcode'];  
+                $contact->city        = $user['city']; //verplicht
+                $contact->phoneNumber = $user['phone'];
                 $contact->faxNumber   = '';
-               $contact->email       = '';
-                $contact->country     = '';
+                $contact->email       = $user['email']; //verplicht
+                $contact->country     = $user['country']; //verplicht
                 $contacts[] = $contact;
             }
 
-            $dnsEntries[] = new Transip_DnsEntryl('@', 86400,    Transip_DnsEntry::TYPE_A,     '149.210.173.97'); // for now
-            $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_AAAA,  '2a01:7c8:aab4:4a5::1'); // for now
-            $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_MX,    '10 @');
-            $dnsEntries[] = new Transip_DnsEntry('ftp', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
-            $dnsEntries[] = new Transip_DnsEntry('mail', 86400, Transip_DnsEntry::TYPE_CNAME, 'mail.deyron.nl.');
-            $dnsEntries[] = new Transip_DnsEntry('www', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
+            // $dnsEntries[] = new Transip_DnsEntryl('@', 86400,    Transip_DnsEntry::TYPE_A,     '149.210.173.97'); // for now
+            // $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_AAAA,  '2a01:7c8:aab4:4a5::1'); // for now
+            // $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_MX,    '10 @');
+            // $dnsEntries[] = new Transip_DnsEntry('ftp', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
+            // $dnsEntries[] = new Transip_DnsEntry('mail', 86400, Transip_DnsEntry::TYPE_CNAME, 'mail.deyron.nl.');
+            // $dnsEntries[] = new Transip_DnsEntry('www', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
 
-            $domain = new Transip_Domain($domain, $nameservers = null, $contacts, $dnsEntries);
-//            Transip_DomainService::register($reqdomain);
+            /*
+            Array ( [username] => zadmin [userid] => 1 [password] => 4QttfmzYk/mVI1ZEHOFQLhBQUPrDnQO 
+            [email] => zadmin@localhost [resellerid] => 1 [packageid] => 1 [enabled] => 1 
+            [usertheme] => zpanelx [usercss] => default [lastlogon] => 1435433108 [fullname] => 
+            Default Zadmin [packagename] => Administration [usergroup] => Administrators [usergroupid] => 1 
+            [address] => 1 Example Road, Ipswich, Suffolk [postcode] => IP9 2HL [phone] => +44(1473) 000 000 [
+            language] => en [diskquota] => 0 [bandwidthquota] => 0 [domainquota] => -1 [subdomainquota] => -1 
+            [parkeddomainquota] => -1 [ftpaccountsquota] => -1 [mysqlquota] => -1 [mailboxquota] => -1 [
+            forwardersquota] => -1 [distlistsquota] => -1 [catorder] => ) 
+            */
+
+            // $domain = new Transip_Domain($domain, $nameservers = null, $contacts, $dnsEntries);
+            $reqdomain = new Transip_Domain($domain, $nameservers = null, $contacts, null);
+            Transip_DomainService::register($reqdomain);
             return TRUE;
         }
         catch(SoapFault $f)
         {
+            print_r($f);
+            print "\n\n\n";
 	    return FALSE;
         }
     }
@@ -457,12 +477,15 @@ class module_controller extends ctrl_module
         $tld = $formvars['inTld'];
         $object = Transip_DomainService::getTldInfo($tld);
         $amount = $object->price; //test value
-        if(($balance-$amount) >= 0){
-            creditRemover::removeCredit($balance,$amount);
-        }
-        else{
-            self::$notenough = TRUE;
-            return FALSE; // turn off for testing
+        if(!self::$disable_credits)
+        {
+            if(($balance-$amount) >= 0){
+                creditRemover::removeCredit($balance,$amount);
+            }
+            else{
+                self::$notenough = TRUE;
+                return FALSE; // turn off for testing
+            }
         }
         $currentuser = ctrl_users::GetUserDetail();
 
@@ -526,6 +549,10 @@ class module_controller extends ctrl_module
         }
     }
 
+    static function getDebug(){
+        $currentuser = ctrl_users::GetUserDetail();
+        print_r($currentuser);
+    }
     static function getResult()
     {
         if (!fs_director::CheckForEmptyValue(self::$blank)) {
