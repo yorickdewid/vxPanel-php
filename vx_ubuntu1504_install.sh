@@ -153,7 +153,7 @@ cd ../qp_install_cache/
 # Install required software and dependencies required by QPanel.
 # We disable the DPKG prompts before we run the software install to enable fully automated install.
 export DEBIAN_FRONTEND=noninteractive
-apt-get install -y percona-server-server-5.6 percona-server-client-5.6 apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl db5.3-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql
+apt-get install -y percona-server-server-5.6 percona-server-client-5.6 apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-cli php-apc php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl db5.3-util zip webalizer build-essential bash-completion dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common dovecot-managesieved dovecot-lmtpd postfix postfix-mysql libsasl2-modules-sql libsasl2-modules proftpd-mod-mysql
 
 # Generation of random passwords
 password=`passwordgen`;
@@ -348,7 +348,7 @@ php /etc/zpanel/panel/bin/daemon.php
 echo "Cleanup..."
 cd ../
 rm -rf qp_install_cache/
-apt-get autoremove
+apt-get -y autoremove
 
 # Advise the user that QPanel is now installed and accessible.
 echo -e "##############################################################" &>/dev/tty
