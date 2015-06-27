@@ -44,8 +44,8 @@ class module_controller extends ctrl_module
     static $transferimpossible;
     static $noregister;
     static $notenough;
-    static $tldlist;
     static $proceed;
+    static $missingWhoisInfo;
     static $test_mode = false;
     static $disable_credits = true;
 
@@ -71,24 +71,6 @@ class module_controller extends ctrl_module
                 $res = array('nl','be','com');
                 return $res;
             }
-        }
-        catch(SoapFault $f)
-        {
-            return FALSE;
-        }
-        return;
-    }
-
-    static function ListTldPrices()
-    {
-        try
-        {
-            $res = array();
-            $tldlist = Transip_DomainService::getAllTldInfos();
-            foreach ($tldlist as $idx) {
-                $res[$idx->name] = $idx->price;
-            }
-            return $res;
         }
         catch(SoapFault $f)
         {
@@ -187,7 +169,12 @@ class module_controller extends ctrl_module
             );
             $user = ctrl_users::GetUserProfileDetail();
 
-
+            $user['firstname'] = null;
+            if(empty($user['firstname']) || empty($user['lastname']) || empty($user['street']) || empty($user['number']) 
+            || empty($user['postcode']) || empty($user['city']) || empty($user['phone']) || empty($user['email']) || empty($user['country'])){
+                self::$missingWhoisInfo = true;
+                return FALSE;
+            }   
             $contacts = array();
             foreach($types AS $type)
             {
@@ -584,6 +571,9 @@ class module_controller extends ctrl_module
         }
         if (!fs_director::CheckForEmptyValue(self::$writeerror)) {
             return ui_sysmessage::shout(ui_language::translate("There was a problem writting to the virtual host container file. Please contact your administrator and report this error. Your domain will not function until this error is corrected."), "zannounceerror");
+        }
+        if (!fs_director::CheckForEmptyValue(self::$missingWhoisInfo)) {
+            return ui_sysmessage::shout(ui_language::translate("Missing Whois information,registration cannot continue. You can add missing details under your account."), "zannounceerror");
         }
         if (!fs_director::CheckForEmptyValue(self::$noregister)) {
             return ui_sysmessage::shout(ui_language::translate("The domain could not be registered"), "zannounceerror");
