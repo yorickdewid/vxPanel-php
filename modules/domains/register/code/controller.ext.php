@@ -232,8 +232,10 @@ class module_controller extends ctrl_module
         }
         catch(SoapFault $f)
         {
-            print $f->faultstring;
-            print "\n\n\n";
+            if($f->faultcode == 101)
+            {
+                return TRUE;
+            }
 	    return FALSE;
         }
     }
