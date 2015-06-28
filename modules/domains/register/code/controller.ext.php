@@ -196,57 +196,75 @@ class module_controller extends ctrl_module
                 $contacts[] = $contact;
             }
 
-
-            $dnsEntries[] = new Transip_DnsEntry('@',86500,Transip_DnsEntry::TYPE_A,$ipaddress);
-            // $dnsEntries[] = new Transip_DnsEntryl('@', 86400,   Transip_DnsEntry::TYPE_A,     '149.210.173.97'); // for now
-            // $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_MX,    '10 @');
-            // $dnsEntries[] = new Transip_DnsEntry('ftp', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
-            // $dnsEntries[] = new Transip_DnsEntry('mail', 86400, Transip_DnsEntry::TYPE_CNAME, 'mail.deyron.nl.');
-            // $dnsEntries[] = new Transip_DnsEntry('www', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
-            // a record
-            // aaaa record
-            // mx record
-            // txt record
-            /*
-            Array ( [username] => zadmin [userid] => 1 [password] => 4QttfmzYk/mVI1ZEHOFQLhBQUPrDnQO 
-            [email] => zadmin@localhost [resellerid] => 1 [packageid] => 1 [enabled] => 1 
-            [usertheme] => zpanelx [usercss] => default [lastlogon] => 1435433108 [fullname] => 
-            Default Zadmin [packagename] => Administration [usergroup] => Administrators [usergroupid] => 1 
-            [address] => 1 Example Road, Ipswich, Suffolk [postcode] => IP9 2HL [phone] => +44(1473) 000 000 [
-            language] => en [diskquota] => 0 [bandwidthquota] => 0 [domainquota] => -1 [subdomainquota] => -1 
-            [parkeddomainquota] => -1 [ftpaccountsquota] => -1 [mysqlquota] => -1 [mailboxquota] => -1 [
-            forwardersquota] => -1 [distlistsquota] => -1 [catorder] => ) 
-            */
-
-            // $domain = new Transip_Domain($domain, $nameservers = null, $contacts, $dnsEntries);
-            $reqdomain = new Transip_Domain($domain, $nameservers = null, $contacts, null);
-            //Transip_DomainService::register($reqdomain);
+            $arDNS = self::getDefaultDNS();
+            $count = 0;
+            foreach($arDNS as $dns)
+            {
+                $data = '';
+                switch($dns['type']){
+                case Transip_DnsEntry::TYPE_A:
+                    $data = self::getIPV4Address();
+                    break;
+                case Transip_DnsEntry::TYPE_AAAA:
+                    break;
+                case Transip_DnsEntry::TYPE_CNAME:
+                    $data = '@';
+                    break;
+                case Transip_DnsEntry::TYPE_MX:
+                    $data = $dns['prio'].' mail.'.$domain.'.';
+                    break;
+                case Transip_DnsEntry::TYPE_NS:
+                    $count++;
+                    $data = 'ns'.$count.'.'.$domain;
+                    break;
+                case Transip_DnsEntry::TYPE_TXT:
+                    break;
+                case Transip_DnsEntry::TYPE_SRV:
+                    break;
+                default:
+                    return;
+                }
+                $dnsEntries[] = new Transip_DnsEntry($dns['name'],$dns['ttl'],strtoupper($dns['type']),$data);
+            }
+            $reqdomain = new Transip_Domain($domain, $nameservers = null, $contacts,$dnsEntries);
+            Transip_DomainService::register($reqdomain);
             return TRUE;
         }
         catch(SoapFault $f)
         {
-            print_r($f);
+            print $f->faultstring;
             print "\n\n\n";
 	    return FALSE;
         }
     }
 
-    static function getDefaultDns($type){
+   function getDefaultDNS(){
         global $zdbh;
-        $sql = "SELECT * FROM x_dns_create WHERE dc_ac_fk = 0";
+        $sql = "SELECT * FROM x_dns_create WHERE dc_acc_fk = 0";
         $numrows = $zdbh->prepare($sql);
-        $numrows->bindParam(':type', $type);
         $numrows->execute();
 
-        $returnResult = array();
-        if(isset($result)){
-            self::$hasWallet = true;
-            foreach($result as $res)
-            {
-                $returnResult = $res['dc_type_vc'];
-            }     
+        $result = array();
+        while($row = $numrows->fetch(PDO::FETCH_ASSOC)){
+            $result[] = array('type' => $row['dc_type_vc'],
+                'name' => $row['dc_host_vc'],
+                'ttl' => $row['dc_ttl_in'],
+                'prio' => $row['dc_priority_in'],
+                'target' => $row['dc_target_vc']);
         }
-        return $returnResult;
+        return $result;
+    }
+
+    function getIPV4Address(){
+        global $zdbh;
+        $sql = "SELECT so_value_tx FROM x_settings WHERE so_id_pk = 21";
+        $numrows = $zdbh->prepare($sql);
+        $numrows->execute();
+        $result = null;
+          while($row = $numrows->fetch(PDO::FETCH_ASSOC)){
+            $result = $row['so_value_tx'];
+        }
+        return $result;
     }
 
     static function ExecuteAddDomain($uid, $domain, $destination, $autohome, $status)
