@@ -169,7 +169,6 @@ class module_controller extends ctrl_module
             );
             $user = ctrl_users::GetUserProfileDetail();
 
-            $user['firstname'] = null;
             if(empty($user['firstname']) || empty($user['lastname']) || empty($user['street']) || empty($user['number']) 
             || empty($user['postcode']) || empty($user['city']) || empty($user['phone']) || empty($user['email']) || empty($user['country'])){
                 self::$missingWhoisInfo = true;
@@ -197,13 +196,17 @@ class module_controller extends ctrl_module
                 $contacts[] = $contact;
             }
 
-            // $dnsEntries[] = new Transip_DnsEntryl('@', 86400,    Transip_DnsEntry::TYPE_A,     '149.210.173.97'); // for now
-            // $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_AAAA,  '2a01:7c8:aab4:4a5::1'); // for now
+
+            $dnsEntries[] = new Transip_DnsEntry('@',86500,Transip_DnsEntry::TYPE_A,$ipaddress);
+            // $dnsEntries[] = new Transip_DnsEntryl('@', 86400,   Transip_DnsEntry::TYPE_A,     '149.210.173.97'); // for now
             // $dnsEntries[] = new Transip_DnsEntry('@', 86400,    Transip_DnsEntry::TYPE_MX,    '10 @');
             // $dnsEntries[] = new Transip_DnsEntry('ftp', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
             // $dnsEntries[] = new Transip_DnsEntry('mail', 86400, Transip_DnsEntry::TYPE_CNAME, 'mail.deyron.nl.');
             // $dnsEntries[] = new Transip_DnsEntry('www', 86400,  Transip_DnsEntry::TYPE_CNAME, '@');
-
+            // a record
+            // aaaa record
+            // mx record
+            // txt record
             /*
             Array ( [username] => zadmin [userid] => 1 [password] => 4QttfmzYk/mVI1ZEHOFQLhBQUPrDnQO 
             [email] => zadmin@localhost [resellerid] => 1 [packageid] => 1 [enabled] => 1 
@@ -217,7 +220,7 @@ class module_controller extends ctrl_module
 
             // $domain = new Transip_Domain($domain, $nameservers = null, $contacts, $dnsEntries);
             $reqdomain = new Transip_Domain($domain, $nameservers = null, $contacts, null);
-            Transip_DomainService::register($reqdomain);
+            //Transip_DomainService::register($reqdomain);
             return TRUE;
         }
         catch(SoapFault $f)
@@ -226,6 +229,24 @@ class module_controller extends ctrl_module
             print "\n\n\n";
 	    return FALSE;
         }
+    }
+
+    static function getDefaultDns($type){
+        global $zdbh;
+        $sql = "SELECT * FROM x_dns_create WHERE dc_ac_fk = 0";
+        $numrows = $zdbh->prepare($sql);
+        $numrows->bindParam(':type', $type);
+        $numrows->execute();
+
+        $returnResult = array();
+        if(isset($result)){
+            self::$hasWallet = true;
+            foreach($result as $res)
+            {
+                $returnResult = $res['dc_type_vc'];
+            }     
+        }
+        return $returnResult;
     }
 
     static function ExecuteAddDomain($uid, $domain, $destination, $autohome, $status)
