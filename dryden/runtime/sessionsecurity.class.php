@@ -50,7 +50,7 @@ class runtime_sessionsecurity {
     static public function destroyCurrentSession(){
         $_SESSION['zpuid'] = null;
         unset($_COOKIE['zUserSaltCookie']);
-        session_destroy();
+        //session_destroy();
         return true;
     }
     
