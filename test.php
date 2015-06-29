@@ -35,9 +35,33 @@ class test
 		}
 		return $result;
 	}
+
+	function getvhost()
+	{		$host = 'localhost';
+		$dbname = 'zpanel_core';
+		$user = 'root';
+		$pass = 'ETOlwGQxhrGV8rp6';
+		print "noooo\n";
+		$domain = 'ariekaas.nl';
+		$zdbh = new db_driver("mysql:host=$host;dbname=$dbname", $user, $pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+		$zdbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		     $numrows = $zdbh->prepare('SELECT vh_id_pk,vh_acc_fk FROM x_vhosts WHERE vh_name_vc = :domainname AND vh_type_in !=2 AND vh_deleted_ts IS NULL');
+            $numrows->bindParam(':domainname', $domain);
+            $numrows->execute();
+            print "after execute";
+            while($row = $numrows->fetch(PDO::FETCH_ASSOC)){
+            	 print $numrows->rowCount();
+            	print_r($numrows);
+            	print_r($result);
+            	$vhostPK = $result['vh_id_pk'];
+            	$userId = $result['vh_acc_fk'];
+            	print "kaas";
+            }
+	}
 }
 
-test::getDefaultDns();
+//test::getDefaultDns();
+test::getvhost();
 //test::getDomains();
 
 ?>

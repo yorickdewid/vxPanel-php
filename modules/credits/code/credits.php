@@ -61,6 +61,10 @@ class credits{
         }
     }
 
+    private static function getWalletId(){
+        
+    }
+
     /**
      * Should be executed just after user registration?
      * @return [type] [description]
