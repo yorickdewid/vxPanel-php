@@ -24,6 +24,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+require_once(__DIR__.'/../../../etc/lib/api/transip/DomainService.php');
+require_once(__DIR__.'/../../../etc/lib/api/transip/DnsEntry.php');
+
 class module_controller extends ctrl_module
 {
 
@@ -790,7 +793,67 @@ class module_controller extends ctrl_module
                 $id++;
             }
         }
+        echo $domainName;
+        self::setRemoteDNSRecords($domainName);
         return;
+    }
+
+
+    static function setRemoteDNSRecords($domain)
+    {   
+        try{
+        global $zdbh;
+        global $controller;
+        $currentuser = ctrl_users::GetUserDetail();
+        $userid = $currentuser['userid'];
+        echo 'user' . $userid;
+        $numrows = $zdbh->prepare('SELECT * FROM x_dns WHERE dn_name_vc = :domainname AND dn_acc_fk = :user AND dn_deleted_ts IS NULL');
+        $numrows->bindParam(':domainname', $domain);
+        $numrows->bindParam(':user', $userid);
+        $numrows->execute();
+        while($row = $numrows->fetch(PDO::FETCH_ASSOC)){
+                //$row['dn_type_vc'] //type
+                // $row['dn_host_vc']; //name
+                // $row['dn_ttl_in']; // expire
+                //  //content
+                // $row['dn_texttarget_tx']; //content
+                // $row['dn_priority_in']; //content
+                // $row['dn_port_in']; //content
+                // $row['dn_weight_in']; //content
+            $content = '';
+            switch($row['dn_type_vc']){
+                case Transip_DnsEntry::TYPE_A:
+                $content = $row['dn_target_vc'];
+                break;
+                case Transip_DnsEntry::TYPE_AAAA:
+                $content = $row['dn_target_vc'];
+                break;
+                case Transip_DnsEntry::TYPE_CNAME:
+                $content = $row['dn_target_vc'];
+                break;
+                case Transip_DnsEntry::TYPE_MX:
+                $content = $row['dn_priority_in'].' '.$row['dn_target_vc'].'.';
+                break;
+                case Transip_DnsEntry::TYPE_NS:
+                $content = $row['dn_target_vc'];
+                break;
+                case Transip_DnsEntry::TYPE_TXT:
+                $content = $row['dn_target_vc'];
+                break;
+                case Transip_DnsEntry::TYPE_SRV:
+                $content = $row['dn_priority_in'].' '.$row['dn_weight_in'].' '.$row['dn_port_in'].' '.$row['dn_target_vc'];
+                break;
+                default:
+                return;
+            }
+            $dnsEntries[] = new Transip_DnsEntry($row['dn_host_vc'],$row['dn_ttl_in'],strtoupper($row['dn_type_vc']),$content);
+        }
+        Transip_DomainService::setDnsEntries($domain,$dnsEntries);
+        }
+        catch(SoapFault $f)
+        {
+            return FALSE;
+        }
     }
 
     //Use the same method as above and check for input errors doSaveDNS() uses before continuing.
