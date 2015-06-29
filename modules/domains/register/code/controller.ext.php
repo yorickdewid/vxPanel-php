@@ -48,6 +48,7 @@ class module_controller extends ctrl_module
     static $missingWhoisInfo;
     static $test_mode = false;
     static $disable_credits = true;
+    static $dnsDB = null;
 
     /**
      * The 'worker' methods.
@@ -58,14 +59,13 @@ class module_controller extends ctrl_module
         {
             if(!self::$test_mode)
             {
-            $res = array();
-            $tldlist = Transip_DomainService::getAllTldInfos();
-            print_r($tldlist);
-            foreach ($tldlist as $idx) {
+                $res = array();
+                $tldlist = Transip_DomainService::getAllTldInfos();
+                foreach ($tldlist as $idx) {
                     array_push($res, $idx->name);
                 }
-            
-            return $res;
+
+                return $res;
             }
             else{
                 $res = array('nl','be','com');
@@ -133,20 +133,20 @@ class module_controller extends ctrl_module
             switch($availability)
             {
                 case Transip_DomainService::AVAILABILITY_INYOURACCOUNT:
-                    self::$unavailable = TRUE;
-                    break;
+                self::$unavailable = TRUE;
+                break;
 
                 case Transip_DomainService::AVAILABILITY_UNAVAILABLE:
-                    self::$notransfer = TRUE;
-                    break;
+                self::$notransfer = TRUE;
+                break;
 
                 case Transip_DomainService::AVAILABILITY_FREE:
-                    $ok = TRUE;
-                    break;
+                $ok = TRUE;
+                break;
 
                 case Transip_DomainService::AVAILABILITY_NOTFREE:
-                    self::$transferimpossible = TRUE;
-                    break;
+                self::$transferimpossible = TRUE;
+                break;
             }
             return $ok;
         }
@@ -161,25 +161,24 @@ class module_controller extends ctrl_module
         try
         {
             global $controller;
-            print "reached register api";
             $types = array(
                 Transip_WhoisContact::TYPE_REGISTRANT,
                 Transip_WhoisContact::TYPE_ADMINISTRATIVE,
                 Transip_WhoisContact::TYPE_TECHNICAL
-            );
+                );
             $user = ctrl_users::GetUserProfileDetail();
 
             if(empty($user['firstname']) || empty($user['lastname']) || empty($user['street']) || empty($user['number']) 
-            || empty($user['postcode']) || empty($user['city']) || empty($user['phone']) || empty($user['email']) || empty($user['country'])){
+                || empty($user['postcode']) || empty($user['city']) || empty($user['phone']) || empty($user['email']) || empty($user['country'])){
                 self::$missingWhoisInfo = true;
-                return FALSE;
-            }   
-            $contacts = array();
-            foreach($types AS $type)
-            {
-                print "foreach";
-                $contact = new Transip_WhoisContact();
-                $contact->type        = $type;
+            return FALSE;
+        }  
+        $dnsEntries = array(); 
+        $contacts = array();
+        foreach($types AS $type)
+        {
+            $contact = new Transip_WhoisContact();
+            $contact->type        = $type;
                 $contact->firstName   = $user['firstname']; //verplicht
                 $contact->lastName    = $user['lastname']; //verplicht 
                 $contact->companyName = '';
@@ -198,49 +197,94 @@ class module_controller extends ctrl_module
 
             $arDNS = self::getDefaultDNS();
             $count = 0;
-            foreach($arDNS as $dns)
+            foreach($arDNS as $key => $dns)
             {
                 $data = '';
                 switch($dns['type']){
-                case Transip_DnsEntry::TYPE_A:
+                    case Transip_DnsEntry::TYPE_A:
                     $data = self::getIPV4Address();
                     break;
-                case Transip_DnsEntry::TYPE_AAAA:
+                    case Transip_DnsEntry::TYPE_AAAA:
                     break;
-                case Transip_DnsEntry::TYPE_CNAME:
+                    case Transip_DnsEntry::TYPE_CNAME:
                     $data = '@';
                     break;
-                case Transip_DnsEntry::TYPE_MX:
+                    case Transip_DnsEntry::TYPE_MX:
                     $data = $dns['prio'].' mail.'.$domain.'.';
                     break;
-                case Transip_DnsEntry::TYPE_NS:
+                    case Transip_DnsEntry::TYPE_NS:
                     $count++;
                     $data = 'ns'.$count.'.'.$domain;
                     break;
-                case Transip_DnsEntry::TYPE_TXT:
+                    case Transip_DnsEntry::TYPE_TXT:
                     break;
-                case Transip_DnsEntry::TYPE_SRV:
+                    case Transip_DnsEntry::TYPE_SRV:
                     break;
-                default:
+                    default:
                     return;
                 }
                 $dnsEntries[] = new Transip_DnsEntry($dns['name'],$dns['ttl'],strtoupper($dns['type']),$data);
             }
             $reqdomain = new Transip_Domain($domain, $nameservers = null, $contacts,$dnsEntries);
             Transip_DomainService::register($reqdomain);
+            self::$dnsDB = $dnsEntries;
             return TRUE;
         }
         catch(SoapFault $f)
         {
             if($f->faultcode == 101)
             {
+                self::$dnsDB = $dnsEntries;
                 return TRUE;
             }
-	    return FALSE;
+            return FALSE;
         }
     }
 
-   function getDefaultDNS(){
+    function saveDNSToDB($domain,array $dnsEntries){
+        try{
+            global $zdbh;
+
+            $numrows = $zdbh->prepare('SELECT vh_id_pk,vh_acc_fk FROM x_vhosts WHERE vh_name_vc = :domainname AND vh_type_in !=2 AND vh_deleted_ts IS NULL');
+            $numrows->bindParam(':domainname', $domain);
+            $numrows->execute();
+            $result = $numrows->fetch(PDO::FETCH_ASSOC);
+            $vhostPK = $result['vh_id_pk'];
+            $userId = $result['vh_acc_fk'];
+            foreach($dnsEntries as $entry)
+            {
+                $sql = "INSERT INTO x_dns set `dn_acc_fk` = :userid, `dn_name_vc` = :domainname, `dn_vhost_fk` = :vhost_fk, `dn_type_vc` = :type, `dn_host_vc` = :name, `dn_ttl_in` = :ttl, `dn_target_vc` = :target, `dn_priority_in` = :prio,`dn_port_in` = :port,`dn_weight_in` = :weight, `dn_created_ts` = :creattime";
+                $prepared = $zdbh->prepare($sql);
+                $prepared->bindValue(':userid', $userId);
+                $prepared->bindValue(':domainname', $domain);
+                $prepared->bindValue(':vhost_fk', $vhostPK);
+                $prepared->bindValue(':type', $entry->type);
+                $prepared->bindValue(':name', $entry->name);
+                $prepared->bindValue(':ttl', $entry->expire);
+                $prepared->bindValue(':port', 0);
+                $prepared->bindValue(':weight', 0);
+                $prepared->bindValue(':createtime', time());
+                if($entry->type == Transip_DnsEntry::TYPE_MX)
+                {
+                    $strings = explode(" ",$entry->content);
+                    $prepared->bindValue(':target', $strings[1]);
+                    $prepared->bindValue(':prio', $strings[0]);
+                }
+                else{
+                    $prepared->bindValue(':target', $entry->content);
+                    $prepared->bindValue(':prio', '0');
+                }
+                $prepared->execute();
+            }
+        }
+        catch(Exception $e)
+        {
+            throw $e;
+        }   
+        return TRUE;
+    }
+
+    function getDefaultDNS(){
         global $zdbh;
         $sql = "SELECT * FROM x_dns_create WHERE dc_acc_fk = 0";
         $numrows = $zdbh->prepare($sql);
@@ -263,7 +307,7 @@ class module_controller extends ctrl_module
         $numrows = $zdbh->prepare($sql);
         $numrows->execute();
         $result = null;
-          while($row = $numrows->fetch(PDO::FETCH_ASSOC)){
+        while($row = $numrows->fetch(PDO::FETCH_ASSOC)){
             $result = $row['so_value_tx'];
         }
         return $result;
@@ -286,37 +330,37 @@ class module_controller extends ctrl_module
             // Do we need to activate the domain //
             if ($status == 1) {
             //** New Home Directory **//
-            if ($autohome == 1) {
-                $destination = "/" . str_replace(".", "_", $domain);
-                $vhost_path = ctrl_options::GetSystemOption('hosted_dir') . $currentuser['username'] . "/public_html/" . $destination . "/";
-                fs_director::CreateDirectory($vhost_path);
-                fs_director::SetFileSystemPermissions($vhost_path, 0777);
+                if ($autohome == 1) {
+                    $destination = "/" . str_replace(".", "_", $domain);
+                    $vhost_path = ctrl_options::GetSystemOption('hosted_dir') . $currentuser['username'] . "/public_html/" . $destination . "/";
+                    fs_director::CreateDirectory($vhost_path);
+                    fs_director::SetFileSystemPermissions($vhost_path, 0777);
                 //** Existing Home Directory **//
-            } else {
-                $destination = "/" . $destination;
-                $vhost_path = ctrl_options::GetSystemOption('hosted_dir') . $currentuser['username'] . "/public_html/" . $destination . "/";
-            }
+                } else {
+                    $destination = "/" . $destination;
+                    $vhost_path = ctrl_options::GetSystemOption('hosted_dir') . $currentuser['username'] . "/public_html/" . $destination . "/";
+                }
             // Error documents:- Error pages are added automatically if they are found in the _errorpages directory
             // and if they are a valid error code, and saved in the proper format, i.e. <error_number>.html
-            fs_director::CreateDirectory($vhost_path . "/_errorpages/");
-            $errorpages = ctrl_options::GetSystemOption('static_dir') . "/errorpages/";
-            if (is_dir($errorpages)) {
-                if ($handle = @opendir($errorpages)) {
-                    while (($file = @readdir($handle)) !== false) {
-                        if ($file != "." && $file != "..") {
-                            $page = explode(".", $file);
-                            if (!fs_director::CheckForEmptyValue(self::CheckErrorDocument($page[0]))) {
-                                fs_filehandler::CopyFile($errorpages . $file, $vhost_path . '/_errorpages/' . $file);
+                fs_director::CreateDirectory($vhost_path . "/_errorpages/");
+                $errorpages = ctrl_options::GetSystemOption('static_dir') . "/errorpages/";
+                if (is_dir($errorpages)) {
+                    if ($handle = @opendir($errorpages)) {
+                        while (($file = @readdir($handle)) !== false) {
+                            if ($file != "." && $file != "..") {
+                                $page = explode(".", $file);
+                                if (!fs_director::CheckForEmptyValue(self::CheckErrorDocument($page[0]))) {
+                                    fs_filehandler::CopyFile($errorpages . $file, $vhost_path . '/_errorpages/' . $file);
+                                }
                             }
                         }
+                        closedir($handle);
                     }
-                    closedir($handle);
                 }
-            }
             // Lets copy the default welcome page across...
-            if ((!file_exists($vhost_path . "/index.html")) && (!file_exists($vhost_path . "/index.php")) && (!file_exists($vhost_path . "/index.htm"))) {
-                fs_filehandler::CopyFileSafe(ctrl_options::GetSystemOption('static_dir') . "pages/welcome.html", $vhost_path . "/index.html");
-            }
+                if ((!file_exists($vhost_path . "/index.html")) && (!file_exists($vhost_path . "/index.php")) && (!file_exists($vhost_path . "/index.htm"))) {
+                    fs_filehandler::CopyFileSafe(ctrl_options::GetSystemOption('static_dir') . "pages/welcome.html", $vhost_path . "/index.html");
+                }
             }else{
                 $destination = "";
                 $domaintype = 3;
@@ -325,15 +369,15 @@ class module_controller extends ctrl_module
             //$addr6 = self::AllocIPv6Addr();
             // If all has gone well we need to now create the domain in the database...
             $sql = $zdbh->prepare("INSERT INTO x_vhosts (vh_acc_fk,
-														 vh_name_vc,
-														 vh_directory_vc,
-														 vh_type_in,
-														 vh_created_ts) VALUES (
-														 :userid,
-														 :domain,
-														 :destination,
-														 :type,
-														 :time)");
+             vh_name_vc,
+             vh_directory_vc,
+             vh_type_in,
+             vh_created_ts) VALUES (
+             :userid,
+             :domain,
+             :destination,
+             :type,
+             :time)");
 														 //:addr6)"); //CLEANER FUNCTION ON $domain and $homedirectory_to_use (Think I got it?)
                                                          // //vh_ipv6_fk) VALUES (
             $time = time();
@@ -346,6 +390,7 @@ class module_controller extends ctrl_module
             $sql->execute();
             self::SetWriteApacheConfigTrue();
             $retval = TRUE;
+            self::saveDNSToDB($domain,self::$dnsDB);
             runtime_hook::Execute('OnAfterAddDomain');
             return $retval;
         }
@@ -457,8 +502,8 @@ class module_controller extends ctrl_module
     {
         global $zdbh;
         $sql = $zdbh->prepare("UPDATE x_settings
-								SET so_value_tx='true'
-								WHERE so_name_vc='apache_changed'");
+            SET so_value_tx='true'
+            WHERE so_name_vc='apache_changed'");
         $sql->execute();
     }
 
@@ -493,7 +538,7 @@ class module_controller extends ctrl_module
     {
         $currentuser = ctrl_users::GetUserDetail();
         return ($currentuser['domainquota'] < 0) or //-1 = unlimited
-                ($currentuser['domainquota'] > ctrl_users::GetQuotaUsages('domains', $currentuser['userid']));
+        ($currentuser['domainquota'] > ctrl_users::GetQuotaUsages('domains', $currentuser['userid']));
     }
 
     static function doCreateDomain($price = null)
@@ -557,9 +602,9 @@ class module_controller extends ctrl_module
             $used = ctrl_users::GetQuotaUsages('domains', $currentuser['userid']);
             $free = max($maximum - $used, 0);
             return '<img src="etc/lib/pChart2/zpanel/z3DPie.php?score=' . $free . '::' . $used
-                    . '&labels=Free: ' . $free . '::Used: ' . $used
-                    . '&legendfont=verdana&legendfontsize=8&imagesize=240::190&chartsize=120::90&radius=100&legendsize=150::160"'
-                    . ' alt="' . ui_language::translate('Pie chart') . '"/>';
+            . '&labels=Free: ' . $free . '::Used: ' . $used
+            . '&legendfont=verdana&legendfontsize=8&imagesize=240::190&chartsize=120::90&radius=100&legendsize=150::160"'
+            . ' alt="' . ui_language::translate('Pie chart') . '"/>';
         }
     }
 
@@ -568,12 +613,12 @@ class module_controller extends ctrl_module
         global $controller;
         if ($int == 1) {
             return '<td><font color="green">' . ui_language::translate('Live') . '</font></td>'
-                    . '<td></td>';
+            . '<td></td>';
         } else {
             return '<td><font color="orange">' . ui_language::translate('Pending') . '</font></td>'
-                    . '<td><a href="#" class="help_small" id="help_small_' . $id . '_a"'
-                    . 'title="' . ui_language::translate('Your domain will become active at the next scheduled update.  This can take up to one hour.') . '">'
-                    . '<img src="/modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/help_small.png" border="0" /></a>';
+            . '<td><a href="#" class="help_small" id="help_small_' . $id . '_a"'
+            . 'title="' . ui_language::translate('Your domain will become active at the next scheduled update.  This can take up to one hour.') . '">'
+            . '<img src="/modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/help_small.png" border="0" /></a>';
         }
     }
 
