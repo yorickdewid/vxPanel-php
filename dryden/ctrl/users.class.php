@@ -81,7 +81,7 @@ class ctrl_users {
         if ($uid == "") {
             $uid = ctrl_auth::CurrentUserID();
         }
-        $rows = $zdbh->prepare("SELECT * FROM x_profiles_detail LEFT JOIN x_accounts ON user_id = ac_id_pk LEFT JOIN x_profiles ON x_accounts.ac_id_pk=x_profiles.ud_user_fk WHERE user_id = :uid");
+        $rows = $zdbh->prepare("SELECT * FROM x_profiles_detail LEFT JOIN x_accounts ON user_id = ac_id_pk WHERE user_id = :uid");
         $rows->bindParam(':uid', $uid);
         $rows->execute();
         $dbvals = $rows->fetch();
@@ -89,11 +89,15 @@ class ctrl_users {
         $userdetail->addItemValue('lastname', $dbvals['lastname']);
         $userdetail->addItemValue('street', $dbvals['street']);
         $userdetail->addItemValue('number', $dbvals['number']);
-        $userdetail->addItemValue('postcode', $dbvals['ud_postcode_vc']);
-        $userdetail->addItemValue('phone', $dbvals['ud_phone_vc']);
+        $userdetail->addItemValue('postcode', $dbvals['postcode']);
+        $userdetail->addItemValue('phone', $dbvals['phone']);
         $userdetail->addItemValue('city', $dbvals['city']);
         $userdetail->addItemValue('country', $dbvals['country']);
-        $userdetail->addItemValue('email', $dbvals['ac_email_vc']);
+        $userdetail->addItemValue('email', $dbvals['email']);
+        $userdetail->addItemValue('companyname', $dbvals['company_name']);
+        $userdetail->addItemValue('companykvk', $dbvals['company_kvk']);
+        $userdetail->addItemValue('companytype', $dbvals['company_type']);
+        $userdetail->addItemValue('fax', $dbvals['faxnumber']);
         return $userdetail->getDataObject();
     }
     /**

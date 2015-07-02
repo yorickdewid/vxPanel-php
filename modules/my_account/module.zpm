@@ -60,32 +60,37 @@
             </table>
             </form>
             <form action="./?module=my_account&action=UpdateWhoisInformation" method="post">
-            <p>This information is used for WHOIS on your domain(s).</p>
+            <p>This information is used for setting the default WHOIS on registering a domain.</p>
+            <p>The Whois information be altered in the Manage Whois Module later when the domain has finished registration.</p>
             <table class="table table-striped">
                 <% loop WhoisInfo %>
                 <% endloop %>
                 <tr>
-                    <th><: First Name :>:</th>
+                    <th>*<: First Name :>:</th>
                     <td><input name="inFirstName" type="text" id="inFirstName" size="40" value="<& firstname &>" /></td>
                 </tr>
                 <tr>
-                    <th><: Last Name :>:</th>
+                    <th>*<: Last Name :>:</th>
                     <td><input name="inLastName" type="text" id="inLastName" size="40" value="<& lastname &>" /></td>
                 </tr>
                 <tr>
-                    <th><: Street :>:</th>
+                    <th>*<: Street :>:</th>
                     <td><input name="inStreet" type="text" id="inStreet" size="20" value="<& street &>" /></td>
                 </tr>
                 <tr>
-                    <th><: Number :>:</th>
+                    <th>*<: Number :>:</th>
                     <td><input name="inNumber" id="inNumber" cols="45" rows="5" value="<& number &>"/></td>
                 </tr>
                 <tr>
-                    <th><: City :>:</th>
+                    <th>*<: City :>:</th>
                     <td><input name="inCity" type="text" id="inCity" size="15" value="<& city &>" /></td>
                 </tr>
                 <tr>
-                    <th><: Choose Country :>:</th>
+                    <th>*<: Postal Code :>:</th>
+                    <td><input name="inPostalCode" type="text" id="inPostalCode" size="15" value="<& postcode &>" /></td>
+                </tr>
+                 <tr>
+                    <th>*<: Choose Country :>:</th>
                     <td>
                         <select name="inCountry" id="inCountry" style="">
 
@@ -96,10 +101,36 @@
                         </select>
                     </td>
                 </tr>
+                <% loop WhoisInfo %>
+                <% endloop %>
+                <tr>
+                    <th>*<: Phone Number :>:</th>
+                    <td><input name="inPhone" type="text" id="inPhone" size="20" value="<& phone2 &>" /></td>
+                </tr>
+                <tr>
+                    <th>*<: Email Address :>:</th>
+                    <td><input name="inEmail" type="text" id="inEmail" size="40" value="<& email2 &>" /></td>
+                </tr>
+               <tr>
+                    <th><: Company Name :>:</th>
+                    <td><input name="inCompanyName" type="text" id="inCompanyName" size="40" value="<& companyname &>" /></td>
+                </tr>
+                <tr>
+                    <th><: Company KVK :>:</th>
+                    <td><input name="inCompanyKVK" type="text" id="inCompanyKVK" size="40" value="<& companykvk &>" /></td>
+                </tr>
+                <tr>
+                    <th><: Company Type :>:</th>
+                    <td><input name="inCompanyType" type="text" id="inCompanyType" size="40" value="<& companytype &>" /></td>
+                </tr>
+                <tr>
+                    <th><: Fax Number :>:</th>
+                    <td><input name="inFax" type="text" id="inFax" size="40" value="<& fax &>" /></td>
+                </tr>
             </tr>
             <tr>
                 <th>&nbsp;</th>
-                <td align="right"><@ CSFR_Tag @><button class="button-loader btn btn-primary" id="button" type="submit" ><: Update Account :></button</td>
+                <td align="right"><@ CSFR_Tag @><button class="button-loader btn btn-primary" id="button" type="submit" ><: Update Whois :></button</td>
             </tr>
         </table>
     </form>
