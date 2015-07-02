@@ -52,7 +52,15 @@ class module_controller extends ctrl_module
             'street' => runtime_xss::xssClean($currentuser['street']),
             'number' => runtime_xss::xssClean($currentuser['number']),
             'city' => runtime_xss::xssClean($currentuser['city']),
-            'country' => runtime_xss::xssClean($currentuser['country'])));
+            'postcode' => runtime_xss::xssClean($currentuser['postcode']),
+            'phone2' => runtime_xss::xssClean($currentuser['phone']),
+            'email2' => runtime_xss::xssClean($currentuser['email']),
+            'country' => runtime_xss::xssClean($currentuser['country']),
+            'companyname' => runtime_xss::xssClean($currentuser['companyname']),
+            'companykvk' => runtime_xss::xssClean($currentuser['companykvk']),
+            'companytype' => runtime_xss::xssClean($currentuser['companytype']),
+            'fax' => runtime_xss::xssClean($currentuser['fax'])));
+        print_r($currentuser);
         return $res;
     }
 
@@ -325,7 +333,7 @@ class module_controller extends ctrl_module
         $currentuser = ctrl_users::GetUserProfileDetail();
         $res = array();
         foreach ($countryList as $short => $country) {
-            if(strtolower($short) == $currentuser['country']) {
+            if(strtolower($short) == strtolower($currentuser['country'])) {
                  $selected = "SELECTED";
             } else {
                 $selected = "";
@@ -347,29 +355,88 @@ static function doUpdateWhoisInformation()
     $street = $controller->GetControllerRequest('FORM', 'inStreet');
     $number = $controller->GetControllerRequest('FORM', 'inNumber');
     $city = $controller->GetControllerRequest('FORM', 'inCity');
+    $postcode = $controller->GetControllerRequest('FORM', 'inPostalCode');
     $country = $controller->GetControllerRequest('FORM', 'inCountry');
-
-    if (!fs_director::CheckForEmptyValue(self::ExecuteUpdateWhoisInformation($userid, $firstname, $lastname, $street, $number, $city, $country))) {
+    $phone = $controller->GetControllerRequest('FORM', 'inPhone');
+    $email = $controller->GetControllerRequest('FORM', 'inEmail');
+    $companyname = $controller->GetControllerRequest('FORM', 'inCompanyName');
+    $companykvk = $controller->GetControllerRequest('FORM', 'inCompanyKVK');
+    $companytype = $controller->GetControllerRequest('FORM', 'inCompanyType');
+    $fax = $controller->GetControllerRequest('FORM', 'inFax');
+    $object = new stdClass();
+    $object->userid = $userid;
+    $object->firstname = $firstname;
+    $object->lastname = $lastname;
+    $object->street = $street;
+    $object->number = $number;
+    $object->city = $city;
+    $object->postcode = $postcode;
+    $object->country = $country;
+    $object->phone = $phone;
+    $object->email = $email;
+    $object->companyname = ($companyname != null ? $companyname : null);
+    $object->companykvk = ($companykvk != null ? $companykvk : null);
+    $object->companytype = ($companytype != null ? $companytype : null);
+    $object->fax = $fax != null ? $fax  : null;
+    if (!fs_director::CheckForEmptyValue(self::ExecuteUpdateWhoisInformation($object))) {
         runtime_hook::Execute('OnAfterUpdateMyAccount');
         self::$ok = true;
     }
 }
 
-static function ExecuteUpdateWhoisInformation($userid, $firstname, $lastname, $street, $number, $city, $country)
+static function ExecuteUpdateWhoisInformation($object)
 {
     global $zdbh;
-    if (fs_director::CheckForEmptyValue(self::CheckUpdateForErrors2($firstname, $lastname, $street, $number, $city, $country))) {
+    if (fs_director::CheckForEmptyValue(self::CheckUpdateForErrors2($object))) {
         return false;
     }
-    $sql = $zdbh->prepare("UPDATE x_profiles_detail SET firstname = :firstname, lastname = :lastname, number = :housenumber, street = :street, city = :city, country = :country WHERE user_id = :userid");
-    $sql->bindParam(':firstname', $firstname);
-    $sql->bindParam(':lastname', $lastname);
-    $sql->bindParam(':street', $street);
-    $sql->bindParam(':housenumber', $number);
-    $sql->bindParam(':city', $city);
-    $sql->bindParam(':country', $country);
-    $sql->bindParam(':userid', $userid);
-    $sql->debugDumpParams();
+    $count = 0;
+    $opt = '';
+    if($object->companyname != null)
+    {
+        $count++;
+        $opt .= ', company_name = :cpname';
+    }
+    if ($object->companykvk != null) {
+        $count++;
+        $opt .= ', company_kvk = :cpkvk';
+    }
+    if ($object->companytype != null) {
+        $count++;
+        $opt .= ', company_type = :cptype';
+    }
+    if ($object->fax != null) {
+        $count++;
+        $opt .= ', faxnumber = :fax';
+    }
+    if($count >0) {
+        $opt .= ' ';
+    }
+    $q = "UPDATE x_profiles_detail SET firstname = :firstname, lastname = :lastname, number = :housenumber, street = :street, city = :city, postcode = :postcode, country = :country, email = :email, phone = :phone ".$opt."WHERE user_id = :userid";
+    $sql = $zdbh->prepare($q);
+    $sql->bindParam(':firstname', $object->firstname);
+    $sql->bindParam(':lastname', $object->lastname);
+    $sql->bindParam(':street', $object->street);
+    $sql->bindParam(':housenumber', $object->number);
+    $sql->bindParam(':city', $object->city);
+    $sql->bindParam(':postcode', $object->postcode);
+    $sql->bindParam(':country', $object->country);
+    $sql->bindParam(':email', $object->email);
+    $sql->bindParam(':phone', $object->phone);
+    $sql->bindParam(':userid', $object->userid);
+    if($object->companyname != null)
+    {
+        $sql->bindParam(':cpname', $object->companyname);
+    }
+    if ($object->companykvk != null) {
+        $sql->bindParam(':cpkvk', $object->companykvk);
+    }
+    if ($object->companytype != null) {
+        $sql->bindParam(':cptype', $object->companytype);
+    }
+    if ($object->fax != null) {
+        $sql->bindParam(':fax', $object->fax);
+    }
     $error = $sql->execute();
     return true;
 }
@@ -436,16 +503,23 @@ if (!self::IsValidEmail($email)) {
 return true;
 }
 
-static function CheckUpdateForErrors2($email, $fullname, $language, $phone, $address, $postalCode)
+static function CheckUpdateForErrors2($object)
 {
     global $zdbh;
-    if (fs_director::CheckForEmptyValue($email) ||
-        fs_director::CheckForEmptyValue($fullname) ||
-        fs_director::CheckForEmptyValue($language) ||
-        fs_director::CheckForEmptyValue($phone) ||
-        fs_director::CheckForEmptyValue($address) ||
-        fs_director::CheckForEmptyValue($postalCode)) {
+    if (fs_director::CheckForEmptyValue($object->firstname) ||
+        fs_director::CheckForEmptyValue($object->lastname) ||
+        fs_director::CheckForEmptyValue($object->street) ||
+        fs_director::CheckForEmptyValue($object->number) ||
+        fs_director::CheckForEmptyValue($object->city) ||
+        fs_director::CheckForEmptyValue($object->postcode) ||
+        fs_director::CheckForEmptyValue($object->country) ||
+        fs_director::CheckForEmptyValue($object->phone ) ||
+        fs_director::CheckForEmptyValue($object->email)) {
         self::$blank = true;
+    return false;
+}
+if (!self::IsValidEmail($object->email)) {
+    self::$emailerror = true;
     return false;
 }
 return true;
