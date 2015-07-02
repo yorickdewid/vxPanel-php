@@ -10,6 +10,9 @@
 
     </div>
 
-    <@ DisplayDomains @>
-
+    <% if EditWhois %>
+        <@ DisplayWhois @>
+    <% else %>
+    	<@ DisplayDomains @>
+    <% endif %>
 </div>
