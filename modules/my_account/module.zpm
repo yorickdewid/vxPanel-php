@@ -79,7 +79,7 @@
                 </tr>
                 <tr>
                     <th>*<: Number :>:</th>
-                    <td><input name="inNumber" id="inNumber" cols="45" rows="5" value="<& number &>"/></td>
+                    <td><input name="inNumber" type="text" id="inNumber" size="20" value="<& number &>"/></td>
                 </tr>
                 <tr>
                     <th>*<: City :>:</th>
