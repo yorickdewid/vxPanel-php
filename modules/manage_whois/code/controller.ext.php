@@ -47,9 +47,7 @@ class module_controller extends ctrl_module
         $s = self::getWhoisForDomain('restaurantoeverbos.nl');
         echo 'owkee';
         $line = '<!-- DNS FORM -->';
-        $line .= '<div id="dnsTitle" class="account accountTitle">';
-        $line .= '</div>';
-        $line .= '</div>';
+        $line .= '<div>';
         $line .= '<form action="./?module=manage_whois&action=UpdateWhoisInfoRemote" method="post">';
         // $line .= '<input id="domainName" name="domainName" value="' . $domain['vh_name_vc'] . '" type="hidden">';
         // $line .= '<input id="domainID" name="domainID" value="' . $domain['vh_id_pk'] . '" type="hidden">';
@@ -57,52 +55,45 @@ class module_controller extends ctrl_module
         $line .= '<div id="dnsRecords">';
         $line .= '<ul class="nav nav-tabs">';
         echo 'type allowed';
-        if (self::IsTypeAllowed(Transip_WhoisContact::TYPE_REGISTRANT,'Reg')) {
-            $line .= '    <li class="active"><a href="#typeA" data-toggle="tab">Registrant(owner) contact</a></li>';
+        if (self::IsTypeAllowed(Transip_WhoisContact::TYPE_REGISTRANT)) {
+            $line .= '    <li class="active"><a href="#typeReg" data-toggle="tab">Registrant(owner) contact</a></li>';
         }
-        if (self::IsTypeAllowed(Transip_WhoisContact::TYPE_ADMINISTRATIVE,'Adm')) {
-            $line .= '    <li><a href="#typeAAAA" data-toggle="tab">Adminstrative contact</a></li>';
+        if (self::IsTypeAllowed(Transip_WhoisContact::TYPE_ADMINISTRATIVE)) {
+            $line .= '    <li><a href="#typeAdm" data-toggle="tab">Adminstrative contact</a></li>';
         }
-        if (self::IsTypeAllowed(Transip_WhoisContact::TYPE_TECHNICAL,'Tec')) {
-            $line .= '    <li><a href="#typeCNAME" data-toggle="tab">Technical contac</a></li>';
+        if (self::IsTypeAllowed(Transip_WhoisContact::TYPE_TECHNICAL)) {
+            $line .= '    <li><a href="#typeTec" data-toggle="tab">Technical contact</a></li>';
         }
         $line .= '</ul>';
         $line .= '<!-- END TABS -->';
         $line .= '<div class="tab-content">';
         echo 'tab contacts';
-        $line .= self::getTabContact('Registrant Contact',$whoisContacts['registrant']);
-        $line .= self::getTabContact('Administrative Contact',$whoisContacts['administrative']);
-        $line .= self::getTabContact('Technical Contact',$whoisContacts['technical']);
+        $line .= self::getTabContact('Registrant Contact',$whoisContacts['registrant'],'Reg',Transip_WhoisContact::TYPE_REGISTRANT);
+        $line .= self::getTabContact('Administrative Contact',$whoisContacts['administrative'],'Adm',Transip_WhoisContact::TYPE_ADMINISTRATIVE);
+        $line .= self::getTabContact('Technical Contact',$whoisContacts['technical'],'Tec',Transip_WhoisContact::TYPE_TECHNICAL);
         $line .= '<input name="newRecords" value="0" type="hidden">';
         $line .= '</div> <!-- END TABS CONTENT -->';
         /* END TABS SECTION */
         $line .= '</div> <!-- END TABS -->';
         // Bottom Edit buttons
-        $line .= "<div id=\"dnsTitle\" class=\"account accountTitle\">";
-        $line .= "<div class=\"content\">";
-        echo "csfr tag";
         $line .= self::getCSFR_Tag();
         $line .= "</form>";
         $line .= '</div>';
-        $line .='
-<div id="dns-modal" class="modal fade in" tabindex="-1" role="dialog" style="display: none;">
-   <div class="modal-dialog">
-       <div class="alert alert-block alert-error fade in">
-           <h4 class="alert-heading">Oh snap! You got an error!</h4>
-           <p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
-           <p>
-           <a class="btn btn-danger" href="#" data-dismiss="modal">Ok</a>
-           </p>
-       </div><!-- /.modal-content -->
-   </div><!-- /.modal-dalog -->
-</div>';
         return $line;
         }
     }
 
-    static function getTabContact($name,$whoisContact,$idSuffix)
+    static function getTabContact($name,$whoisContact,$idSuffix,$type)
     {
-          $line = '<!-- testing !-->';
+        if (self::IsTypeAllowed($type)) {
+            if ($type === Transip_WhoisContact::TYPE_REGISTRANT ) {
+                $activeCss = 'active';
+            } else {
+                $activeCss = '';
+            }
+            $line = '<!-- ' . $type . ' RECORDS -->';
+            $line .= '<div class="tab-pane ' . $activeCss . '" id="type' . $idSuffix. '">';
+            $line .= '<div><p>Edit your whois information for the '.$type.' contact here.</p></div>';
             $line .= '<table class="table table-striped">';
             $line .= '<tr>';
             $line .= '<th>* First Name :</th>';
@@ -110,7 +101,7 @@ class module_controller extends ctrl_module
             $line .= '</tr>';
             $line .= '<tr>';
             $line .= '<th>* Last Name :</th>';
-            $line .= '<td><input name="inLastName'.$idSuffix.' type="text" id="inLastName'.$idSuffix.'" size="40" value="'.$s['lastname'].'" /></td>';
+            $line .= '<td><input name="inLastName'.$idSuffix.'" type="text" id="inLastName'.$idSuffix.'" size="40" value="'.$s['lastname'].'" /></td>';
             $line .= '</tr>';
             $line .= '<tr>';
             $line .= '<th>* Street :</th>';
@@ -176,7 +167,9 @@ class module_controller extends ctrl_module
             $line .= '<td align="right"><button class="button-loader btn btn-primary" id="button" type="submit" > Update Whois </button</td>';
             $line .= '</tr>';
             $line .= '</table>';
+            $line .= '</div>';
             return $line;
+        }
     }
 
     static function temp()
@@ -220,7 +213,8 @@ class module_controller extends ctrl_module
 
     static function getCountryList()
     {
-        $countryList = Transip_WhoisContact::$possibleCountryCodes;
+        //$countryList = Transip_WhoisContact::$possibleCountryCodes;
+        $countryList = array('nl'=>'nederland');
         return $countryList;
     }
 
