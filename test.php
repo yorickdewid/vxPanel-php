@@ -1,10 +1,22 @@
 <?php
 
 require_once(__DIR__.'/etc/lib/api/transip/DomainService.php');
+require_once(__DIR__.'/etc/lib/api/transip/WhoisContact.php');
 require_once(__DIR__.'/dryden/db/driver.class.php');
 
 class test
 {
+
+    const ADMIN_SUFFIX = 'Adm';
+    const TECHNICAL_SUFFIX = 'Tec';
+    const REGISTRANT_SUFFIX = 'Reg';
+    //security that someone only edits their domains>
+    static $editwhois = null;
+    static $whoisContacts = array(
+                Transip_WhoisContact::TYPE_REGISTRANT => self::REGISTRANT_SUFFIX,
+                Transip_WhoisContact::TYPE_ADMINISTRATIVE => self::ADMIN_SUFFIX,
+                Transip_WhoisContact::TYPE_TECHNICAL => self::TECHNICAL_SUFFIX
+                );
 
 
 	function getDomains(){
@@ -111,9 +123,56 @@ class test
             }
             Transip_DomainService::setDnsEntries($domain,$dnsEntries);
 	}
+static function getExistingWhoisContacts(){
+    //getinfo
+    //$domainObject = Transip_DomainService::getInfo($domain);
+    $whoisContacts = array(self::createFakeWhoisContacts(Transip_WhoisContact::TYPE_REGISTRANT));
+    $contacts = array();
+   foreach($whoisContacts as $whoisContact)
+    {
+        $type = $whoisContact->type;
+        $formContact['inType'.self::$whoisContacts[$type]] = $type;
+        $formContact['inFirstName'.self::$whoisContacts[$type]] = $whoisContact->firstName;
+        $formContact['inLastName'.self::$whoisContacts[$type]] = $whoisContact->lastName;
+        $formContact['inCompanyName'.self::$whoisContacts[$type]] = $whoisContact->companyName;
+        $formContact['inCompanyKvk'.self::$whoisContacts[$type]] = $whoisContact->companyKvk;
+        $formContact['inCompanyType'.self::$whoisContacts[$type]] = $whoisContact->companyType;
+        $formContact['inStreet'.self::$whoisContacts[$type]] = $whoisContact->street;
+        $formContact['inNumber'.self::$whoisContacts[$type]] = $whoisContact->number;
+        $formContact['inPostalCode'.self::$whoisContacts[$type]] = $whoisContact->postalCode;
+        $formContact['inCity'.self::$whoisContacts[$type]] = $whoisContact->city;
+        $formContact['inPhoneNumber'.self::$whoisContacts[$type]] = $whoisContact->phoneNumber;
+        $formContact['inFaxNumber'.self::$whoisContacts[$type]] = $whoisContact->faxNumber;
+        $formContact['inEmail'.self::$whoisContacts[$type]] = $whoisContact->email;
+        $formContact['inCountry'.self::$whoisContacts[$type]]  = $whoisContact->country;
+        $contacts[] = $whoisContact;
+    }
+    print_r($contacts);
+
 }
 
-test::getDNSRecords();
+static function createFakeWhoisContacts($type){
+    $contact  = new Transip_WhoisContact();
+    $contact->type = $type;
+    $contact->firstName = 'arie';
+    $contact->lastName = 'kaas';
+    $contact->companyName = 'ariekaas productions';
+    $contact->companyKvk = 122425535;
+    $contact->companyType = 'BV';
+    $contact->street = 'kaasfabriekstraat';
+    $contact->number = 117;
+    $contact->postalCode = '4437ll';
+    $contact->city = 'Kaaszilla';
+    $contact->phoneNumber = "+31020300302";
+    $contact->faxNumber = '2-10-240-2-40-1';
+    $contact->email = 'nopeeee@hotmail.com';
+    $contact->country = 'nederkaas';
+    return $contact;
+    }
+}
+
+test::getExistingWhoisContacts()
+//test::getDNSRecords();
 //test::getDefaultDns();
 //test::getvhost();
 //test::getDomains();

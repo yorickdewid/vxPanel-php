@@ -121,7 +121,16 @@
                 </tr>
                 <tr>
                     <th><: Company Type :>:</th>
-                    <td><input name="inCompanyType" type="text" id="inCompanyType" size="40" value="<& companytype &>" /></td>
+                    <td>
+                        <select name="inCompanyType" id="inCompanyType">
+                             <option value=""></option>"
+                            <% loop CompanyTypeList %>
+                            <option value="<& short &>" <& selected &>><& companytype &></option>"
+                            <% endloop %>
+
+                        </select>
+                    </td>
+                </tr>
                 </tr>
                 <tr>
                     <th><: Fax Number :>:</th>
