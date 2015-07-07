@@ -9,7 +9,7 @@
         <div class="zmodule_desc" id="zmodule_desc_<@ ModuleName @>"><@ ModuleDesc @></div>
 
     </div>
-
+    <@ Result @>
     <% if EditWhois %>
         <@ DisplayWhois @>
     <% else %>

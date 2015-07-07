@@ -102,6 +102,22 @@ class module_controller extends ctrl_module
         return $res;
 }
 
+    static function getCompanyTypeList()
+    {
+        $companyList = Transip_WhoisContact::$possibleCompanyTypes;
+        $currentuser = ctrl_users::GetUserProfileDetail();
+        $res = array();
+        foreach ($companyList as $short => $companytype) {
+            if(strtolower($short) == strtolower($currentuser['companytype'])) {
+                 $selected = "SELECTED";
+            } else {
+                $selected = "";
+            }
+            array_push($res, array('companytype' => $companytype, 'short' => $short, 'selected' => $selected));
+        }
+        return $res;
+    }
+
 static function doUpdateWhoisInformation()
 {
     global $zdbh;
