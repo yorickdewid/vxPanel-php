@@ -27,7 +27,7 @@
      <div>
             <table>
                 <tr valign="top">
-                    <td><a href="<@ URL @>" target="_blank"><button class="button-loader btn btn-primary" type="submit" id="button" name="inAdd" value="1">Add Funds</button></a>
+                    <td><a href="<@ URL @>"><button class="button-loader btn btn-primary" type="submit" id="button" name="inAdd" value="1">Add Funds</button></a>
                 </tr>
             </table>
     </div>
