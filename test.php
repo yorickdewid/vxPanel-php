@@ -2,6 +2,7 @@
 
 require_once(__DIR__.'/etc/lib/api/transip/DomainService.php');
 require_once(__DIR__.'/etc/lib/api/transip/WhoisContact.php');
+require_once(__DIR__.'/modules/credits/code/credits.php');
 require_once(__DIR__.'/dryden/db/driver.class.php');
 
 class test
@@ -148,7 +149,10 @@ static function getExistingWhoisContacts(){
         $contacts[] = $whoisContact;
     }
     print_r($contacts);
+}
 
+static function testCreateWallet(){
+    credits::createWallet(1);
 }
 
 static function createFakeWhoisContacts($type){
@@ -171,10 +175,10 @@ static function createFakeWhoisContacts($type){
     }
 }
 
-test::getExistingWhoisContacts()
+//test::getExistingWhoisContacts()
 //test::getDNSRecords();
 //test::getDefaultDns();
 //test::getvhost();
 //test::getDomains();
-
+test::testCreateWallet();
 ?>
