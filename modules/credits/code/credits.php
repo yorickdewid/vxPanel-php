@@ -28,10 +28,10 @@ class credits {
 			$numrows->bindValue(':wallet_id', 0);
 
 			if ($numrows->execute()) {
-				self::logTransaction(0, $amount, 2);
+				self::logTransaction(0, $amount, $ref, 2);
 				return true;
 			} else {
-				self::logTransaction(0, $amount, 1);
+				self::logTransaction(0, $amount, $ref, 1);
 				return false;
 			}
 		} catch (PDOException $e) {
