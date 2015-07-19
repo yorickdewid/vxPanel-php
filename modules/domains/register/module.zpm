@@ -11,7 +11,7 @@
     </div>
 
     <@ Result @>
-
+    <div id="divPrice"></div>
     <div class="zform_wrapper">
         <table class="none" width="100%" cellborder="0" cellspacing="0">
         <tr valign="top">
@@ -101,28 +101,30 @@
     //-->
 </script>
 
-<script type="text/javascript">
-            $('<div></div>').appendTo('body').html('<div><h6>Yes or No?</h6></div>').dialog({
-            modal: true,title : 'message',zIndex: 10000,autoOpen: true,
-            width: 'auto',resizable: false,
-            buttons: {
-            Yes: function()
-            {
-                alert('kaas');
-                $(this).dialog("close")
-            }
-            No: function()
-            {
-                alert('geen kaas');
-                $(this).dialog("close")
-            }
-        },
-        close: function (event,ui){
-            $(this).remove();
-        }
-        });
-<script>
+<script type ="text/javascript">
+function getPrice(value){
+    var output;
+    $.ajax({  
+    type: "POST",
+    async : false,  
+    url: "/common/prices.php",  
+    data: { 'tld': value },      
+    success: function(data){
+        $('#divPrice').empty(); 
+        output = data;
+    }
+    }); 
+    return output;
+}
 
+$('#inTld').change(function(){
+    $('#divPrice').empty();
+    $('#divPrice').append('Getting price...');
+    var tld = $(this).find('option:selected').attr('value');
+    var price = getPrice(tld);
+    $('#divPrice').append('<p>'+tld+' price : € '+price+'</p>');
+});
+</script>
 <script type="text/javascript">
 // Add punycode support fo national domains
 // http://stackoverflow.com/questions/183485/can-anyone-recommend-a-good-free-javascript-for-punycode-to-unicode-conversion
