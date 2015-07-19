@@ -11,6 +11,7 @@ if ($pingback->validate()) {
 		credits::addCredit($virtualCurrency, $pingback->getUserId(), $pingback->getReferenceId());
 	} else if ($pingback->isCancelable()) {
 		// withdraw the virtual currency
+		credits::removeCredit($virtualCurrency, $pingback->getUserId(), $pingback->getReferenceId());
 	}
 	echo 'OK'; // Paymentwall expects response to be OK, otherwise the pingback will be resent
 } else {
