@@ -11,7 +11,7 @@ class credits {
 	public static function addCredit($amount, $userId) {
 		try {
 			global $zdbh;
-			if (!self::checkWalletExists()) {
+			if (!self::checkWalletExists($userId)) {
 				self::createWallet($userId);
 			}
 			$balance = self::getWalletBalance($userId);
@@ -72,16 +72,16 @@ class credits {
 		}
 	}
 
-	private static function checkWalletExists() {
+	private static function checkWalletExists($userId) {
 		try {
 			global $zdbh;
-			$sql = "SELECT id FROM x_wallet WHERE user_id=:userid";
+			$sql = "SELECT user_id FROM x_wallet WHERE user_id=:userid";
 			$numrows = $zdbh->prepare($sql);
 			$numrows->bindParam(':userid', $userId);
 
 			if ($numrows->execute()) {
-				$result = $numrows->rowCount();
-				if ($result == 1) {
+				$result = $numrows->fetch();
+				if ($result['user_id'] == $userId) {
 					return true;
 				} else {
 					return false;
