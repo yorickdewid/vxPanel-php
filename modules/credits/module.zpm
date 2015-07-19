@@ -25,9 +25,11 @@
         <p> No history yet </p>
     <% endif %>
      <div>
+      <form action="<@ URL @>" method="post">
             <table>
                 <tr valign="top">
-                    <td><a href="<@ URL @>"><button class="button-loader btn btn-primary" type="submit" id="button" name="inAdd" value="1">Add Funds</button></a>
+                    <input type="hidden" id="inHash" name="inHash" value="<@ Hash @>">
+                    <td><button class="button-loader btn btn-primary" type="submit" id="button">Add Funds</button>
                 </tr>
             </table>
     </div>

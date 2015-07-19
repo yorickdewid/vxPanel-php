@@ -15,11 +15,13 @@ CREATE TABLE IF NOT EXISTS `x_wallet` (
 ALTER TABLE `x_wallet`
  ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`);
 
+ALTER TABLE `x_wallet` ADD `hash` VARCHAR(40) NOT NULL AFTER `total`, ADD UNIQUE (`hash`) ;
+
 ALTER TABLE `x_wallet`
 ADD CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `x_accounts` (`ac_id_pk`) ON UPDATE CASCADE;
 
-INSERT INTO `x_wallet` (`id`, `total`, `user_id`) VALUES
-(0, 0, 1);
+INSERT INTO `x_wallet` (`id`,`total`,`hash`,`user_id`) VALUES
+(0, 0,'356a192b7913b04c54574d18c28d46e6395428ab', 1);
 
 CREATE TABLE IF NOT EXISTS `x_credit_transaction` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

@@ -12,9 +12,10 @@ All methods must not contain any echo/prints or any output the pingback wel else
 
 class credits {
 
-	public static function addCredit($amount, $userId) {
+	public static function addCredit($amount, $hash) {
 		try {
 			global $zdbh;
+			$userId = self::getUserFromHash($hash);
 			if (!self::checkWalletExists($userId)) {
 				self::createWallet($userId);
 			}
@@ -32,6 +33,21 @@ class credits {
 			} else {
 				self::logTransaction(0, $amount, 1);
 				return false;
+			}
+		} catch (PDOException $e) {
+			throw $e;
+		}
+	}
+
+	private static function getUserFromHash($hash) {
+		try {
+			global $zdbh;
+			$sql = "SELECT user_id FROM x_wallet WHERE hash = :hash";
+			$numrows = $zdbh->prepare($sql);
+			$numrows->bindParam(':userid', $hash);
+			if ($numrows->execute()) {
+				$result = $numrows->fetch();
+				return $result['user_id'];
 			}
 		} catch (PDOException $e) {
 			throw $e;
