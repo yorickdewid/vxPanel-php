@@ -12,7 +12,7 @@ All methods must not contain any echo/prints or any output the pingback wel else
 
 class credits {
 
-	public static function addCredit($amount, $hash) {
+	public static function addCredit($amount, $hash, $ref) {
 		try {
 			global $zdbh;
 			$userId = self::getUserFromHash($hash);
@@ -44,7 +44,7 @@ class credits {
 			global $zdbh;
 			$sql = "SELECT user_id FROM x_wallet WHERE hash = :hash";
 			$numrows = $zdbh->prepare($sql);
-			$numrows->bindParam(':userid', $hash);
+			$numrows->bindParam(':hash', $hash);
 			if ($numrows->execute()) {
 				$result = $numrows->fetch();
 				return $result['user_id'];
@@ -54,13 +54,14 @@ class credits {
 		}
 	}
 
-	private static function logTransaction($walletId, $amount, $status) {
+	private static function logTransaction($walletId, $amount, $ref, $status) {
 		try {
 			global $zdbh;
-			$sql = "INSERT INTO x_credit_transaction (`wallet_id`,`amount`,`status_id`) VALUES(:walletId,:amount,:status)";
+			$sql = "INSERT INTO x_credit_transaction (`wallet_id`,`amount`,`ref_id`,`status_id`) VALUES(:walletId,:amount,:ref,:status)";
 			$numrows = $zdbh->prepare($sql);
 			$numrows->bindValue(':walletId', $walletId);
 			$numrows->bindValue(':amount', $amount);
+			$numrows->bindValue(':ref', $ref);
 			$numrows->bindValue(':status', $status);
 
 			if ($numrows->execute()) {
@@ -114,9 +115,10 @@ class credits {
 	public static function createWallet($userId) {
 		try {
 			global $zdbh;
-			$sql = "INSERT INTO x_wallet (`user_id`) VALUES(:userid)";
+			$sql = "INSERT INTO x_wallet (`user_id`,`hash`) VALUES(:userid,:hash)";
 			$numrows = $zdbh->prepare($sql);
 			$numrows->bindValue(':userid', $userId);
+			$numrows->bindValue(':hash', sha1($userId));
 
 			if ($numrows->execute()) {
 				if ($numrows->rowCount() > 0) {

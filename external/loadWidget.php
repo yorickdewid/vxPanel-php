@@ -16,6 +16,8 @@ function getShowPayWall() {
 	$widget = new Paymentwall_Widget(
 		$_POST['inHash'], // MUST BE USER ID OF OUR CUSTOMERS NOT PAYMENTWALL ACCOUNTS
 		'p10_1'
+		, array(),
+		array('email' => $_POST['inEmail'], 'succes_url' => '/?module=credits')
 	);
 	echo $widget->getHtmlCode();
 }

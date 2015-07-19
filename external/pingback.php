@@ -8,7 +8,7 @@ $pingback = new Paymentwall_Pingback($_GET, $_SERVER['REMOTE_ADDR']);
 if ($pingback->validate()) {
 	$virtualCurrency = $pingback->getVirtualCurrencyAmount();
 	if ($pingback->isDeliverable()) {
-		credits::addCredit($virtualCurrency, $pingback->getUserId());
+		credits::addCredit($virtualCurrency, $pingback->getUserId(), $pingback->getReferenceId());
 	} else if ($pingback->isCancelable()) {
 		// withdraw the virtual currency
 	}
