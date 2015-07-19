@@ -55,7 +55,6 @@ class module_controller extends ctrl_module {
 		} else {
 			$display = "<p>Balance never added.</p>";
 		}
-		echo hash('sha512', $_SESSION['zuid']);
 		return $display;
 	}
 
@@ -101,8 +100,23 @@ class module_controller extends ctrl_module {
 
 	public static function getUrl() {
 		global $controller;
-		$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . '/external/loadWidget.php?uid=' . $_SESSION['zpuid'];
+		$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . '/external/loadWidget.php?uid=' . self::getHash();
 		return $actual_link;
+	}
+
+	public static function getHash() {
+		try {
+			global $zdbh;
+			$sql = "SELECT hash FROM x_wallet WHERE user_id=:userid";
+			$numrows = $zdbh->prepare($sql);
+			$numrows->bindParam(':userid', $_SESSION['zpuid']);
+			if ($numrows->execute()) {
+				$result = $numrows->fetch();
+				return $result['hash'];
+			}
+		} catch (PDOException $e) {
+			throw $e;
+		}
 	}
 
 	private static function pingwall() {
