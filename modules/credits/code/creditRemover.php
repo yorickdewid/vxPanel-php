@@ -22,9 +22,17 @@ class creditRemover {
 		return $display;
 	}
 
+	/**
+	 * cannot use framework methods here..
+	 */
 	public static function doRefund($minusAmount, $ref, $hash) {
 		global $zdbh;
-		$currentuser = ctrl_users::GetUserDetail();
+		$sql = "SELECT * FROM x_wallet WHERE hash = :hash";
+		$numrows = $zdbh->prepare($sql);
+		$numrows->bindParam(':hash', $hash);
+		$numrows->execute();
+		$result = $numrows->fetch();
+		$currentBalance = $result['total'];
 		$sql = "UPDATE x_wallet SET total = :newAmount WHERE hash=:hash;";
 		$numrows = $zdbh->prepare($sql);
 		$numrows->bindParam(':hash', $hash);
@@ -47,6 +55,7 @@ class creditRemover {
 			global $zdbh;
 			$sql = "SELECT * FROM x_wallet WHERE hash = :hash";
 			$numrows = $zdbh->prepare($sql);
+			$numrows->execute();
 			$result = $numrows->fetch();
 			$walletId = $result['wallet_id'];
 			$sql = "INSERT INTO x_credit_transaction (`wallet_id`,`amount`,`ref_id`,`status_id`) VALUES(:walletId,:amount,:ref,:status)";

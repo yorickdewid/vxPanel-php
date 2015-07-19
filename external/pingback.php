@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../etc/lib/paymentwall-php/lib/paymentwall.php';
 require_once __DIR__ . '/../modules/credits/code/credits.php';
+require_once __DIR__ . '/../modules/credits/code/creditRemover.php';
 Paymentwall_Base::setApiType(Paymentwall_Base::API_VC);
 Paymentwall_Base::setAppKey('db0433611c5f2cade2bbaea512b8fc9b'); // available in your Paymentwall mercha$
 Paymentwall_Base::setSecretKey('8fdfbb9b8df26d6368a874bac4ade389'); // available in your Paymentwall mer$
@@ -11,7 +12,7 @@ if ($pingback->validate()) {
 		credits::addCredit($virtualCurrency, $pingback->getUserId(), $pingback->getReferenceId());
 	} else if ($pingback->isCancelable()) {
 		// withdraw the virtual currency
-		credits::removeCredit($virtualCurrency, $pingback->getUserId(), $pingback->getReferenceId());
+		creditRemover::doRefund($virtualCurrency, $pingback->getUserId(), $pingback->getReferenceId());
 	}
 	echo 'OK'; // Paymentwall expects response to be OK, otherwise the pingback will be resent
 } else {
