@@ -28,6 +28,7 @@
       <form action="<@ URL @>" method="post">
             <table>
                 <tr valign="top">
+                    <input type="hidden" id="inEmail" name="inEmail" value="<@ Email @>">
                     <input type="hidden" id="inHash" name="inHash" value="<@ Hash @>">
                     <td><button class="button-loader btn btn-primary" type="submit" id="button">Add Funds</button>
                 </tr>

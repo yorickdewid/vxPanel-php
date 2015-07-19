@@ -66,6 +66,11 @@ class module_controller extends ctrl_module {
 		}
 	}
 
+	public static function getEmail() {
+		$currentuser = ctrl_users::GetUserDetail();
+		return $currentuser['email'];
+	}
+
 	public static function getTransactionLog() {
 		global $zdbh;
 		$currentuser = ctrl_users::GetUserDetail();

@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `x_credit_transaction` (
   `wallet_id` int(11) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `amount` double NOT NULL DEFAULT '5',
+  `ref_id` varchar(60) NOT NULL,
   `status_id` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `wallet` (`wallet_id`),
