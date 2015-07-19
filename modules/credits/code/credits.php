@@ -6,6 +6,10 @@ require_once __DIR__ . '/../../../dryden/ctrl/users.class.php';
 require_once __DIR__ . '/../../../dryden/debug/logger.class.php';
 require_once __DIR__ . '/../../../inc/dbc.inc.php';
 
+/*
+All methods must not contain any echo/prints or any output the pingback wel else report failed.
+ */
+
 class credits {
 
 	public static function addCredit($amount, $userId) {
@@ -44,7 +48,7 @@ class credits {
 			$numrows->bindValue(':status', $status);
 
 			if ($numrows->execute()) {
-				print "logged transaction";
+				return true;
 			}
 		} catch (PDOException $e) {
 			throw $e;
@@ -60,7 +64,6 @@ class credits {
 
 			if ($numrows->execute()) {
 				$result = $numrows->fetchAll();
-				print_r($result);
 				if (isset($result) && $result != null) {
 					foreach ($result as $res) {
 						return $res['total'];
