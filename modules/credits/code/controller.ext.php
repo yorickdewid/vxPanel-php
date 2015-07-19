@@ -24,108 +24,100 @@
  *
  */
 
-require_once(__DIR__.'/../../../etc/lib/paymentwall-php/lib/paymentwall.php');
-require_once(__DIR__.'/creditRemover.php');
+require_once __DIR__ . '/../../../etc/lib/paymentwall-php/lib/paymentwall.php';
+require_once __DIR__ . '/creditRemover.php';
 
-class module_controller extends ctrl_module
-{
-    private static $hasWallet;
-    private static $wallet;
-    static $showPayWall;
+class module_controller extends ctrl_module {
+	private static $hasWallet;
+	private static $wallet;
+	static $showPayWall;
 
-    public static function getCurrentCreditBalance(){
-        global $zdbh;
-        $currentuser = ctrl_users::GetUserDetail();
-        $sql = "SELECT id,total FROM x_wallet WHERE user_id=:userid";
-        $numrows = $zdbh->prepare($sql);
-        $numrows->bindParam(':userid', $currentuser['userid']);
+	public static function getCurrentCreditBalance() {
+		global $zdbh;
+		$currentuser = ctrl_users::GetUserDetail();
+		$sql = "SELECT id,total FROM x_wallet WHERE user_id=:userid";
+		$numrows = $zdbh->prepare($sql);
+		$numrows->bindParam(':userid', $currentuser['userid']);
 
-        $display = '';
-        if ($numrows->execute()) {
-            $result = $numrows->fetchAll();
-            if(isset($result)){
-                self::$hasWallet = true;
-                foreach($result as $res)
-                {
-                    self::$wallet = $res['id'];
-                    $display = "<p>You currently have ".$res['total']." credits</p>";
-                }
-            }
-            else{
-                self::$hasWallet = true;
-                $display = "<p>You currently do not have any balance.</p>";
-            }
-        }
-        else{
-            $display = "<p>Balance never added.</p>";
-        }
-        return $display;
-    }
+		$display = '';
+		if ($numrows->execute()) {
+			$result = $numrows->fetchAll();
+			if (isset($result)) {
+				self::$hasWallet = true;
+				foreach ($result as $res) {
+					self::$wallet = $res['id'];
+					$display = "<p>You currently have " . $res['total'] . " credits</p>";
+				}
+			} else {
+				self::$hasWallet = true;
+				$display = "<p>You currently do not have any balance.</p>";
+			}
+		} else {
+			$display = "<p>Balance never added.</p>";
+		}
+		echo hash('sha512', $_SESSION['zuid']);
+		return $display;
+	}
 
-    public static function getHasWallet(){
-        if(self::$hasWallet)
-        {
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
+	public static function getHasWallet() {
+		if (self::$hasWallet) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-    public static function getTransactionLog(){
-        global $zdbh;
-        $currentuser = ctrl_users::GetUserDetail();
-        $sql = "SELECT date,amount,status_id FROM x_credit_transaction WHERE wallet_id=:walletid";
-        $numrows = $zdbh->prepare($sql);
-        $numrows->bindValue(':walletid', self::$wallet);
-        $numrows->execute();
-        $result = $numrows->fetchAll();
-        $display = "";
-        $display = "<tr><th>Amount</th><th>Date</th><th>Status</th></tr>";
-        foreach($result as $res)
-        {
-            $display .= "<tr>";
-            $display .= "<td>".$res['amount']."</td>";
-            $display .= "<td>".$res['date']."</td>";
-            $display .= "<td>".$res['status_id']."</td>";
-            $display .= "</tr>";
-        }
-        return $display;
-    }
+	public static function getTransactionLog() {
+		global $zdbh;
+		$currentuser = ctrl_users::GetUserDetail();
+		$sql = "SELECT date,amount,status_id FROM x_credit_transaction WHERE wallet_id=:walletid";
+		$numrows = $zdbh->prepare($sql);
+		$numrows->bindValue(':walletid', self::$wallet);
+		$numrows->execute();
+		$result = $numrows->fetchAll();
+		$display = "";
+		$display = "<tr><th>Amount</th><th>Date</th><th>Status</th></tr>";
+		foreach ($result as $res) {
+			$display .= "<tr>";
+			$display .= "<td>" . $res['amount'] . "</td>";
+			$display .= "<td>" . $res['date'] . "</td>";
+			$display .= "<td>" . $res['status_id'] . "</td>";
+			$display .= "</tr>";
+		}
+		return $display;
+	}
 
-    public static function doAddFunds($amount,$user){
-        self::$showPayWall = true;
-        return;
-    }
+	public static function doAddFunds($amount, $user) {
+		self::$showPayWall = true;
+		return;
+	}
 
-    public static function getAddFunds()
-    {
-        if(self::$showPayWall)
-        {
-            return true;
-        }
-        return false;
-    }
+	public static function getAddFunds() {
+		if (self::$showPayWall) {
+			return true;
+		}
+		return false;
+	}
 
-    public static function getUrl(){
-        global $controller;
-        $actual_link = 'http://'.$_SERVER['HTTP_HOST'].'/external/loadWidget.php';
-        return $actual_link;
-    }
+	public static function getUrl() {
+		global $controller;
+		$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . '/external/loadWidget.php?uid=' . $_SESSION['zpuid'];
+		return $actual_link;
+	}
 
-    private static function pingwall(){
-        $pingback = new Paymentwall_Pingback($_GET, $_SERVER['REMOTE_ADDR']);
-        if ($pingback->validate()) {
-          $virtualCurrency = $pingback->getVirtualCurrencyAmount();
-          if ($pingback->isDeliverable()) {
-      // deliver the virtual currency
-          } else if ($pingback->isCancelable()) {
-            creditRemover::$removeCredits();
-          } 
-          echo 'OK'; 
-      } else {
-          echo $pingback->getErrorSummary();
-      }
-    }
+	private static function pingwall() {
+		$pingback = new Paymentwall_Pingback($_GET, $_SERVER['REMOTE_ADDR']);
+		if ($pingback->validate()) {
+			$virtualCurrency = $pingback->getVirtualCurrencyAmount();
+			if ($pingback->isDeliverable()) {
+				// deliver the virtual currency
+			} else if ($pingback->isCancelable()) {
+				creditRemover::$removeCredits();
+			}
+			echo 'OK';
+		} else {
+			echo $pingback->getErrorSummary();
+		}
+	}
 }
-
+?>
