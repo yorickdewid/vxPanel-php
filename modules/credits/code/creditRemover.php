@@ -25,7 +25,7 @@ class creditRemover {
 	/**
 	 * cannot use framework methods here..
 	 */
-	public static function doRefund($minusAmount, $hash,$ref,) {
+	public static function doRefund($minusAmount, $hash, $ref) {
 		global $zdbh;
 		$sql = "SELECT * FROM x_wallet WHERE hash = :hash";
 		$numrows = $zdbh->prepare($sql);
