@@ -36,14 +36,14 @@ class creditRemover {
 		$sql = "UPDATE x_wallet SET total = :newAmount WHERE hash=:hash;";
 		$numrows = $zdbh->prepare($sql);
 		$numrows->bindParam(':hash', $hash);
-		$newAmount = $currentBalance - $minusAmount;
+		$newAmount = $currentBalance + $minusAmount;
 		$numrows->bindParam(':newAmount', $newAmount);
 
 		if ($numrows->execute()) {
 			if ($numrows->rowCount() == 0) {
 				$display = "<p>Failed to remove credit</p>";
 			} else {
-				self::logTransaction(0, $minusAmount, $ref, 3); // 3 = refund
+				self::logTransaction($hash, $minusAmount, $ref, 3); // 3 = refund
 				$display = "<p>Succesfully removed amount of credit</p>";
 			}
 		}
