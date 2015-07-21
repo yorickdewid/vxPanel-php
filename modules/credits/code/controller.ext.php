@@ -74,7 +74,7 @@ class module_controller extends ctrl_module {
 	public static function getTransactionLog() {
 		global $zdbh;
 		$currentuser = ctrl_users::GetUserDetail();
-		$sql = "SELECT date,amount,status_id FROM x_credit_transaction WHERE wallet_id=:walletid";
+		$sql = "SELECT date,amount,status FROM x_credit_transaction x_cred LEFT JOIN x_status x_stat on x_cred.status_id = x_stat.id WHERE wallet_id=:walletid";
 		$numrows = $zdbh->prepare($sql);
 		$numrows->bindValue(':walletid', self::$wallet);
 		$numrows->execute();
@@ -85,7 +85,7 @@ class module_controller extends ctrl_module {
 			$display .= "<tr>";
 			$display .= "<td>" . $res['amount'] . "</td>";
 			$display .= "<td>" . $res['date'] . "</td>";
-			$display .= "<td>" . $res['status_id'] . "</td>";
+			$display .= "<td>" . $res['status'] . "</td>";
 			$display .= "</tr>";
 		}
 		return $display;
@@ -124,19 +124,5 @@ class module_controller extends ctrl_module {
 		}
 	}
 
-	private static function pingwall() {
-		$pingback = new Paymentwall_Pingback($_GET, $_SERVER['REMOTE_ADDR']);
-		if ($pingback->validate()) {
-			$virtualCurrency = $pingback->getVirtualCurrencyAmount();
-			if ($pingback->isDeliverable()) {
-				// deliver the virtual currency
-			} else if ($pingback->isCancelable()) {
-				creditRemover::$removeCredits();
-			}
-			echo 'OK';
-		} else {
-			echo $pingback->getErrorSummary();
-		}
-	}
 }
 ?>
