@@ -45,10 +45,9 @@ insert into x_modules (`mo_category_fk`,`mo_name_vc`,`mo_version_in`,`mo_folder_
 update x_modules set `mo_folder_vc` = 'register',`mo_folder_path` ='domains',`mo_name_vc`='Register Domains' where mo_id_pk = 15;
 insert into x_modules set `mo_category_fk`=5,`mo_name_vc`='Manage Whois',`mo_version_in`=1,`mo_folder_vc`='manage_whois',`mo_type_en`='user',`mo_desc_tx`='With Manage Whois you can alter your Whois information of your domain(s).',`mo_enabled_en`= true;
 
-
-insert into x_status (`status`) VALUES("The transaction failed");
-insert into x_status (`status`) VALUES("The transaction was succesful");
-
+insert into x_status (`status`) VALUES("Failure");
+insert into x_status (`status`) VALUES("Succesful");
+insert into x_status (`status`) VALUES("Refund");
 
 CREATE TABLE IF NOT EXISTS `x_profiles_detail` (
   `firstname` varchar(50) NOT NULL,
