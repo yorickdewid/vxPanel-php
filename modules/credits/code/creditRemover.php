@@ -33,6 +33,7 @@ class creditRemover {
 		$numrows->execute();
 		$result = $numrows->fetch();
 		$currentBalance = $result['total'];
+		$walletId = $result['wallet_id'];
 		$sql = "UPDATE x_wallet SET total = :newAmount WHERE hash=:hash;";
 		$numrows = $zdbh->prepare($sql);
 		$numrows->bindParam(':hash', $hash);
@@ -43,20 +44,16 @@ class creditRemover {
 			if ($numrows->rowCount() == 0) {
 				$display = "<p>Failed to remove credit</p>";
 			} else {
-				self::logTransaction($hash, $minusAmount, $ref, 3); // 3 = refund
+				self::logTransaction($walletId, $minusAmount, $ref, 3); // 3 = refund
 				$display = "<p>Succesfully removed amount of credit</p>";
 			}
 		}
 		return $display;
 	}
 
-	private static function logTransaction($hash, $amount, $ref, $status) {
+	private static function logTransaction($walletId, $amount, $ref, $status) {
 		try {
 			global $zdbh;
-			$sql = "SELECT * FROM x_wallet WHERE hash = :hash";
-			$numrows = $zdbh->prepare($sql);
-			$numrows->execute();
-			$result = $numrows->fetch();
 			$walletId = $result['wallet_id'];
 			$sql = "INSERT INTO x_credit_transaction (`wallet_id`,`amount`,`ref_id`,`status_id`) VALUES(:walletId,:amount,:ref,:status)";
 			$numrows = $zdbh->prepare($sql);
