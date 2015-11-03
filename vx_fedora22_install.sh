@@ -102,8 +102,7 @@ dnf -y update
 
 # Installer options
 while true; do
-	tzselect
-	tz=`cat /etc/timezone`
+	tz=`tzselect | tail -n1`
 	echo -e "Enter the FQDN you will use to access VXpanel on your server."
 	echo -e "- It MUST be a sub-domain of you main domain, it MUST NOT be your main domain only. Example: panel.yourdomain.com"
 	echo -e "- Remember that the sub-domain ('panel' in the example) MUST be setup in your DNS nameserver."
