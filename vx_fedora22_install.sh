@@ -37,21 +37,21 @@ if [ -e /usr/local/cpanel ] || [ -e /usr/local/directadmin ] || [ -e /usr/local/
 fi
 
 # Ensure the installer is launched and can only be launched on Fedora 22
-#BITS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
-#if [ -f /etc/issue ]; then
-#  OS=$(cat /etc/issue | grep '[A-Z][a-z]*' -o)
-#  VER=$(cat /etc/issue | grep '\(([A-Z][a-z]*\ [A-Z][a-z]*)\)' -o)
-#else
-#  OS=$(uname -s)
-#  VER=$(uname -r)
-#fi
-#echo "Detected : $OS  $VER  $BITS"
-#if [ "$OS" = "Fedora" ] && [ "$VER" = "(Twenty Two)" ]; then
-#  echo "Ok."
-#else
-#  echo "Sorry, this installer only supports the installation of VXpanel on Fedora 22."
-#  exit 1;
-#fi
+BITS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+if [ $BITS == 64 ]; then
+  OS=$(cat /etc/issue | head -n1 |  cut -d " " -f1)
+  VER=$(cat /etc/issue | grep '\(([A-Z][a-z]*\ [A-Z][a-z]*)\)' -o)
+else
+  OS=$(uname -s)
+  VER=$(uname -r)
+fi
+echo "Detected $OS $VER $BITS"
+if [ "$OS" == "Fedora" ] && [ "$VER" == "(Twenty Two)" ]; then
+  echo "Ok."
+else
+  echo "Sorry, this installer only supports the installation of VXpanel on Fedora 22."
+  exit 1;
+fi
 
 # Set custom logging methods so we create a log file in the current working directory.
 logfile=$$.log
