@@ -1,0 +1,1191 @@
+
+##############################################################
+# Welcome to the VXpanel Installer for Fedora                #
+# Server Fedora22x64                                         #
+#                                                            #
+# Please make sure your VPS provider hasn't pre-installed    #
+# any packages required by VXpanel.                           #
+#                                                            #
+# If you are installing on a physical machine where the OS   #
+# has been installed by yourself please make sure you only   #
+# installed Fedora Server with no extra packages.            #
+#                                                            #
+# If you selected additional options during the Fedora       #
+# install please consider reinstalling without them.         #
+#                                                            #
+##############################################################
+
+Last metadata expiration check performed 5:40:31 ago on Tue Nov  3 10:43:37 2015.
+Dependencies resolved.
+Nothing to do.
+Complete!
+Please identify a location so that time zone rules can be set correctly.
+Please select a continent, ocean, "coord", or "TZ".
+ 1) Africa
+ 2) Americas
+ 3) Antarctica
+ 4) Arctic Ocean
+ 5) Asia
+ 6) Atlantic Ocean
+ 7) Australia
+ 8) Europe
+ 9) Indian Ocean
+10) Pacific Ocean
+11) coord - I want to use geographical coordinates.
+12) TZ - I want to specify the time zone using the Posix TZ format.
+#? Please select a country whose clocks agree with yours.
+ 1) Albania		  18) Guernsey		    35) Poland
+ 2) Andorra		  19) Hungary		    36) Portugal
+ 3) Austria		  20) Ireland		    37) Romania
+ 4) Belarus		  21) Isle of Man	    38) Russia
+ 5) Belgium		  22) Italy		    39) San Marino
+ 6) Bosnia & Herzegovina  23) Jersey		    40) Serbia
+ 7) Britain (UK)	  24) Latvia		    41) Slovakia
+ 8) Bulgaria		  25) Liechtenstein	    42) Slovenia
+ 9) Croatia		  26) Lithuania		    43) Spain
+10) Czech Republic	  27) Luxembourg	    44) Sweden
+11) Denmark		  28) Macedonia		    45) Switzerland
+12) Estonia		  29) Malta		    46) Turkey
+13) Finland		  30) Moldova		    47) Ukraine
+14) France		  31) Monaco		    48) Vatican City
+15) Germany		  32) Montenegro	    49) Åland Islands
+16) Gibraltar		  33) Netherlands
+17) Greece		  34) Norway
+#? 
+The following information has been given:
+
+	Netherlands
+
+Therefore TZ='Europe/Amsterdam' will be used.
+Local time is now:	Tue Nov  3 16:24:11 CET 2015.
+Universal Time is now:	Tue Nov  3 15:24:11 UTC 2015.
+Is the above information OK?
+1) Yes
+2) No
+#? 
+You can make this change permanent for yourself by appending the line
+	TZ='Europe/Amsterdam'; export TZ
+to the file '.profile' in your home directory; then log out and log in again.
+
+Here is that TZ value again, this time on standard output so that you
+can use the /usr/bin/tzselect command in shell scripts:
+Enter the FQDN you will use to access VXpanel on your server.
+- It MUST be a sub-domain of you main domain, it MUST NOT be your main domain only. Example: panel.yourdomain.com
+- Remember that the sub-domain ('panel' in the example) MUST be setup in your DNS nameserver.
+FQDN for VXpanel: localhost
+Enter the public (external) server IP: 87.211.99.157
+
+# Generating installation log and debug info...
+Linux localhost.localdomain 4.2.3-200.fc22.x86_64 #1 SMP Thu Oct 8 03:23:55 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+
+Last metadata expiration check performed 5:40:37 ago on Tue Nov  3 10:43:37 2015.
+Package firewalld-0.3.14.2-4.fc22.noarch is already installed, skipping.
+Package ntp-4.2.6p5-33.fc22.x86_64 is already installed, skipping.
+Dependencies resolved.
+================================================================================
+ Package                 Arch        Version                 Repository    Size
+================================================================================
+Installing:
+ apr                     x86_64      1.5.1-3.fc22            fedora       111 k
+ apr-util                x86_64      1.5.4-1.fc22            fedora        96 k
+ binutils                x86_64      2.25-9.fc22             updates      5.4 M
+ cpp                     x86_64      5.1.1-4.fc22            updates      8.3 M
+ expect                  x86_64      5.45-18.fc22            fedora       264 k
+ fedora-logos-httpd      noarch      22.0.0-1.fc22           fedora        33 k
+ gcc                     x86_64      5.1.1-4.fc22            updates       19 M
+ glibc-devel             x86_64      2.21-8.fc22             updates      903 k
+ glibc-headers           x86_64      2.21-8.fc22             updates      494 k
+ httpd                   x86_64      2.4.16-1.fc22           updates      1.3 M
+ httpd-filesystem        noarch      2.4.16-1.fc22           updates       24 k
+ httpd-tools             x86_64      2.4.16-1.fc22           updates       88 k
+ isl                     x86_64      0.14-3.fc22             fedora       490 k
+ kernel-headers          x86_64      4.2.3-200.fc22          updates      1.0 M
+ libmpc                  x86_64      1.0.2-3.fc22            fedora        55 k
+ mariadb                 x86_64      1:10.0.21-1.fc22        updates      6.1 M
+ mariadb-common          x86_64      1:10.0.21-1.fc22        updates       74 k
+ mariadb-config          x86_64      1:10.0.21-1.fc22        updates       25 k
+ mariadb-errmsg          x86_64      1:10.0.21-1.fc22        updates      199 k
+ mariadb-libs            x86_64      1:10.0.21-1.fc22        updates      637 k
+ mariadb-server          x86_64      1:10.0.21-1.fc22        updates       18 M
+ mpfr                    x86_64      3.1.2-8.fc22            fedora       209 k
+ perl-DBD-MySQL          x86_64      4.031-1.fc22            fedora       151 k
+ perl-DBI                x86_64      1.633-3.fc22            fedora       727 k
+ perl-Data-Dumper        x86_64      2.154-1.fc22            fedora        54 k
+ tcl                     x86_64      1:8.6.4-1.fc22          fedora       2.2 M
+
+Transaction Summary
+================================================================================
+Install  26 Packages
+
+Total download size: 66 M
+Installed size: 242 M
+Downloading Packages:
+--------------------------------------------------------------------------------
+Total                                           1.1 MB/s |  66 MB     00:57     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Installing  : apr-1.5.1-3.fc22.x86_64                                    1/26 
+  Installing  : mpfr-3.1.2-8.fc22.x86_64                                   2/26 
+  Installing  : libmpc-1.0.2-3.fc22.x86_64                                 3/26 
+  Installing  : apr-util-1.5.4-1.fc22.x86_64                               4/26 
+  Installing  : mariadb-config-1:10.0.21-1.fc22.x86_64                     5/26 
+  Installing  : mariadb-common-1:10.0.21-1.fc22.x86_64                     6/26 
+  Installing  : perl-Data-Dumper-2.154-1.fc22.x86_64                       7/26 
+  Installing  : perl-DBI-1.633-3.fc22.x86_64                               8/26 
+  Installing  : mariadb-1:10.0.21-1.fc22.x86_64                            9/26 
+  Installing  : mariadb-errmsg-1:10.0.21-1.fc22.x86_64                    10/26 
+  Installing  : mariadb-libs-1:10.0.21-1.fc22.x86_64                      11/26 
+  Installing  : perl-DBD-MySQL-4.031-1.fc22.x86_64                        12/26 
+  Installing  : httpd-tools-2.4.16-1.fc22.x86_64                          13/26 
+  Installing  : cpp-5.1.1-4.fc22.x86_64                                   14/26 
+  Installing  : fedora-logos-httpd-22.0.0-1.fc22.noarch                   15/26 
+  Installing  : kernel-headers-4.2.3-200.fc22.x86_64                      16/26 
+  Installing  : glibc-headers-2.21-8.fc22.x86_64                          17/26 
+  Installing  : glibc-devel-2.21-8.fc22.x86_64                            18/26 
+  Installing  : isl-0.14-3.fc22.x86_64                                    19/26 
+  Installing  : binutils-2.25-9.fc22.x86_64                               20/26 
+  Installing  : httpd-filesystem-2.4.16-1.fc22.noarch                     21/26 
+  Installing  : tcl-1:8.6.4-1.fc22.x86_64                                 22/26 
+  Installing  : expect-5.45-18.fc22.x86_64                                23/26 
+  Installing  : httpd-2.4.16-1.fc22.x86_64                                24/26 
+  Installing  : gcc-5.1.1-4.fc22.x86_64                                   25/26 
+  Installing  : mariadb-server-1:10.0.21-1.fc22.x86_64                    26/26 
+  Verifying   : expect-5.45-18.fc22.x86_64                                 1/26 
+  Verifying   : tcl-1:8.6.4-1.fc22.x86_64                                  2/26 
+  Verifying   : mariadb-1:10.0.21-1.fc22.x86_64                            3/26 
+  Verifying   : mariadb-common-1:10.0.21-1.fc22.x86_64                     4/26 
+  Verifying   : mariadb-server-1:10.0.21-1.fc22.x86_64                     5/26 
+  Verifying   : perl-DBD-MySQL-4.031-1.fc22.x86_64                         6/26 
+  Verifying   : perl-DBI-1.633-3.fc22.x86_64                               7/26 
+  Verifying   : perl-Data-Dumper-2.154-1.fc22.x86_64                       8/26 
+  Verifying   : mariadb-errmsg-1:10.0.21-1.fc22.x86_64                     9/26 
+  Verifying   : mariadb-libs-1:10.0.21-1.fc22.x86_64                      10/26 
+  Verifying   : gcc-5.1.1-4.fc22.x86_64                                   11/26 
+  Verifying   : libmpc-1.0.2-3.fc22.x86_64                                12/26 
+  Verifying   : mpfr-3.1.2-8.fc22.x86_64                                  13/26 
+  Verifying   : cpp-5.1.1-4.fc22.x86_64                                   14/26 
+  Verifying   : httpd-2.4.16-1.fc22.x86_64                                15/26 
+  Verifying   : apr-1.5.1-3.fc22.x86_64                                   16/26 
+  Verifying   : apr-util-1.5.4-1.fc22.x86_64                              17/26 
+  Verifying   : httpd-filesystem-2.4.16-1.fc22.noarch                     18/26 
+  Verifying   : httpd-tools-2.4.16-1.fc22.x86_64                          19/26 
+  Verifying   : mariadb-config-1:10.0.21-1.fc22.x86_64                    20/26 
+  Verifying   : binutils-2.25-9.fc22.x86_64                               21/26 
+  Verifying   : glibc-devel-2.21-8.fc22.x86_64                            22/26 
+  Verifying   : isl-0.14-3.fc22.x86_64                                    23/26 
+  Verifying   : glibc-headers-2.21-8.fc22.x86_64                          24/26 
+  Verifying   : kernel-headers-4.2.3-200.fc22.x86_64                      25/26 
+  Verifying   : fedora-logos-httpd-22.0.0-1.fc22.noarch                   26/26 
+
+Installed:
+  apr.x86_64 1.5.1-3.fc22                                                       
+  apr-util.x86_64 1.5.4-1.fc22                                                  
+  binutils.x86_64 2.25-9.fc22                                                   
+  cpp.x86_64 5.1.1-4.fc22                                                       
+  expect.x86_64 5.45-18.fc22                                                    
+  fedora-logos-httpd.noarch 22.0.0-1.fc22                                       
+  gcc.x86_64 5.1.1-4.fc22                                                       
+  glibc-devel.x86_64 2.21-8.fc22                                                
+  glibc-headers.x86_64 2.21-8.fc22                                              
+  httpd.x86_64 2.4.16-1.fc22                                                    
+  httpd-filesystem.noarch 2.4.16-1.fc22                                         
+  httpd-tools.x86_64 2.4.16-1.fc22                                              
+  isl.x86_64 0.14-3.fc22                                                        
+  kernel-headers.x86_64 4.2.3-200.fc22                                          
+  libmpc.x86_64 1.0.2-3.fc22                                                    
+  mariadb.x86_64 1:10.0.21-1.fc22                                               
+  mariadb-common.x86_64 1:10.0.21-1.fc22                                        
+  mariadb-config.x86_64 1:10.0.21-1.fc22                                        
+  mariadb-errmsg.x86_64 1:10.0.21-1.fc22                                        
+  mariadb-libs.x86_64 1:10.0.21-1.fc22                                          
+  mariadb-server.x86_64 1:10.0.21-1.fc22                                        
+  mpfr.x86_64 3.1.2-8.fc22                                                      
+  perl-DBD-MySQL.x86_64 4.031-1.fc22                                            
+  perl-DBI.x86_64 1.633-3.fc22                                                  
+  perl-Data-Dumper.x86_64 2.154-1.fc22                                          
+  tcl.x86_64 1:8.6.4-1.fc22                                                     
+
+Complete!
+Last metadata expiration check performed 5:41:47 ago on Tue Nov  3 10:43:37 2015.
+Dependencies resolved.
+================================================================================
+ Group                  Packages                                               
+================================================================================
+Marking installed:
+ Development Libraries  poco-doc          mpir-devel         lockdev-devel     
+                        gupnp-devel       iml-devel          cyrus-sasl-devel  
+                        geoclue-devel     gpm-devel          pciutils-devel    
+                        linbox-devel      openldap-devel     libdwarf-devel    
+                        slang-devel       gmp-ecm-devel      python-ldap       
+                        glibc-devel       ffcall             gmp-devel         
+                        check-devel       libcurl-devel      python-ZODB3-devel
+                        bzip2-devel       python-devel       openssl-devel     
+                        libselinux-devel  rpm-devel          poco-devel        
+                        m4ri-devel        libedit-devel      coolkey-devel     
+                        libattr-devel     lexertl-devel      boost-devel       
+                        ncurses-devel     perl-devel         dbus-devel        
+                        libusbx-devel     libdb-devel        libcap-devel      
+                        DSDP-devel        gdbm-devel         libacl-devel      
+                        hesiod-devel      zlib-devel         binutils-devel    
+                        gf2x-devel        krb5-devel         libuser-devel     
+                        readline-devel    libogg-devel       pcsc-lite-devel   
+                        libvorbis-devel   expat-devel        gypsy-devel       
+                        gssdp-devel       m4rie-devel        newt-devel        
+                        libxml2-devel     pam-devel          givaro-devel      
+ Development Tools      gitg              dejagnu            quilt             
+                        diffstat          bzr-explorer       cvs2cl            
+                        svn2cl            utrac              nemiver           
+                        expect            translate-toolkit  buildbot          
+                        qgit              gtranslator        git               
+                        scanmem           tig                gettext           
+                        rcs               subversion         robodoc           
+                        patchutils        manedit            rapidsvn          
+                        subunit           cvsgraph           systemtap         
+                        monotone          archmage           tailor            
+                        cvsps             tkcvs              tortoisehg        
+                        giggle            darcs              doxygen           
+                        bzr               git-cola           gambas3-ide       
+                        mercurial         cvs                git-annex         
+                        meld              mr                 highlight         
+                        lcov              colordiff          git2cl            
+================================================================================
+ Package                  Arch    Version                        Repository
+                                                                           Size
+================================================================================
+Installing:
+ autoconf                 noarch  2.69-20.fc22                   updates  709 k
+ automake                 noarch  1.15-1.fc22                    fedora   694 k
+ binutils-devel           x86_64  2.25-9.fc22                    updates  852 k
+ boost                    x86_64  1.57.0-6.fc22                  fedora    43 k
+ boost-atomic             x86_64  1.57.0-6.fc22                  fedora    45 k
+ boost-chrono             x86_64  1.57.0-6.fc22                  fedora    52 k
+ boost-container          x86_64  1.57.0-6.fc22                  fedora    66 k
+ boost-context            x86_64  1.57.0-6.fc22                  fedora    45 k
+ boost-coroutine          x86_64  1.57.0-6.fc22                  fedora    60 k
+ boost-date-time          x86_64  1.57.0-6.fc22                  fedora    59 k
+ boost-devel              x86_64  1.57.0-6.fc22                  fedora   7.9 M
+ boost-filesystem         x86_64  1.57.0-6.fc22                  fedora    75 k
+ boost-graph              x86_64  1.57.0-6.fc22                  fedora   140 k
+ boost-iostreams          x86_64  1.57.0-6.fc22                  fedora    67 k
+ boost-locale             x86_64  1.57.0-6.fc22                  fedora   285 k
+ boost-log                x86_64  1.57.0-6.fc22                  fedora   487 k
+ boost-math               x86_64  1.57.0-6.fc22                  fedora   282 k
+ boost-program-options    x86_64  1.57.0-6.fc22                  fedora   169 k
+ boost-python             x86_64  1.57.0-6.fc22                  fedora   132 k
+ boost-random             x86_64  1.57.0-6.fc22                  fedora    51 k
+ boost-regex              x86_64  1.57.0-6.fc22                  fedora   303 k
+ boost-serialization      x86_64  1.57.0-6.fc22                  fedora   159 k
+ boost-signals            x86_64  1.57.0-6.fc22                  fedora    70 k
+ boost-system             x86_64  1.57.0-6.fc22                  fedora    48 k
+ boost-test               x86_64  1.57.0-6.fc22                  fedora   223 k
+ boost-thread             x86_64  1.57.0-6.fc22                  fedora    89 k
+ boost-timer              x86_64  1.57.0-6.fc22                  fedora    50 k
+ boost-wave               x86_64  1.57.0-6.fc22                  fedora   233 k
+ bzip2-devel              x86_64  1.0.6-14.fc22                  fedora   222 k
+ cvs                      x86_64  1.11.23-38.fc22                fedora   590 k
+ cyrus-sasl               x86_64  2.1.26-23.fc22                 updates   92 k
+ cyrus-sasl-devel         x86_64  2.1.26-23.fc22                 updates  314 k
+ dbus-devel               x86_64  1:1.8.20-1.fc22                updates   58 k
+ diffstat                 x86_64  1.59-2.fc22                    fedora    40 k
+ doxygen                  x86_64  1:1.8.9.1-2.fc22               fedora   4.2 M
+ dyninst                  x86_64  8.2.1-2.fc22                   fedora   2.6 M
+ gdbm-devel               x86_64  1.11-4.fc22                    fedora    58 k
+ glib2-devel              x86_64  2.44.1-2.fc22                  updates  432 k
+ gmp-devel                x86_64  1:6.0.0-9.fc22                 fedora   185 k
+ hesiod-devel             x86_64  3.2.1-4.fc22                   fedora    26 k
+ kernel-debug-devel       x86_64  4.2.3-200.fc22                 updates  9.8 M
+ keyutils-libs-devel      x86_64  1.5.9-4.fc22                   fedora    45 k
+ krb5-devel               x86_64  1.13.2-8.fc22                  updates  648 k
+ libacl-devel             x86_64  2.2.52-7.fc22                  fedora    76 k
+ libattr-devel            x86_64  2.4.47-10.fc22                 updates   32 k
+ libcap-devel             x86_64  2.24-7.fc22                    fedora    31 k
+ libcom_err-devel         x86_64  1.42.12-4.fc22                 fedora    35 k
+ libcurl-devel            x86_64  7.40.0-7.fc22                  updates  560 k
+ libdb-devel              x86_64  5.3.28-12.fc22                 updates   43 k
+ libdwarf                 x86_64  20150507-1.fc22                updates  128 k
+ libicu-devel             x86_64  54.1-4.fc22                    updates  741 k
+ libogg                   x86_64  2:1.3.2-2.fc22                 fedora    28 k
+ libogg-devel             x86_64  2:1.3.2-2.fc22                 fedora    18 k
+ libselinux-devel         x86_64  2.3-10.fc22                    updates  181 k
+ libsepol-devel           x86_64  2.3-4.fc22                     fedora    76 k
+ libserf                  x86_64  1.3.7-2.fc22                   fedora    57 k
+ libuser-devel            x86_64  0.62-1.fc22                    updates   74 k
+ libverto-devel           x86_64  0.2.6-4.fc22                   fedora    16 k
+ libvorbis                x86_64  1:1.3.4-3.fc22                 fedora   190 k
+ libvorbis-devel          x86_64  1:1.3.4-3.fc22                 fedora    24 k
+ libxml2-devel            x86_64  2.9.2-4.fc22                   updates  1.1 M
+ lockdev                  x86_64  1.0.4-0.19.20111007git.fc22    fedora    38 k
+ lockdev-devel            x86_64  1.0.4-0.19.20111007git.fc22    fedora    19 k
+ m4                       x86_64  1.4.17-6.fc22                  fedora   264 k
+ mokutil                  x86_64  1:0.2.0-1.fc22                 fedora    38 k
+ ncurses-devel            x86_64  5.9-18.20150214.fc22           fedora   731 k
+ openldap-devel           x86_64  2.4.40-12.fc22                 fedora   804 k
+ openssl-devel            x86_64  1:1.0.1k-12.fc22               updates  1.3 M
+ pam-devel                x86_64  1.1.8-19.fc22                  updates  188 k
+ patchutils               x86_64  0.3.4-2.fc22                   updates  111 k
+ pciutils-devel           x86_64  3.3.0-1.fc22                   fedora    38 k
+ pcre-devel               x86_64  8.37-5.fc22                    updates  539 k
+ pcsc-lite-devel          x86_64  1.8.13-1.fc22                  fedora    53 k
+ perl-ExtUtils-Command    noarch  1.20-1.fc22                    fedora    25 k
+ perl-ExtUtils-Install    noarch  2.04-1.fc22                    fedora    46 k
+ perl-ExtUtils-MakeMaker  noarch  7.04-1.fc22                    fedora   277 k
+ perl-ExtUtils-Manifest   noarch  1.70-1.fc22                    fedora    35 k
+ perl-ExtUtils-ParseXS    noarch  1:3.24-310.fc22                fedora    86 k
+ perl-Test-Harness        noarch  3.35-1.fc22                    fedora   277 k
+ perl-Thread-Queue        noarch  3.06-1.fc22                    updates   22 k
+ perl-devel               x86_64  4:5.20.3-328.fc22              updates  508 k
+ perl-version             x86_64  4:0.99.12-1.fc22               fedora    93 k
+ popt-devel               x86_64  1.16-5.fc22                    fedora    28 k
+ pyparsing                noarch  2.0.3-1.fc22                   fedora   103 k
+ python-devel             x86_64  2.7.10-8.fc22                  updates  397 k
+ python-macros            noarch  2.7.10-8.fc22                  updates   61 k
+ rcs                      x86_64  5.9.4-1.fc22                   fedora   241 k
+ readline-devel           x86_64  6.3-5.fc22                     fedora   178 k
+ rpm-devel                x86_64  4.12.0.1-12.fc22               updates  115 k
+ slang-devel              x86_64  2.3.0-2.fc22                   fedora    96 k
+ subversion               x86_64  1.8.13-7.fc22                  updates  1.1 M
+ subversion-libs          x86_64  1.8.13-7.fc22                  updates  1.1 M
+ systemtap                x86_64  2.9-1.fc22                     updates   23 k
+ systemtap-client         x86_64  2.9-1.fc22                     updates  3.0 M
+ systemtap-devel          x86_64  2.9-1.fc22                     updates  1.7 M
+ systemtap-runtime        x86_64  2.9-1.fc22                     updates  272 k
+ systemtap-sdt-devel      x86_64  2.9-1.fc22                     updates   68 k
+ xz-devel                 x86_64  5.2.0-2.fc22                   fedora    60 k
+ zlib-devel               x86_64  1.2.8-7.fc22                   fedora    54 k
+
+Transaction Summary
+================================================================================
+Install  99 Packages
+
+Total download size: 50 M
+Installed size: 237 M
+Downloading Packages:
+--------------------------------------------------------------------------------
+Total                                           1.0 MB/s |  50 MB     00:50     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Installing  : boost-system-1.57.0-6.fc22.x86_64                          1/99 
+  Installing  : boost-chrono-1.57.0-6.fc22.x86_64                          2/99 
+  Installing  : boost-thread-1.57.0-6.fc22.x86_64                          3/99 
+  Installing  : boost-filesystem-1.57.0-6.fc22.x86_64                      4/99 
+  Installing  : boost-regex-1.57.0-6.fc22.x86_64                           5/99 
+  Installing  : boost-date-time-1.57.0-6.fc22.x86_64                       6/99 
+  Installing  : zlib-devel-1.2.8-7.fc22.x86_64                             7/99 
+  Installing  : boost-context-1.57.0-6.fc22.x86_64                         8/99 
+  Installing  : boost-coroutine-1.57.0-6.fc22.x86_64                       9/99 
+  Installing  : boost-log-1.57.0-6.fc22.x86_64                            10/99 
+  Installing  : boost-wave-1.57.0-6.fc22.x86_64                           11/99 
+  Installing  : boost-graph-1.57.0-6.fc22.x86_64                          12/99 
+  Installing  : boost-locale-1.57.0-6.fc22.x86_64                         13/99 
+  Installing  : boost-timer-1.57.0-6.fc22.x86_64                          14/99 
+  Installing  : boost-random-1.57.0-6.fc22.x86_64                         15/99 
+  Installing  : libogg-2:1.3.2-2.fc22.x86_64                              16/99 
+  Installing  : boost-test-1.57.0-6.fc22.x86_64                           17/99 
+  Installing  : boost-signals-1.57.0-6.fc22.x86_64                        18/99 
+  Installing  : boost-serialization-1.57.0-6.fc22.x86_64                  19/99 
+  Installing  : boost-python-1.57.0-6.fc22.x86_64                         20/99 
+  Installing  : boost-program-options-1.57.0-6.fc22.x86_64                21/99 
+  Installing  : boost-math-1.57.0-6.fc22.x86_64                           22/99 
+  Installing  : boost-iostreams-1.57.0-6.fc22.x86_64                      23/99 
+  Installing  : boost-atomic-1.57.0-6.fc22.x86_64                         24/99 
+  Installing  : libserf-1.3.7-2.fc22.x86_64                               25/99 
+  Installing  : subversion-libs-1.8.13-7.fc22.x86_64                      26/99 
+  Installing  : boost-1.57.0-6.fc22.x86_64                                27/99 
+  Installing  : libvorbis-1:1.3.4-3.fc22.x86_64                           28/99 
+  Installing  : kernel-debug-devel-4.2.3-200.fc22.x86_64                  29/99 
+  Installing  : systemtap-devel-2.9-1.fc22.x86_64                         30/99 
+  Installing  : perl-Thread-Queue-3.06-1.fc22.noarch                      31/99 
+  Installing  : m4-1.4.17-6.fc22.x86_64                                   32/99 
+  Installing  : autoconf-2.69-20.fc22.noarch                              33/99 
+  Installing  : automake-1.15-1.fc22.noarch                               34/99 
+  Installing  : libogg-devel-2:1.3.2-2.fc22.x86_64                        35/99 
+  Installing  : libdwarf-20150507-1.fc22.x86_64                           36/99 
+  Installing  : dyninst-8.2.1-2.fc22.x86_64                               37/99 
+  Installing  : systemtap-runtime-2.9-1.fc22.x86_64                       38/99 
+  Installing  : libverto-devel-0.2.6-4.fc22.x86_64                        39/99 
+  Installing  : libcom_err-devel-1.42.12-4.fc22.x86_64                    40/99 
+  Installing  : keyutils-libs-devel-1.5.9-4.fc22.x86_64                   41/99 
+  Installing  : pcre-devel-8.37-5.fc22.x86_64                             42/99 
+  Installing  : libsepol-devel-2.3-4.fc22.x86_64                          43/99 
+  Installing  : libselinux-devel-2.3-10.fc22.x86_64                       44/99 
+  Installing  : krb5-devel-1.13.2-8.fc22.x86_64                           45/99 
+  Installing  : xz-devel-5.2.0-2.fc22.x86_64                              46/99 
+  Installing  : pyparsing-2.0.3-1.fc22.noarch                             47/99 
+  Installing  : systemtap-sdt-devel-2.9-1.fc22.x86_64                     48/99 
+  Installing  : gdbm-devel-1.11-4.fc22.x86_64                             49/99 
+  Installing  : libicu-devel-54.1-4.fc22.x86_64                           50/99 
+  Installing  : glib2-devel-2.44.1-2.fc22.x86_64                          51/99 
+  Installing  : libattr-devel-2.4.47-10.fc22.x86_64                       52/99 
+  Installing  : libdb-devel-5.3.28-12.fc22.x86_64                         53/99 
+  Installing  : perl-version-4:0.99.12-1.fc22.x86_64                      54/99 
+  Installing  : perl-Test-Harness-3.35-1.fc22.noarch                      55/99 
+  Installing  : perl-ExtUtils-Manifest-1.70-1.fc22.noarch                 56/99 
+  Installing  : perl-ExtUtils-Command-1.20-1.fc22.noarch                  57/99 
+  Installing  : perl-ExtUtils-Install-2.04-1.fc22.noarch                  58/99 
+  Installing  : perl-ExtUtils-MakeMaker-7.04-1.fc22.noarch                59/99 
+  Installing  : perl-ExtUtils-ParseXS-1:3.24-310.fc22.noarch              60/99 
+  Installing  : perl-devel-4:5.20.3-328.fc22.x86_64                       61/99 
+  Installing  : boost-container-1.57.0-6.fc22.x86_64                      62/99 
+  Installing  : popt-devel-1.16-5.fc22.x86_64                             63/99 
+  Installing  : python-macros-2.7.10-8.fc22.noarch                        64/99 
+  Installing  : cyrus-sasl-2.1.26-23.fc22.x86_64                          65/99 
+  Installing  : cyrus-sasl-devel-2.1.26-23.fc22.x86_64                    66/99 
+  Installing  : lockdev-1.0.4-0.19.20111007git.fc22.x86_64                67/99 
+  Installing  : ncurses-devel-5.9-18.20150214.fc22.x86_64                 68/99 
+  Installing  : mokutil-1:0.2.0-1.fc22.x86_64                             69/99 
+  Installing  : systemtap-client-2.9-1.fc22.x86_64                        70/99 
+  Installing  : systemtap-2.9-1.fc22.x86_64                               71/99 
+  Installing  : readline-devel-6.3-5.fc22.x86_64                          72/99 
+  Installing  : lockdev-devel-1.0.4-0.19.20111007git.fc22.x86_64          73/99 
+  Installing  : openldap-devel-2.4.40-12.fc22.x86_64                      74/99 
+  Installing  : python-devel-2.7.10-8.fc22.x86_64                         75/99 
+  Installing  : rpm-devel-4.12.0.1-12.fc22.x86_64                         76/99 
+  Installing  : boost-devel-1.57.0-6.fc22.x86_64                          77/99 
+  Installing  : libacl-devel-2.2.52-7.fc22.x86_64                         78/99 
+  Installing  : libuser-devel-0.62-1.fc22.x86_64                          79/99 
+  Installing  : libxml2-devel-2.9.2-4.fc22.x86_64                         80/99 
+  Installing  : openssl-devel-1:1.0.1k-12.fc22.x86_64                     81/99 
+  Installing  : libvorbis-devel-1:1.3.4-3.fc22.x86_64                     82/99 
+  Installing  : subversion-1.8.13-7.fc22.x86_64                           83/99 
+  Installing  : pciutils-devel-3.3.0-1.fc22.x86_64                        84/99 
+  Installing  : binutils-devel-2.25-9.fc22.x86_64                         85/99 
+  Installing  : pcsc-lite-devel-1.8.13-1.fc22.x86_64                      86/99 
+  Installing  : hesiod-devel-3.2.1-4.fc22.x86_64                          87/99 
+  Installing  : libcap-devel-2.24-7.fc22.x86_64                           88/99 
+  Installing  : dbus-devel-1:1.8.20-1.fc22.x86_64                         89/99 
+  Installing  : libcurl-devel-7.40.0-7.fc22.x86_64                        90/99 
+  Installing  : gmp-devel-1:6.0.0-9.fc22.x86_64                           91/99 
+  Installing  : slang-devel-2.3.0-2.fc22.x86_64                           92/99 
+  Installing  : pam-devel-1.1.8-19.fc22.x86_64                            93/99 
+  Installing  : bzip2-devel-1.0.6-14.fc22.x86_64                          94/99 
+  Installing  : patchutils-0.3.4-2.fc22.x86_64                            95/99 
+  Installing  : doxygen-1:1.8.9.1-2.fc22.x86_64                           96/99 
+  Installing  : rcs-5.9.4-1.fc22.x86_64                                   97/99 
+  Installing  : cvs-1.11.23-38.fc22.x86_64                                98/99 
+  Installing  : diffstat-1.59-2.fc22.x86_64                               99/99 
+  Verifying   : diffstat-1.59-2.fc22.x86_64                                1/99 
+  Verifying   : cvs-1.11.23-38.fc22.x86_64                                 2/99 
+  Verifying   : rcs-5.9.4-1.fc22.x86_64                                    3/99 
+  Verifying   : doxygen-1:1.8.9.1-2.fc22.x86_64                            4/99 
+  Verifying   : patchutils-0.3.4-2.fc22.x86_64                             5/99 
+  Verifying   : systemtap-2.9-1.fc22.x86_64                                6/99 
+  Verifying   : systemtap-client-2.9-1.fc22.x86_64                         7/99 
+  Verifying   : mokutil-1:0.2.0-1.fc22.x86_64                              8/99 
+  Verifying   : systemtap-runtime-2.9-1.fc22.x86_64                        9/99 
+  Verifying   : dyninst-8.2.1-2.fc22.x86_64                               10/99 
+  Verifying   : boost-system-1.57.0-6.fc22.x86_64                         11/99 
+  Verifying   : boost-thread-1.57.0-6.fc22.x86_64                         12/99 
+  Verifying   : subversion-1.8.13-7.fc22.x86_64                           13/99 
+  Verifying   : libserf-1.3.7-2.fc22.x86_64                               14/99 
+  Verifying   : subversion-libs-1.8.13-7.fc22.x86_64                      15/99 
+  Verifying   : zlib-devel-1.2.8-7.fc22.x86_64                            16/99 
+  Verifying   : readline-devel-6.3-5.fc22.x86_64                          17/99 
+  Verifying   : ncurses-devel-5.9-18.20150214.fc22.x86_64                 18/99 
+  Verifying   : bzip2-devel-1.0.6-14.fc22.x86_64                          19/99 
+  Verifying   : pam-devel-1.1.8-19.fc22.x86_64                            20/99 
+  Verifying   : lockdev-devel-1.0.4-0.19.20111007git.fc22.x86_64          21/99 
+  Verifying   : lockdev-1.0.4-0.19.20111007git.fc22.x86_64                22/99 
+  Verifying   : cyrus-sasl-devel-2.1.26-23.fc22.x86_64                    23/99 
+  Verifying   : cyrus-sasl-2.1.26-23.fc22.x86_64                          24/99 
+  Verifying   : pciutils-devel-3.3.0-1.fc22.x86_64                        25/99 
+  Verifying   : openldap-devel-2.4.40-12.fc22.x86_64                      26/99 
+  Verifying   : slang-devel-2.3.0-2.fc22.x86_64                           27/99 
+  Verifying   : gmp-devel-1:6.0.0-9.fc22.x86_64                           28/99 
+  Verifying   : libcurl-devel-7.40.0-7.fc22.x86_64                        29/99 
+  Verifying   : python-devel-2.7.10-8.fc22.x86_64                         30/99 
+  Verifying   : python-macros-2.7.10-8.fc22.noarch                        31/99 
+  Verifying   : openssl-devel-1:1.0.1k-12.fc22.x86_64                     32/99 
+  Verifying   : libselinux-devel-2.3-10.fc22.x86_64                       33/99 
+  Verifying   : rpm-devel-4.12.0.1-12.fc22.x86_64                         34/99 
+  Verifying   : popt-devel-1.16-5.fc22.x86_64                             35/99 
+  Verifying   : boost-devel-1.57.0-6.fc22.x86_64                          36/99 
+  Verifying   : boost-1.57.0-6.fc22.x86_64                                37/99 
+  Verifying   : boost-atomic-1.57.0-6.fc22.x86_64                         38/99 
+  Verifying   : boost-chrono-1.57.0-6.fc22.x86_64                         39/99 
+  Verifying   : boost-container-1.57.0-6.fc22.x86_64                      40/99 
+  Verifying   : boost-context-1.57.0-6.fc22.x86_64                        41/99 
+  Verifying   : boost-coroutine-1.57.0-6.fc22.x86_64                      42/99 
+  Verifying   : boost-date-time-1.57.0-6.fc22.x86_64                      43/99 
+  Verifying   : boost-filesystem-1.57.0-6.fc22.x86_64                     44/99 
+  Verifying   : boost-graph-1.57.0-6.fc22.x86_64                          45/99 
+  Verifying   : boost-iostreams-1.57.0-6.fc22.x86_64                      46/99 
+  Verifying   : boost-locale-1.57.0-6.fc22.x86_64                         47/99 
+  Verifying   : boost-log-1.57.0-6.fc22.x86_64                            48/99 
+  Verifying   : boost-math-1.57.0-6.fc22.x86_64                           49/99 
+  Verifying   : boost-program-options-1.57.0-6.fc22.x86_64                50/99 
+  Verifying   : boost-python-1.57.0-6.fc22.x86_64                         51/99 
+  Verifying   : boost-random-1.57.0-6.fc22.x86_64                         52/99 
+  Verifying   : boost-regex-1.57.0-6.fc22.x86_64                          53/99 
+  Verifying   : boost-serialization-1.57.0-6.fc22.x86_64                  54/99 
+  Verifying   : boost-signals-1.57.0-6.fc22.x86_64                        55/99 
+  Verifying   : boost-test-1.57.0-6.fc22.x86_64                           56/99 
+  Verifying   : boost-timer-1.57.0-6.fc22.x86_64                          57/99 
+  Verifying   : boost-wave-1.57.0-6.fc22.x86_64                           58/99 
+  Verifying   : perl-devel-4:5.20.3-328.fc22.x86_64                       59/99 
+  Verifying   : perl-ExtUtils-Install-2.04-1.fc22.noarch                  60/99 
+  Verifying   : perl-ExtUtils-MakeMaker-7.04-1.fc22.noarch                61/99 
+  Verifying   : perl-ExtUtils-ParseXS-1:3.24-310.fc22.noarch              62/99 
+  Verifying   : perl-ExtUtils-Command-1.20-1.fc22.noarch                  63/99 
+  Verifying   : perl-ExtUtils-Manifest-1.70-1.fc22.noarch                 64/99 
+  Verifying   : perl-Test-Harness-3.35-1.fc22.noarch                      65/99 
+  Verifying   : perl-version-4:0.99.12-1.fc22.x86_64                      66/99 
+  Verifying   : dbus-devel-1:1.8.20-1.fc22.x86_64                         67/99 
+  Verifying   : libdb-devel-5.3.28-12.fc22.x86_64                         68/99 
+  Verifying   : libcap-devel-2.24-7.fc22.x86_64                           69/99 
+  Verifying   : libacl-devel-2.2.52-7.fc22.x86_64                         70/99 
+  Verifying   : libattr-devel-2.4.47-10.fc22.x86_64                       71/99 
+  Verifying   : binutils-devel-2.25-9.fc22.x86_64                         72/99 
+  Verifying   : krb5-devel-1.13.2-8.fc22.x86_64                           73/99 
+  Verifying   : libuser-devel-0.62-1.fc22.x86_64                          74/99 
+  Verifying   : hesiod-devel-3.2.1-4.fc22.x86_64                          75/99 
+  Verifying   : libogg-devel-2:1.3.2-2.fc22.x86_64                        76/99 
+  Verifying   : automake-1.15-1.fc22.noarch                               77/99 
+  Verifying   : libogg-2:1.3.2-2.fc22.x86_64                              78/99 
+  Verifying   : pcsc-lite-devel-1.8.13-1.fc22.x86_64                      79/99 
+  Verifying   : libvorbis-devel-1:1.3.4-3.fc22.x86_64                     80/99 
+  Verifying   : libvorbis-1:1.3.4-3.fc22.x86_64                           81/99 
+  Verifying   : libxml2-devel-2.9.2-4.fc22.x86_64                         82/99 
+  Verifying   : glib2-devel-2.44.1-2.fc22.x86_64                          83/99 
+  Verifying   : libicu-devel-54.1-4.fc22.x86_64                           84/99 
+  Verifying   : systemtap-devel-2.9-1.fc22.x86_64                         85/99 
+  Verifying   : gdbm-devel-1.11-4.fc22.x86_64                             86/99 
+  Verifying   : systemtap-sdt-devel-2.9-1.fc22.x86_64                     87/99 
+  Verifying   : pyparsing-2.0.3-1.fc22.noarch                             88/99 
+  Verifying   : xz-devel-5.2.0-2.fc22.x86_64                              89/99 
+  Verifying   : libsepol-devel-2.3-4.fc22.x86_64                          90/99 
+  Verifying   : pcre-devel-8.37-5.fc22.x86_64                             91/99 
+  Verifying   : keyutils-libs-devel-1.5.9-4.fc22.x86_64                   92/99 
+  Verifying   : libcom_err-devel-1.42.12-4.fc22.x86_64                    93/99 
+  Verifying   : libverto-devel-0.2.6-4.fc22.x86_64                        94/99 
+  Verifying   : libdwarf-20150507-1.fc22.x86_64                           95/99 
+  Verifying   : autoconf-2.69-20.fc22.noarch                              96/99 
+  Verifying   : m4-1.4.17-6.fc22.x86_64                                   97/99 
+  Verifying   : perl-Thread-Queue-3.06-1.fc22.noarch                      98/99 
+  Verifying   : kernel-debug-devel-4.2.3-200.fc22.x86_64                  99/99 
+
+Installed:
+  autoconf.noarch 2.69-20.fc22                                                  
+  automake.noarch 1.15-1.fc22                                                   
+  binutils-devel.x86_64 2.25-9.fc22                                             
+  boost.x86_64 1.57.0-6.fc22                                                    
+  boost-atomic.x86_64 1.57.0-6.fc22                                             
+  boost-chrono.x86_64 1.57.0-6.fc22                                             
+  boost-container.x86_64 1.57.0-6.fc22                                          
+  boost-context.x86_64 1.57.0-6.fc22                                            
+  boost-coroutine.x86_64 1.57.0-6.fc22                                          
+  boost-date-time.x86_64 1.57.0-6.fc22                                          
+  boost-devel.x86_64 1.57.0-6.fc22                                              
+  boost-filesystem.x86_64 1.57.0-6.fc22                                         
+  boost-graph.x86_64 1.57.0-6.fc22                                              
+  boost-iostreams.x86_64 1.57.0-6.fc22                                          
+  boost-locale.x86_64 1.57.0-6.fc22                                             
+  boost-log.x86_64 1.57.0-6.fc22                                                
+  boost-math.x86_64 1.57.0-6.fc22                                               
+  boost-program-options.x86_64 1.57.0-6.fc22                                    
+  boost-python.x86_64 1.57.0-6.fc22                                             
+  boost-random.x86_64 1.57.0-6.fc22                                             
+  boost-regex.x86_64 1.57.0-6.fc22                                              
+  boost-serialization.x86_64 1.57.0-6.fc22                                      
+  boost-signals.x86_64 1.57.0-6.fc22                                            
+  boost-system.x86_64 1.57.0-6.fc22                                             
+  boost-test.x86_64 1.57.0-6.fc22                                               
+  boost-thread.x86_64 1.57.0-6.fc22                                             
+  boost-timer.x86_64 1.57.0-6.fc22                                              
+  boost-wave.x86_64 1.57.0-6.fc22                                               
+  bzip2-devel.x86_64 1.0.6-14.fc22                                              
+  cvs.x86_64 1.11.23-38.fc22                                                    
+  cyrus-sasl.x86_64 2.1.26-23.fc22                                              
+  cyrus-sasl-devel.x86_64 2.1.26-23.fc22                                        
+  dbus-devel.x86_64 1:1.8.20-1.fc22                                             
+  diffstat.x86_64 1.59-2.fc22                                                   
+  doxygen.x86_64 1:1.8.9.1-2.fc22                                               
+  dyninst.x86_64 8.2.1-2.fc22                                                   
+  gdbm-devel.x86_64 1.11-4.fc22                                                 
+  glib2-devel.x86_64 2.44.1-2.fc22                                              
+  gmp-devel.x86_64 1:6.0.0-9.fc22                                               
+  hesiod-devel.x86_64 3.2.1-4.fc22                                              
+  kernel-debug-devel.x86_64 4.2.3-200.fc22                                      
+  keyutils-libs-devel.x86_64 1.5.9-4.fc22                                       
+  krb5-devel.x86_64 1.13.2-8.fc22                                               
+  libacl-devel.x86_64 2.2.52-7.fc22                                             
+  libattr-devel.x86_64 2.4.47-10.fc22                                           
+  libcap-devel.x86_64 2.24-7.fc22                                               
+  libcom_err-devel.x86_64 1.42.12-4.fc22                                        
+  libcurl-devel.x86_64 7.40.0-7.fc22                                            
+  libdb-devel.x86_64 5.3.28-12.fc22                                             
+  libdwarf.x86_64 20150507-1.fc22                                               
+  libicu-devel.x86_64 54.1-4.fc22                                               
+  libogg.x86_64 2:1.3.2-2.fc22                                                  
+  libogg-devel.x86_64 2:1.3.2-2.fc22                                            
+  libselinux-devel.x86_64 2.3-10.fc22                                           
+  libsepol-devel.x86_64 2.3-4.fc22                                              
+  libserf.x86_64 1.3.7-2.fc22                                                   
+  libuser-devel.x86_64 0.62-1.fc22                                              
+  libverto-devel.x86_64 0.2.6-4.fc22                                            
+  libvorbis.x86_64 1:1.3.4-3.fc22                                               
+  libvorbis-devel.x86_64 1:1.3.4-3.fc22                                         
+  libxml2-devel.x86_64 2.9.2-4.fc22                                             
+  lockdev.x86_64 1.0.4-0.19.20111007git.fc22                                    
+  lockdev-devel.x86_64 1.0.4-0.19.20111007git.fc22                              
+  m4.x86_64 1.4.17-6.fc22                                                       
+  mokutil.x86_64 1:0.2.0-1.fc22                                                 
+  ncurses-devel.x86_64 5.9-18.20150214.fc22                                     
+  openldap-devel.x86_64 2.4.40-12.fc22                                          
+  openssl-devel.x86_64 1:1.0.1k-12.fc22                                         
+  pam-devel.x86_64 1.1.8-19.fc22                                                
+  patchutils.x86_64 0.3.4-2.fc22                                                
+  pciutils-devel.x86_64 3.3.0-1.fc22                                            
+  pcre-devel.x86_64 8.37-5.fc22                                                 
+  pcsc-lite-devel.x86_64 1.8.13-1.fc22                                          
+  perl-ExtUtils-Command.noarch 1.20-1.fc22                                      
+  perl-ExtUtils-Install.noarch 2.04-1.fc22                                      
+  perl-ExtUtils-MakeMaker.noarch 7.04-1.fc22                                    
+  perl-ExtUtils-Manifest.noarch 1.70-1.fc22                                     
+  perl-ExtUtils-ParseXS.noarch 1:3.24-310.fc22                                  
+  perl-Test-Harness.noarch 3.35-1.fc22                                          
+  perl-Thread-Queue.noarch 3.06-1.fc22                                          
+  perl-devel.x86_64 4:5.20.3-328.fc22                                           
+  perl-version.x86_64 4:0.99.12-1.fc22                                          
+  popt-devel.x86_64 1.16-5.fc22                                                 
+  pyparsing.noarch 2.0.3-1.fc22                                                 
+  python-devel.x86_64 2.7.10-8.fc22                                             
+  python-macros.noarch 2.7.10-8.fc22                                            
+  rcs.x86_64 5.9.4-1.fc22                                                       
+  readline-devel.x86_64 6.3-5.fc22                                              
+  rpm-devel.x86_64 4.12.0.1-12.fc22                                             
+  slang-devel.x86_64 2.3.0-2.fc22                                               
+  subversion.x86_64 1.8.13-7.fc22                                               
+  subversion-libs.x86_64 1.8.13-7.fc22                                          
+  systemtap.x86_64 2.9-1.fc22                                                   
+  systemtap-client.x86_64 2.9-1.fc22                                            
+  systemtap-devel.x86_64 2.9-1.fc22                                             
+  systemtap-runtime.x86_64 2.9-1.fc22                                           
+  systemtap-sdt-devel.x86_64 2.9-1.fc22                                         
+  xz-devel.x86_64 5.2.0-2.fc22                                                  
+  zlib-devel.x86_64 1.2.8-7.fc22                                                
+
+Complete!
+Last metadata expiration check performed 5:43:11 ago on Tue Nov  3 10:43:37 2015.
+Package libdb-utils-5.3.28-12.fc22.x86_64 is already installed, skipping.
+Package bash-completion-1:2.1-7.20150513git1950590.fc22.noarch is already installed, skipping.
+Package cyrus-sasl-lib-2.1.26-23.fc22.x86_64 is already installed, skipping.
+Dependencies resolved.
+================================================================================
+ Package               Arch   Version                             Repository
+                                                                           Size
+================================================================================
+Installing:
+ GeoIP                 x86_64 1.6.5-1.fc22                        fedora  117 k
+ GeoIP-GeoLite-data    noarch 2015.08-1.fc22                      updates 364 k
+ clucene-core          x86_64 2.3.3.4-17.20130812.e8e3d20git.fc22 fedora  550 k
+ dejavu-fonts-common   noarch 2.35-1.fc22                         updates  73 k
+ dejavu-sans-fonts     noarch 2.35-1.fc22                         updates 1.5 M
+ dovecot               x86_64 1:2.2.18-3.fc22                     updates 3.4 M
+ dovecot-devel         x86_64 1:2.2.18-3.fc22                     updates 395 k
+ dovecot-mysql         x86_64 1:2.2.18-3.fc22                     updates  76 k
+ gd                    x86_64 2.1.1-2.fc22                        fedora  145 k
+ libXpm                x86_64 3.5.11-3.fc22                       fedora   54 k
+ libc-client           x86_64 2007f-9.fc22                        fedora  565 k
+ libmcrypt             x86_64 2.5.8-16.fc22                       fedora  105 k
+ libmemcached-libs     x86_64 1.0.18-4.fc22                       fedora  133 k
+ libtidy               x86_64 0.99.0-33.20091203.fc22             fedora  137 k
+ libvpx                x86_64 1.3.0-7.fc22                        updates 513 k
+ libzip                x86_64 0.11.2-5.fc22                       fedora   64 k
+ nginx-filesystem      noarch 1:1.8.0-10.fc22                     updates  19 k
+ php                   x86_64 5.6.14-1.fc22                       updates 2.6 M
+ php-bcmath            x86_64 5.6.14-1.fc22                       updates  74 k
+ php-cli               x86_64 5.6.14-1.fc22                       updates 4.0 M
+ php-common            x86_64 5.6.14-1.fc22                       updates 1.1 M
+ php-gd                x86_64 5.6.14-1.fc22                       updates  97 k
+ php-imap              x86_64 5.6.14-1.fc22                       updates  94 k
+ php-mbstring          x86_64 5.6.14-1.fc22                       updates 580 k
+ php-mcrypt            x86_64 5.6.14-1.fc22                       updates  65 k
+ php-mysqlnd           x86_64 5.6.14-1.fc22                       updates 310 k
+ php-pdo               x86_64 5.6.14-1.fc22                       updates 150 k
+ php-pear              noarch 1:1.10.1-1.fc22                     updates 352 k
+ php-pecl-apcu         x86_64 4.0.7-1.fc22                        fedora   88 k
+ php-pecl-jsonc        x86_64 1.3.9-1.fc22                        updates  57 k
+ php-pecl-zip          x86_64 1.12.5-1.fc22                       updates 248 k
+ php-php-gettext       noarch 1.0.11-12.fc22                      updates  26 k
+ php-process           x86_64 5.6.14-1.fc22                       updates  87 k
+ php-tcpdf             noarch 6.2.11-1.fc22                       updates 2.1 M
+ php-tcpdf-dejavu-sans-fonts
+                       noarch 6.2.11-1.fc22                       updates 274 k
+ php-tidy              x86_64 5.6.14-1.fc22                       updates  69 k
+ php-udan11-sql-parser noarch 3.0.4-1.fc22                        updates  82 k
+ php-xml               x86_64 5.6.14-1.fc22                       updates 258 k
+ php-xmlrpc            x86_64 5.6.14-1.fc22                       updates  89 k
+ phpMyAdmin            noarch 4.5.1-1.fc22                        updates 4.6 M
+ postfix               x86_64 2:3.0.2-1.fc22                      updates 2.8 M
+ proftpd               x86_64 1.3.5a-1.fc22                       updates 3.7 M
+ proftpd-mysql         x86_64 1.3.5a-1.fc22                       updates  51 k
+ t1lib                 x86_64 5.1.2-16.fc22                       fedora  169 k
+ webalizer             x86_64 2.23_08-1.fc22                      fedora  139 k
+
+Transaction Summary
+================================================================================
+Install  45 Packages
+
+Total download size: 32 M
+Installed size: 123 M
+Downloading Packages:
+--------------------------------------------------------------------------------
+Total                                           1.0 MB/s |  32 MB     00:31     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Installing  : php-pecl-jsonc-1.3.9-1.fc22.x86_64                         1/45 
+  Installing  : php-common-5.6.14-1.fc22.x86_64                            2/45 
+  Installing  : php-xml-5.6.14-1.fc22.x86_64                               3/45 
+  Installing  : php-mbstring-5.6.14-1.fc22.x86_64                          4/45 
+  Installing  : php-cli-5.6.14-1.fc22.x86_64                               5/45 
+  Installing  : php-process-5.6.14-1.fc22.x86_64                           6/45 
+  Installing  : php-pear-1:1.10.1-1.fc22.noarch                            7/45 
+  Installing  : libvpx-1.3.0-7.fc22.x86_64                                 8/45 
+  Installing  : libXpm-3.5.11-3.fc22.x86_64                                9/45 
+  Installing  : gd-2.1.1-2.fc22.x86_64                                    10/45 
+  Installing  : php-5.6.14-1.fc22.x86_64                                  11/45 
+  Installing  : php-udan11-sql-parser-3.0.4-1.fc22.noarch                 12/45 
+  Installing  : php-php-gettext-1.0.11-12.fc22.noarch                     13/45 
+  Installing  : php-pdo-5.6.14-1.fc22.x86_64                              14/45 
+  Installing  : php-mysqlnd-5.6.14-1.fc22.x86_64                          15/45 
+  Installing  : php-bcmath-5.6.14-1.fc22.x86_64                           16/45 
+  Installing  : GeoIP-GeoLite-data-2015.08-1.fc22.noarch                  17/45 
+  Installing  : GeoIP-1.6.5-1.fc22.x86_64                                 18/45 
+  Installing  : clucene-core-2.3.3.4-17.20130812.e8e3d20git.fc22.x86_64   19/45 
+  Installing  : dovecot-1:2.2.18-3.fc22.x86_64                            20/45 
+  Installing  : dejavu-fonts-common-2.35-1.fc22.noarch                    21/45 
+  Installing  : dejavu-sans-fonts-2.35-1.fc22.noarch                      22/45 
+  Installing  : libtidy-0.99.0-33.20091203.fc22.x86_64                    23/45 
+  Installing  : php-tidy-5.6.14-1.fc22.x86_64                             24/45 
+  Installing  : libzip-0.11.2-5.fc22.x86_64                               25/45 
+  Installing  : php-pecl-zip-1.12.5-1.fc22.x86_64                         26/45 
+  Installing  : nginx-filesystem-1:1.8.0-10.fc22.noarch                   27/45 
+  Installing  : libmemcached-libs-1.0.18-4.fc22.x86_64                    28/45 
+  Installing  : proftpd-1.3.5a-1.fc22.x86_64                              29/45 
+  Installing  : t1lib-5.1.2-16.fc22.x86_64                                30/45 
+  Installing  : php-gd-5.6.14-1.fc22.x86_64                               31/45 
+  Installing  : php-tcpdf-6.2.11-1.fc22.noarch                            32/45 
+  Installing  : php-tcpdf-dejavu-sans-fonts-6.2.11-1.fc22.noarch          33/45 
+  Installing  : libc-client-2007f-9.fc22.x86_64                           34/45 
+  Installing  : libmcrypt-2.5.8-16.fc22.x86_64                            35/45 
+  Installing  : php-mcrypt-5.6.14-1.fc22.x86_64                           36/45 
+  Installing  : php-imap-5.6.14-1.fc22.x86_64                             37/45 
+  Installing  : phpMyAdmin-4.5.1-1.fc22.noarch                            38/45 
+  Installing  : proftpd-mysql-1.3.5a-1.fc22.x86_64                        39/45 
+  Installing  : dovecot-devel-1:2.2.18-3.fc22.x86_64                      40/45 
+  Installing  : dovecot-mysql-1:2.2.18-3.fc22.x86_64                      41/45 
+  Installing  : webalizer-2.23_08-1.fc22.x86_64                           42/45 
+  Installing  : php-pecl-apcu-4.0.7-1.fc22.x86_64                         43/45 
+  Installing  : php-xmlrpc-5.6.14-1.fc22.x86_64                           44/45 
+  Installing  : postfix-2:3.0.2-1.fc22.x86_64                             45/45 
+  Verifying   : webalizer-2.23_08-1.fc22.x86_64                            1/45 
+  Verifying   : gd-2.1.1-2.fc22.x86_64                                     2/45 
+  Verifying   : libXpm-3.5.11-3.fc22.x86_64                                3/45 
+  Verifying   : php-5.6.14-1.fc22.x86_64                                   4/45 
+  Verifying   : php-cli-5.6.14-1.fc22.x86_64                               5/45 
+  Verifying   : php-common-5.6.14-1.fc22.x86_64                            6/45 
+  Verifying   : php-xml-5.6.14-1.fc22.x86_64                               7/45 
+  Verifying   : php-mcrypt-5.6.14-1.fc22.x86_64                            8/45 
+  Verifying   : php-imap-5.6.14-1.fc22.x86_64                              9/45 
+  Verifying   : php-gd-5.6.14-1.fc22.x86_64                               10/45 
+  Verifying   : php-xmlrpc-5.6.14-1.fc22.x86_64                           11/45 
+  Verifying   : libmcrypt-2.5.8-16.fc22.x86_64                            12/45 
+  Verifying   : libc-client-2007f-9.fc22.x86_64                           13/45 
+  Verifying   : t1lib-5.1.2-16.fc22.x86_64                                14/45 
+  Verifying   : php-pecl-apcu-4.0.7-1.fc22.x86_64                         15/45 
+  Verifying   : php-mysqlnd-5.6.14-1.fc22.x86_64                          16/45 
+  Verifying   : php-pdo-5.6.14-1.fc22.x86_64                              17/45 
+  Verifying   : php-pear-1:1.10.1-1.fc22.noarch                           18/45 
+  Verifying   : php-process-5.6.14-1.fc22.x86_64                          19/45 
+  Verifying   : dovecot-devel-1:2.2.18-3.fc22.x86_64                      20/45 
+  Verifying   : dovecot-mysql-1:2.2.18-3.fc22.x86_64                      21/45 
+  Verifying   : postfix-2:3.0.2-1.fc22.x86_64                             22/45 
+  Verifying   : proftpd-mysql-1.3.5a-1.fc22.x86_64                        23/45 
+  Verifying   : proftpd-1.3.5a-1.fc22.x86_64                              24/45 
+  Verifying   : GeoIP-1.6.5-1.fc22.x86_64                                 25/45 
+  Verifying   : libmemcached-libs-1.0.18-4.fc22.x86_64                    26/45 
+  Verifying   : phpMyAdmin-4.5.1-1.fc22.noarch                            27/45 
+  Verifying   : php-mbstring-5.6.14-1.fc22.x86_64                         28/45 
+  Verifying   : php-udan11-sql-parser-3.0.4-1.fc22.noarch                 29/45 
+  Verifying   : nginx-filesystem-1:1.8.0-10.fc22.noarch                   30/45 
+  Verifying   : php-pecl-jsonc-1.3.9-1.fc22.x86_64                        31/45 
+  Verifying   : php-pecl-zip-1.12.5-1.fc22.x86_64                         32/45 
+  Verifying   : libzip-0.11.2-5.fc22.x86_64                               33/45 
+  Verifying   : php-php-gettext-1.0.11-12.fc22.noarch                     34/45 
+  Verifying   : php-tcpdf-6.2.11-1.fc22.noarch                            35/45 
+  Verifying   : php-bcmath-5.6.14-1.fc22.x86_64                           36/45 
+  Verifying   : php-tidy-5.6.14-1.fc22.x86_64                             37/45 
+  Verifying   : libtidy-0.99.0-33.20091203.fc22.x86_64                    38/45 
+  Verifying   : php-tcpdf-dejavu-sans-fonts-6.2.11-1.fc22.noarch          39/45 
+  Verifying   : dejavu-sans-fonts-2.35-1.fc22.noarch                      40/45 
+  Verifying   : dejavu-fonts-common-2.35-1.fc22.noarch                    41/45 
+  Verifying   : libvpx-1.3.0-7.fc22.x86_64                                42/45 
+  Verifying   : dovecot-1:2.2.18-3.fc22.x86_64                            43/45 
+  Verifying   : clucene-core-2.3.3.4-17.20130812.e8e3d20git.fc22.x86_64   44/45 
+  Verifying   : GeoIP-GeoLite-data-2015.08-1.fc22.noarch                  45/45 
+
+Installed:
+  GeoIP.x86_64 1.6.5-1.fc22                                                     
+  GeoIP-GeoLite-data.noarch 2015.08-1.fc22                                      
+  clucene-core.x86_64 2.3.3.4-17.20130812.e8e3d20git.fc22                       
+  dejavu-fonts-common.noarch 2.35-1.fc22                                        
+  dejavu-sans-fonts.noarch 2.35-1.fc22                                          
+  dovecot.x86_64 1:2.2.18-3.fc22                                                
+  dovecot-devel.x86_64 1:2.2.18-3.fc22                                          
+  dovecot-mysql.x86_64 1:2.2.18-3.fc22                                          
+  gd.x86_64 2.1.1-2.fc22                                                        
+  libXpm.x86_64 3.5.11-3.fc22                                                   
+  libc-client.x86_64 2007f-9.fc22                                               
+  libmcrypt.x86_64 2.5.8-16.fc22                                                
+  libmemcached-libs.x86_64 1.0.18-4.fc22                                        
+  libtidy.x86_64 0.99.0-33.20091203.fc22                                        
+  libvpx.x86_64 1.3.0-7.fc22                                                    
+  libzip.x86_64 0.11.2-5.fc22                                                   
+  nginx-filesystem.noarch 1:1.8.0-10.fc22                                       
+  php.x86_64 5.6.14-1.fc22                                                      
+  php-bcmath.x86_64 5.6.14-1.fc22                                               
+  php-cli.x86_64 5.6.14-1.fc22                                                  
+  php-common.x86_64 5.6.14-1.fc22                                               
+  php-gd.x86_64 5.6.14-1.fc22                                                   
+  php-imap.x86_64 5.6.14-1.fc22                                                 
+  php-mbstring.x86_64 5.6.14-1.fc22                                             
+  php-mcrypt.x86_64 5.6.14-1.fc22                                               
+  php-mysqlnd.x86_64 5.6.14-1.fc22                                              
+  php-pdo.x86_64 5.6.14-1.fc22                                                  
+  php-pear.noarch 1:1.10.1-1.fc22                                               
+  php-pecl-apcu.x86_64 4.0.7-1.fc22                                             
+  php-pecl-jsonc.x86_64 1.3.9-1.fc22                                            
+  php-pecl-zip.x86_64 1.12.5-1.fc22                                             
+  php-php-gettext.noarch 1.0.11-12.fc22                                         
+  php-process.x86_64 5.6.14-1.fc22                                              
+  php-tcpdf.noarch 6.2.11-1.fc22                                                
+  php-tcpdf-dejavu-sans-fonts.noarch 6.2.11-1.fc22                              
+  php-tidy.x86_64 5.6.14-1.fc22                                                 
+  php-udan11-sql-parser.noarch 3.0.4-1.fc22                                     
+  php-xml.x86_64 5.6.14-1.fc22                                                  
+  php-xmlrpc.x86_64 5.6.14-1.fc22                                               
+  phpMyAdmin.noarch 4.5.1-1.fc22                                                
+  postfix.x86_64 2:3.0.2-1.fc22                                                 
+  proftpd.x86_64 1.3.5a-1.fc22                                                  
+  proftpd-mysql.x86_64 1.3.5a-1.fc22                                            
+  t1lib.x86_64 5.1.2-16.fc22                                                    
+  webalizer.x86_64 2.23_08-1.fc22                                               
+
+Complete!
+Created symlink from /etc/systemd/system/multi-user.target.wants/mariadb.service to /usr/lib/systemd/system/mariadb.service.
+Add exception to firewall
+success
+success
+success
+success
+[91mError: INVALID_SERVICE: 'stmp' not among existing services[00m
+success
+spawn mysql_secure_installation
+
+NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB
+      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!
+
+In order to log into MariaDB to secure it, we'll need the current
+password for the root user.  If you've just installed MariaDB, and
+you haven't set the root password yet, the password will be blank,
+so you should just press enter here.
+
+Enter current password for root (enter for none): 
+OK, successfully used password, moving on...
+
+Setting the root password ensures that nobody can log into the MariaDB
+root user without the proper authorisation.
+
+Set root password? [Y/n] y
+New password: 
+Re-enter new password: 
+Password updated successfully!
+Reloading privilege tables..
+ ... Success!
+
+
+By default, a MariaDB installation has an anonymous user, allowing anyone
+to log into MariaDB without having to have a user account created for
+them.  This is intended only for testing, and to make the installation
+go a bit smoother.  You should remove them before moving into a
+production environment.
+
+Remove anonymous users? [Y/n] y
+ ... Success!
+
+Normally, root should only be allowed to connect from 'localhost'.  This
+ensures that someone cannot guess at the root password from the network.
+
+Disallow root login remotely? [Y/n] y
+ ... Success!
+
+By default, MariaDB comes with a database named 'test' that anyone can
+access.  This is also intended only for testing, and should be removed
+before moving into a production environment.
+
+Remove test database and access to it? [Y/n] y
+ - Dropping test database...
+ ... Success!
+ - Removing privileges on test database...
+ ... Success!
+
+Reloading the privilege tables will ensure that all changes made so far
+will take effect immediately.
+
+Reload privilege tables now? [Y/n] y
+ ... Success!
+
+Cleaning up...
+
+All done!  If you've completed all of the above steps, your MariaDB
+installation should now be secure.
+
+Thanks for using MariaDB!
+
+> New server crypto key written to cnf/security.php
+> New API key has been generated!
+> Account password for 'zadmin' has been updated!
+
+Store settings in passwords.txt
+Reconfigure PHP settings
+Setup SMTP
+Setup IMAP/POP
+Setup FTP
+Reconfigure Apache
+Setting up cron tasks
+Configure webstatistics
+Configure phpMyAdmin
+Configure RoundCube
+Enable services
+Created symlink from /etc/systemd/system/multi-user.target.wants/httpd.service to /usr/lib/systemd/system/httpd.service.
+Created symlink from /etc/systemd/system/multi-user.target.wants/postfix.service to /usr/lib/systemd/system/postfix.service.
+Created symlink from /etc/systemd/system/multi-user.target.wants/dovecot.service to /usr/lib/systemd/system/dovecot.service.
+Created symlink from /etc/systemd/system/multi-user.target.wants/proftpd.service to /usr/lib/systemd/system/proftpd.service.
+Starting services
+Daemon is now running...
+START Apache Config Hook.
+Apache Admin module ENABLED...
+Apache Config has changed...
+Backing up Apache Config to: /var/zpanel/backups/
+Apache VHost backups are enabled... Backing up current vhost.conf to: /var/zpanel/backups/
+Apache VHost purges are enabled... Purging backups older than: 7 days...
+[FILE][PURGE_DATE][FILE_DATE][ACTION]
+VHOST_BACKUP_1446564481 - 7 - 0 - Skipping file...
+Purging old backups complete...
+Apache backups complete...
+Begin writing Apache Config to: /etc/zpanel/configs/apache/httpd-vhosts.conf
+PHP Notice:  Undefined variable: customPorts in /etc/zpanel/panel/modules/apache_admin/hooks/OnDaemonRun.hook.php on line 75
+PHP Warning:  array_unique() expects parameter 1 to be array, null given in /etc/zpanel/panel/modules/apache_admin/hooks/OnDaemonRun.hook.php on line 75
+PHP Warning:  Invalid argument supplied for foreach() in /etc/zpanel/panel/modules/apache_admin/hooks/OnDaemonRun.hook.php on line 94
+Finished writting Apache Config... Now reloading Apache...
+warning: commands will be executed using /bin/sh
+job 1 at Tue Nov  3 16:28:00 2015
+Apache reload suceeded.
+END Apache Config Hook.
+
+START DNS Manager Hook
+DNS Manager module ENABLED...
+DNS Records have not changed...nothing to do.
+END DNS Manager Hook.
+
+START MySQL Databases hook
+Calculating the total size of all MySQL databases....
+END MySQL Databases hook
+
+START Calculating disk Usage for all client accounts..
+Disk usage for user "zadmin" is: 0 (0 bytes)
+END Calculating disk usage
+
+START Calculating bandwidth usage for all client accounts..
+END Calculating bandwidth usage
+
+BEGIN Webalizer Stats
+Generating webalizer stats html...
+END Webalizer Stats
+
+START Backup Config.
+Backup Config module ENABLED...
+
+Backup Purging enabled - Purging backups older than 30 days...
+[FILE][PURGE_DATE][FILE_DATE][ACTION]
+Backup Purging COMPLETE...
+
+Purging backups from temp folder...
+[FILE][PURGE_DATE][FILE_DATE][ACTION]
+END Backup Config.
+
+START ZPanel Updates hook
+Checking for latest version of ZPanel...
+PHP Notice:  XML Parsing Error at 11:10. Error 76: Mismatched tag in /etc/zpanel/panel/dryden/xml/reader.class.php on line 110
+END ZPanel Updates hook
+
+START checking for any avaliable module updates..
+Checking update for mod: Aliases
+Checking update for mod: Apache Config
+Checking update for mod: Backup
+Checking update for mod: Backup Config
+Checking update for mod: Change Password
+Checking update for mod: Client Notice Manager
+Checking update for mod: Credit Funds
+Couldn't open the module XML file for (Credit Funds)
+Checking update for mod: Cron Manager
+Checking update for mod: Distribution Lists
+Checking update for mod: DNS Config
+Checking update for mod: DNS Manager
+Checking update for mod: FAQ's
+Checking update for mod: Forwards
+Checking update for mod: FTP Accounts
+Checking update for mod: FTP Config
+Checking update for mod: Mail Config
+Checking update for mod: Mailboxes
+Checking update for mod: Manage Clients
+Checking update for mod: Manage Domains
+Couldn't open the module XML file for (Manage Domains)
+Checking update for mod: Manage Groups
+Checking update for mod: Manage Whois
+Checking update for mod: Module Admin
+Checking update for mod: My Account
+Checking update for mod: MySQL Database
+Checking update for mod: MySQL Users
+Checking update for mod: Package Manager
+Checking update for mod: Parked Domains
+Checking update for mod: PHPInfo
+Checking update for mod: phpMyAdmin
+Checking update for mod: phpSysInfo
+Checking update for mod: Register Domains
+Couldn't open the module XML file for (Register Domains)
+Checking update for mod: Service Status
+Checking update for mod: Shadowing
+Checking update for mod: Sub Domains
+Checking update for mod: Theme Manager
+Checking update for mod: Updates
+Checking update for mod: Usage Viewer
+Checking update for mod: Webalizer Stats
+Checking update for mod: WebMail
+Checking update for mod: WHOIS
+Couldn't open the module XML file for (WHOIS)
+Checking update for mod: ZPanel Config
+Checking update for mod: ZPanel News
+END getting module version update information!
+
+Daemon run complete!
+Cleanup...
+Last metadata expiration check performed 5:44:34 ago on Tue Nov  3 10:43:37 2015.
+Dependencies resolved.
+================================================================================
+ Package                   Arch     Version                   Repository   Size
+================================================================================
+Removing:
+ aajohan-comfortaa-fonts   noarch   2.004-4.fc22              @anaconda   515 k
+ cairo                     x86_64   1.14.2-1.fc22             @anaconda   1.7 M
+ cairo-gobject             x86_64   1.14.2-1.fc22             @anaconda    35 k
+ libXdamage                x86_64   1.1.4-6.fc22              @anaconda    29 k
+ libXext                   x86_64   1.3.3-2.fc22              @anaconda    84 k
+ libXfixes                 x86_64   5.0.1-4.fc22              @anaconda    26 k
+ libXrender                x86_64   0.9.9-1.fc22              @anaconda    42 k
+ libXxf86vm                x86_64   1.1.4-1.fc22              @anaconda    25 k
+ libwayland-client         x86_64   1.7.0-1.fc22              @anaconda    57 k
+ libwayland-server         x86_64   1.7.0-1.fc22              @anaconda    73 k
+ libxshmfence              x86_64   1.2-1.fc22                @anaconda    11 k
+ mesa-libEGL               x86_64   10.6.9-1.20151008.fc22    @updates    186 k
+ mesa-libGL                x86_64   10.6.9-1.20151008.fc22    @updates    640 k
+ mesa-libgbm               x86_64   10.6.9-1.20151008.fc22    @updates     82 k
+ mesa-libglapi             x86_64   10.6.9-1.20151008.fc22    @updates    187 k
+ pycairo                   x86_64   1.10.0-1.fc22             @anaconda   1.0 M
+ pygobject2                x86_64   2.28.6-13.fc22            @anaconda   877 k
+ pygobject3                x86_64   3.16.2-1.fc22             @updates     15 k
+ python-chardet            noarch   2.2.1-2.fc22              @anaconda   1.1 M
+ python-requests           noarch   2.7.0-7.fc22              @updates    344 k
+ python-urllib3            noarch   1.10.4-6.fc22             @updates    380 k
+ python-xpyb               x86_64   1.3.1-4.fc22              @anaconda   1.2 M
+
+Transaction Summary
+================================================================================
+Remove  22 Packages
+
+Installed size: 8.6 M
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Erasing     : python-requests-2.7.0-7.fc22.noarch                        1/22 
+  Erasing     : python-chardet-2.2.1-2.fc22.noarch                         2/22 
+  Erasing     : python-urllib3-1.10.4-6.fc22.noarch                        3/22 
+  Erasing     : aajohan-comfortaa-fonts-2.004-4.fc22.noarch                4/22 
+  Erasing     : pygobject3-3.16.2-1.fc22.x86_64                            5/22 
+  Erasing     : cairo-gobject-1.14.2-1.fc22.x86_64                         6/22 
+  Erasing     : pycairo-1.10.0-1.fc22.x86_64                               7/22 
+  Erasing     : cairo-1.14.2-1.fc22.x86_64                                 8/22 
+  Erasing     : mesa-libGL-10.6.9-1.20151008.fc22.x86_64                   9/22 
+  Erasing     : mesa-libEGL-10.6.9-1.20151008.fc22.x86_64                 10/22 
+  Erasing     : mesa-libgbm-10.6.9-1.20151008.fc22.x86_64                 11/22 
+  Erasing     : libXdamage-1.1.4-6.fc22.x86_64                            12/22 
+  Erasing     : libXxf86vm-1.1.4-1.fc22.x86_64                            13/22 
+  Erasing     : libXext-1.3.3-2.fc22.x86_64                               14/22 
+  Erasing     : libXfixes-5.0.1-4.fc22.x86_64                             15/22 
+  Erasing     : libwayland-client-1.7.0-1.fc22.x86_64                     16/22 
+  Erasing     : libwayland-server-1.7.0-1.fc22.x86_64                     17/22 
+  Erasing     : mesa-libglapi-10.6.9-1.20151008.fc22.x86_64               18/22 
+  Erasing     : libxshmfence-1.2-1.fc22.x86_64                            19/22 
+  Erasing     : libXrender-0.9.9-1.fc22.x86_64                            20/22 
+  Erasing     : python-xpyb-1.3.1-4.fc22.x86_64                           21/22 
+  Erasing     : pygobject2-2.28.6-13.fc22.x86_64                          22/22 
+  Verifying   : libwayland-client-1.7.0-1.fc22.x86_64                      1/22 
+  Verifying   : libwayland-server-1.7.0-1.fc22.x86_64                      2/22 
+  Verifying   : libxshmfence-1.2-1.fc22.x86_64                             3/22 
+  Verifying   : python-requests-2.7.0-7.fc22.noarch                        4/22 
+  Verifying   : python-xpyb-1.3.1-4.fc22.x86_64                            5/22 
+  Verifying   : pycairo-1.10.0-1.fc22.x86_64                               6/22 
+  Verifying   : pygobject2-2.28.6-13.fc22.x86_64                           7/22 
+  Verifying   : pygobject3-3.16.2-1.fc22.x86_64                            8/22 
+  Verifying   : cairo-1.14.2-1.fc22.x86_64                                 9/22 
+  Verifying   : cairo-gobject-1.14.2-1.fc22.x86_64                        10/22 
+  Verifying   : python-chardet-2.2.1-2.fc22.noarch                        11/22 
+  Verifying   : mesa-libEGL-10.6.9-1.20151008.fc22.x86_64                 12/22 
+  Verifying   : mesa-libGL-10.6.9-1.20151008.fc22.x86_64                  13/22 
+  Verifying   : mesa-libgbm-10.6.9-1.20151008.fc22.x86_64                 14/22 
+  Verifying   : mesa-libglapi-10.6.9-1.20151008.fc22.x86_64               15/22 
+  Verifying   : libXfixes-5.0.1-4.fc22.x86_64                             16/22 
+  Verifying   : libXrender-0.9.9-1.fc22.x86_64                            17/22 
+  Verifying   : libXxf86vm-1.1.4-1.fc22.x86_64                            18/22 
+  Verifying   : aajohan-comfortaa-fonts-2.004-4.fc22.noarch               19/22 
+  Verifying   : libXext-1.3.3-2.fc22.x86_64                               20/22 
+  Verifying   : python-urllib3-1.10.4-6.fc22.noarch                       21/22 
+  Verifying   : libXdamage-1.1.4-6.fc22.x86_64                            22/22 
+
+Removed:
+  aajohan-comfortaa-fonts.noarch 2.004-4.fc22                                   
+  cairo.x86_64 1.14.2-1.fc22                                                    
+  cairo-gobject.x86_64 1.14.2-1.fc22                                            
+  libXdamage.x86_64 1.1.4-6.fc22                                                
+  libXext.x86_64 1.3.3-2.fc22                                                   
+  libXfixes.x86_64 5.0.1-4.fc22                                                 
+  libXrender.x86_64 0.9.9-1.fc22                                                
+  libXxf86vm.x86_64 1.1.4-1.fc22                                                
+  libwayland-client.x86_64 1.7.0-1.fc22                                         
+  libwayland-server.x86_64 1.7.0-1.fc22                                         
+  libxshmfence.x86_64 1.2-1.fc22                                                
+  mesa-libEGL.x86_64 10.6.9-1.20151008.fc22                                     
+  mesa-libGL.x86_64 10.6.9-1.20151008.fc22                                      
+  mesa-libgbm.x86_64 10.6.9-1.20151008.fc22                                     
+  mesa-libglapi.x86_64 10.6.9-1.20151008.fc22                                   
+  pycairo.x86_64 1.10.0-1.fc22                                                  
+  pygobject2.x86_64 2.28.6-13.fc22                                              
+  pygobject3.x86_64 3.16.2-1.fc22                                               
+  python-chardet.noarch 2.2.1-2.fc22                                            
+  python-requests.noarch 2.7.0-7.fc22                                           
+  python-urllib3.noarch 1.10.4-6.fc22                                           
+  python-xpyb.x86_64 1.3.1-4.fc22                                               
+
+Complete!
+Restart your server now to complete the install (RECOMMENDED) (y/n)? y
