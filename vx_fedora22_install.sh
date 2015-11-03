@@ -165,6 +165,7 @@ chmod -R 777 /etc/zpanel/
 chmod -R 777 /var/zpanel/
 chmod -R 770 /var/zpanel/hostdata/
 chown -R apache:apache /var/zpanel/hostdata/
+chmod ugo+rx -R /var/zpanel/hostdata/
 ln -s /etc/zpanel/panel/bin/zppy /usr/bin/zppy
 ln -s /etc/zpanel/panel/bin/setso /usr/bin/setso
 ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
