@@ -206,10 +206,12 @@ mysql -u root -p$password -e "CREATE SCHEMA zpanel_roundcube";
 cat /etc/zpanel/configs/zpanelx-install/sql/*.sql | mysql -u root -p$password
 mysql -u root -p$password -e "UPDATE mysql.user SET Password=PASSWORD('$postfixpassword') WHERE User='postfix' AND Host='localhost';";
 mysql -u root -p$password -e "FLUSH PRIVILEGES";
-mysql -u root -p$password -e "CREATE FUNCTION fnv1a_64 RETURNS INTEGER SONAME 'libfnv1a_udf.so'"
-mysql -u root -p$password -e "CREATE FUNCTION fnv_64 RETURNS INTEGER SONAME 'libfnv_udf.so'"
-mysql -u root -p$password -e "CREATE FUNCTION murmur_hash RETURNS INTEGER SONAME 'libmurmur_udf.so'"
-sed -i "/ssl-key=/a \secure-file-priv = /var/tmp" /etc/mysql/my.cnf
+
+## Specific to Percona
+#mysql -u root -p$password -e "CREATE FUNCTION fnv1a_64 RETURNS INTEGER SONAME 'libfnv1a_udf.so'"
+#mysql -u root -p$password -e "CREATE FUNCTION fnv_64 RETURNS INTEGER SONAME 'libfnv_udf.so'"
+#mysql -u root -p$password -e "CREATE FUNCTION murmur_hash RETURNS INTEGER SONAME 'libmurmur_udf.so'"
+# sed -i "/ssl-key=/a \secure-file-priv = /var/tmp" /etc/mysql/my.cnf #Does nothing at the moment?
 
 # Set some ZPanel custom configuration settings (using. setso and setzadmin)
 setzadmin --set "$zadminNewPass";
@@ -221,14 +223,14 @@ setzadmin --set "$zadminNewPass";
 echo "Store settings in passwords.txt"
 touch /root/passwords.txt;
 echo "zadmin Password: $zadminNewPass" >> /root/passwords.txt;
-echo "Percona Root Password: $password" >> /root/passwords.txt
-echo "Percona Postfix Password: $postfixpassword" >> /root/passwords.txt
+echo "MariaDB Root Password: $password" >> /root/passwords.txt
+echo "MariaDB Postfix Password: $postfixpassword" >> /root/passwords.txt
 echo "IP Address: $publicip" >> /root/passwords.txt
 echo "Panel Domain: $fqdn" >> /root/passwords.txt
 
 # Postfix specific installation tasks...
 echo "Setup SMTP"
-mkdir /var/zpanel/vmail
+mkdir -p /var/zpanel/vmail
 chmod -R 770 /var/zpanel/vmail
 useradd -r -u 150 -g mail -d /var/zpanel/vmail -s /sbin/nologin -c "Virtual maildir" vmail
 chown -R vmail:mail /var/zpanel/vmail
