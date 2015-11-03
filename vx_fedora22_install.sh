@@ -103,6 +103,7 @@ dnf -y update
 # Installer options
 while true; do
 	tz=`tzselect | tail -n1`
+	export TZ=$tz
 	echo -e "Enter the FQDN you will use to access VXpanel on your server."
 	echo -e "- It MUST be a sub-domain of you main domain, it MUST NOT be your main domain only. Example: panel.yourdomain.com"
 	echo -e "- Remember that the sub-domain ('panel' in the example) MUST be setup in your DNS nameserver."
@@ -126,7 +127,6 @@ cd ../qp_install_cache/
 
 # Install required software and dependencies required by VXpanel.
 # We disable the DPKG prompts before we run the software install to enable fully automated install.
-#export DEBIAN_FRONTEND=noninteractive
 dnf -y groupinstall "Development Tools" "Development Libraries"
 dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-curl php-pear php-imap php-xmlrpc php-xsl libdb-utils webalizer bash-completion dovecot-devel.x86_64 dovecot-mysql.x86_64 postfix cyrus-sasl-lib.x86_64 proftpd-mysql.x86_64 
 
@@ -330,11 +330,11 @@ ln -s /etc/zpanel/configs/roundcube/db.inc.php /etc/zpanel/panel/etc/apps/webmai
 
 # Enable system services and start/restart them as required.
 echo "Enable services"
-chkconfig mariadb on
-chkconfig httpd on
-chkconfig postfix on
-chkconfig dovecot on
-chkconfig proftpd on
+systemctl enable mariadb
+systemctl enable httpd
+systemctl enable postfix
+systemctl enable dovecot
+systemctl enable proftpd
 
 echo "Starting services"
 systemctl start httpd
@@ -359,8 +359,8 @@ echo -e "# server. Please review the log file left in /root/ for      #" &>/dev/
 echo -e "# any errors encountered during installation.                #" &>/dev/tty
 echo -e "#                                                            #" &>/dev/tty
 echo -e "# Save the following information somewhere safe:             #" &>/dev/tty
-echo -e "# Percona Root Password    : $password" &>/dev/tty
-echo -e "# Percona Postfix Password : $postfixpassword" &>/dev/tty
+echo -e "# MariaDB Root Password    : $password" &>/dev/tty
+echo -e "# MariaDB Postfix Password : $postfixpassword" &>/dev/tty
 echo -e "# VXpanel Username        : zadmin                            #" &>/dev/tty
 echo -e "# VXpanel Password        : $zadminNewPass" &>/dev/tty
 echo -e "#                                                            #" &>/dev/tty
