@@ -65,9 +65,9 @@ exec 2>&1
 
 # Generates random passwords for the 'zadmin' account as well as Postfix and MySQL root account.
 passwordgen() {
-    	 l=$1
-           [ "$l" == "" ] && l=16
-          tr -dc A-Za-z0-9 < /dev/urandom | head -c ${l} | xargs
+	l=$1
+	[ "$l" == "" ] && l=16
+	tr -dc A-Za-z0-9 < /dev/urandom | head -c ${l} | xargs
 }
 
 # Display the 'welcome' splash/user warning info..
@@ -131,7 +131,6 @@ dnf -y groupinstall "Development Tools" "Development Libraries"
 dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-curl php-pear php-imap php-xmlrpc php-xsl libdb-utils webalizer bash-completion dovecot-devel.x86_64 dovecot-mysql.x86_64 postfix cyrus-sasl-lib.x86_64 proftpd-mysql.x86_64 phpmyadmin
 
 # At least start the database
-systemctl enable mariadb
 systemctl start mariadb
 
 # Add exception to firewall
@@ -142,7 +141,6 @@ firewall-cmd --permanent --zone=public --add-service=https
 firewall-cmd --permanent --zone=public --add-service=ftp
 firewall-cmd --permanent --zone=public --add-service=smtp
 firewall-cmd --permanent --zone=public --add-service=mysql
-firewall-cmd --permanent --zone=public --add-service=ssh
 firewall-cmd --reload
 
 # Generation of random passwords
@@ -204,12 +202,11 @@ expect eof
 ")
 echo "$SECURE_MYSQL"
 sed -i "s|YOUR_ROOT_MYSQL_PASSWORD|$password|" /etc/zpanel/panel/cnf/db.php
-#mysql -u root -p$password -e "DROP DATABASE test";
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User='root' AND Host != 'localhost'";
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User=''";
-mysql -u root -p$password -e "FLUSH PRIVILEGES";
+mysql -u root -p$passwoqrd -e "FLUSH PRIVILEGES";
 mysql -u root -p$password -e "CREATE SCHEMA zpanel_roundcube";
-cat /etc/zpanel/configs/zpanelx-install/sql/*.sql | mysql -u root -p$password
+cat /etc/zpanel/configs/sql/*.sql | mysql -u root -p$password
 mysql -u root -p$password -e "UPDATE mysql.user SET Password=PASSWORD('$postfixpassword') WHERE User='postfix' AND Host='localhost';";
 mysql -u root -p$password -e "FLUSH PRIVILEGES";
 
@@ -235,6 +232,9 @@ sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php.ini
 sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 500M|" /etc/php.ini
 sed -i "s|memory_limit = 128M|memory_limit = 256M|" /etc/php.ini
 sed -i "s|expose_php = On|expose_php = Off|" /etc/php.ini
+sed -i "s|session.gc_maxlifetime = 1440|session.gc_maxlifetime = 7200|" /etc/php.ini
+sed -i "s|session.name = PHPSESSID|session.name = _UMTAUTHS|" /etc/php.ini
+sed -i "s|session.hash_function = 0|session.hash_function = 1|" /etc/php.ini
 
 # Postfix specific installation tasks...
 echo "Setup SMTP"
@@ -286,7 +286,6 @@ useradd -u 2001 -s /bin/false -d /bin/null -c "proftpd user" -g ftpgroup ftpuser
 sed -i "s|zpanel_proftpd@localhost root z|zpanel_proftpd@localhost root $password|" /etc/zpanel/configs/proftpd/proftpd-mysql.conf
 rm -rf /etc/proftpd.conf
 touch /etc/proftpd.conf
-#if ! grep -q "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" /etc/proftpd.conf; then echo "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" >> /etc/proftpd.conf; fi
 rm -rf /etc/proftpd.conf
 ln -s /etc/zpanel/configs/proftpd/proftpd-mysql.conf /etc/proftpd.conf
 chmod -R 644 /var/zpanel/logs/proftpd
@@ -294,15 +293,11 @@ serverhost=`hostname`
 
 # Apache HTTPD specific installation tasks...
 echo "Reconfigure Apache"
-#if ! grep -q "Include /etc/zpanel/configs/apache/httpd.conf" /etc/httpd/conf/httpd.conf; then echo "Include /etc/zpanel/configs/apache/httpd.conf" >> /etc/httpd/conf/httpd.conf; fi
 rm -rf /etc/httpd/conf/httpd.conf
 ln -s /etc/zpanel/configs/apache/httpd.conf /etc/httpd/conf/httpd.conf
 if ! grep -q "127.0.0.1 "$fqdn /etc/hosts; then echo "127.0.0.1 "$fqdn >> /etc/hosts; fi
 if ! grep -q "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" /etc/sudoers; then echo "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" >> /etc/sudoers; fi
-#sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/httpd/conf/httpd.conf
 chown -R apache:apache /var/zpanel/temp/
-#Set keepalive on (default is off)
-#sed -i "s|KeepAlive Off|KeepAlive On|" /etc/httpd/conf/httpd.conf
 
 # Permissions fix for Apache and ProFTPD (to enable them to play nicely together!)
 if ! grep -q "umask 002" /etc/sysconfig/httpd; then echo "umask 002" >> /etc/sysconfig/httpd; fi
@@ -328,9 +323,11 @@ echo "Configure webstatistics"
 rm -rf /etc/webalizer.conf
 
 # phpMyAdmin config
+salt=`passwordgen`;
 echo "Configure phpMyAdmin"
 rm -rf /etc/phpMyAdmin/config.inc.php
 ln -s /etc/zpanel/configs/phpmyadmin/config.inc.php /etc/phpMyAdmin/config.inc.php
+sed -i "s|CHANGE_ME|$salt|" /etc/phpMyAdmin/config.inc.php
 
 # Roundcube specific installation tasks...
 echo "Configure RoundCube"
