@@ -102,7 +102,8 @@ dnf -y update
 
 # Installer options
 while true; do
-	timedatectl
+	tzselect
+	tz=`cat /etc/timezone`
 	echo -e "Enter the FQDN you will use to access VXpanel on your server."
 	echo -e "- It MUST be a sub-domain of you main domain, it MUST NOT be your main domain only. Example: panel.yourdomain.com"
 	echo -e "- Remember that the sub-domain ('panel' in the example) MUST be setup in your DNS nameserver."
@@ -118,7 +119,7 @@ uname -a
 echo -e ""
 
 # We now update the server software packages.
-dnf -y install mariadb mariadb-server.x86_64 gcc httpd expect
+dnf -y install mariadb mariadb-server.x86_64 gcc httpd expect firewalld ntp
 
 mkdir -p ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
@@ -130,12 +131,9 @@ cd ../qp_install_cache/
 dnf -y groupinstall "Development Tools" "Development Libraries"
 dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-curl php-pear php-imap php-xmlrpc php-xsl libdb-utils webalizer bash-completion dovecot-devel.x86_64 dovecot-mysql.x86_64 postfix cyrus-sasl-lib.x86_64 proftpd-mysql.x86_64 
 
-# Enable services to start
+# At least start the database
 systemctl enable mariadb
-#systemctl enable httpd
-
 systemctl start mariadb
-#systemctl start httpd
 
 # Add exception to firewall
 firewall-cmd --set-default-zone=public
@@ -166,7 +164,7 @@ chmod -R 777 /etc/zpanel/
 chmod -R 777 /var/zpanel/
 chmod -R 770 /var/zpanel/hostdata/
 chown -R apache:apache /var/zpanel/hostdata/
-chmod 644 /etc/zpanel/panel/etc/apps/phpmyadmin/config.inc.php
+# chmod 644 /etc/zpanel/panel/etc/apps/phpmyadmin/config.inc.php
 ln -s /etc/zpanel/panel/bin/zppy /usr/bin/zppy
 ln -s /etc/zpanel/panel/bin/setso /usr/bin/setso
 ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
@@ -203,7 +201,7 @@ expect eof
 ")
 echo "$SECURE_MYSQL"
 sed -i "s|YOUR_ROOT_MYSQL_PASSWORD|$password|" /etc/zpanel/panel/cnf/db.php
-mysql -u root -p$password -e "DROP DATABASE test";
+#mysql -u root -p$password -e "DROP DATABASE test";
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User='root' AND Host != 'localhost'";
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User=''";
 mysql -u root -p$password -e "FLUSH PRIVILEGES";
@@ -211,12 +209,6 @@ mysql -u root -p$password -e "CREATE SCHEMA zpanel_roundcube";
 cat /etc/zpanel/configs/zpanelx-install/sql/*.sql | mysql -u root -p$password
 mysql -u root -p$password -e "UPDATE mysql.user SET Password=PASSWORD('$postfixpassword') WHERE User='postfix' AND Host='localhost';";
 mysql -u root -p$password -e "FLUSH PRIVILEGES";
-
-## Specific to Percona
-#mysql -u root -p$password -e "CREATE FUNCTION fnv1a_64 RETURNS INTEGER SONAME 'libfnv1a_udf.so'"
-#mysql -u root -p$password -e "CREATE FUNCTION fnv_64 RETURNS INTEGER SONAME 'libfnv_udf.so'"
-#mysql -u root -p$password -e "CREATE FUNCTION murmur_hash RETURNS INTEGER SONAME 'libmurmur_udf.so'"
-# sed -i "/ssl-key=/a \secure-file-priv = /var/tmp" /etc/mysql/my.cnf #Does nothing at the moment?
 
 # Set some ZPanel custom configuration settings (using. setso and setzadmin)
 setzadmin --set "$zadminNewPass";
@@ -232,6 +224,14 @@ echo "MariaDB Root Password: $password" >> /root/passwords.txt
 echo "MariaDB Postfix Password: $postfixpassword" >> /root/passwords.txt
 echo "IP Address: $publicip" >> /root/passwords.txt
 echo "Panel Domain: $fqdn" >> /root/passwords.txt
+
+# PHP specific installation tasks...
+echo "Reconfigure PHP settings"
+sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php.ini
+sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php.ini
+sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 500M|" /etc/php.ini
+sed -i "s|memory_limit = 128M|memory_limit = 256M|" /etc/php.ini
+sed -i "s|expose_php = On|expose_php = Off|" /etc/php.ini
 
 # Postfix specific installation tasks...
 echo "Setup SMTP"
@@ -290,23 +290,12 @@ serverhost=`hostname`
 # Apache HTTPD specific installation tasks...
 echo "Reconfigure Apache"
 if ! grep -q "Include /etc/zpanel/configs/apache/httpd.conf" /etc/httpd/conf/httpd.conf; then echo "Include /etc/zpanel/configs/apache/httpd.conf" >> /etc/httpd/conf/httpd.conf; fi
-rm -rf /etc/apache2/conf-enabled/*
-rm -rf /etc/apache2/sites-enabled/*
-sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/apache2/apache2.conf
-sed -i 's|Include sites-enabled/||' /etc/apache2/apache2.conf
-chown -R apache:apache /var/zpanel/temp/
 if ! grep -q "127.0.0.1 "$fqdn /etc/hosts; then echo "127.0.0.1 "$fqdn >> /etc/hosts; fi
 if ! grep -q "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" /etc/sudoers; then echo "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" >> /etc/sudoers; fi
-a2enmod rewrite
-systemctl apache2 restart
-
-# PHP specific installation tasks...
-echo "Reconfigure PHP settings"
-sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php.ini
-sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php.ini
-sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 500M|" /etc/php.ini
-sed -i "s|memory_limit = 128M|memory_limit = 256M|" /etc/php.ini
-sed -i "s|expose_php = On|expose_php = Off|" /etc/php.ini
+sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/httpd/conf/httpd.conf
+chown -R apache:apache /var/zpanel/temp/
+#Set keepalive on (default is off)
+sed -i "s|KeepAlive Off|KeepAlive On|" /etc/httpd/conf/httpd.conf
 
 # Permissions fix for Apache and ProFTPD (to enable them to play nicely together!)
 if ! grep -q "umask 002" /etc/sysconfig/httpd; then echo "umask 002" >> /etc/sysconfig/httpd; fi
@@ -341,14 +330,21 @@ ln -s /etc/zpanel/configs/roundcube/config.inc.php /etc/zpanel/panel/etc/apps/we
 ln -s /etc/zpanel/configs/roundcube/db.inc.php /etc/zpanel/panel/etc/apps/webmail/config/db.inc.php
 
 # Enable system services and start/restart them as required.
-echo "Restarting services"
-systemctl restart httpd
+echo "Enable services"
+chkconfig mariadb on
+chkconfig httpd on
+chkconfig postfix on
+chkconfig dovecot on
+chkconfig proftpd on
+
+echo "Starting services"
+systemctl start httpd
 systemctl restart postfix
-systemctl restart dovecot
+systemctl start dovecot
 systemctl reload crond
 systemctl restart mariadb
-systemctl restart proftpd
-systemctl restart atd
+systemctl start proftpd
+systemctl start atd
 php /etc/zpanel/panel/bin/daemon.php
 
 # We'll now remove the temporary install cache.
