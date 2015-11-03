@@ -162,6 +162,11 @@ mkdir /var/zpanel/logs/apache
 mkdir /var/zpanel/backups
 mkdir /var/zpanel/temp
 cp -R . /etc/zpanel/panel/
+rm -rf /etc/zpanel/panel/*.sh
+rm -rf /etc/zpanel/panel/*.log
+rm -rf /etc/zpanel/panel/README.md
+rm -rf /etc/zpanel/panel/LICENSE
+rm -rf /etc/zpanel/panel/Vagrantfile
 chmod -R 777 /etc/zpanel/
 chmod -R 777 /var/zpanel/
 chmod -R 770 /var/zpanel/hostdata/
@@ -173,7 +178,7 @@ ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
 chmod +x /etc/zpanel/panel/bin/zppy
 chmod +x /etc/zpanel/panel/bin/setso
 cp -R /etc/zpanel/panel/etc/build/config_packs/fedora_22/. /etc/zpanel/configs/
-cc -o /etc/zpanel/panel/bin/zsudo /etc/zpanel/configs/bin/zsudo.c
+cc -O3 -o /etc/zpanel/panel/bin/zsudo /etc/zpanel/configs/bin/zsudo.c
 sudo chown root /etc/zpanel/panel/bin/zsudo
 chmod +s /etc/zpanel/panel/bin/zsudo
 
