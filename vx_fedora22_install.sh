@@ -117,7 +117,7 @@ uname -a
 echo -e ""
 
 # We now update the server software packages.
-dnf -y install mariadb mariadb-server.x86_64 gcc git httpd expect
+dnf -y install mariadb mariadb-server.x86_64 gcc httpd expect
 
 mkdir -p ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
