@@ -141,6 +141,8 @@ firewall-cmd --permanent --zone=public --add-service=http
 firewall-cmd --permanent --zone=public --add-service=https
 firewall-cmd --permanent --zone=public --add-service=ftp
 firewall-cmd --permanent --zone=public --add-service=smtp
+firewall-cmd --permanent --zone=public --add-service=mysql
+firewall-cmd --permanent --zone=public --add-service=ssh
 firewall-cmd --reload
 
 # Generation of random passwords
@@ -158,6 +160,7 @@ mkdir /var/zpanel/hostdata/zadmin
 mkdir /var/zpanel/hostdata/zadmin/public_html
 mkdir /var/zpanel/logs
 mkdir /var/zpanel/logs/proftpd
+mkdir /var/zpanel/logs/apache
 mkdir /var/zpanel/backups
 mkdir /var/zpanel/temp
 cp -R . /etc/zpanel/panel/
@@ -283,19 +286,23 @@ useradd -u 2001 -s /bin/false -d /bin/null -c "proftpd user" -g ftpgroup ftpuser
 sed -i "s|zpanel_proftpd@localhost root z|zpanel_proftpd@localhost root $password|" /etc/zpanel/configs/proftpd/proftpd-mysql.conf
 rm -rf /etc/proftpd.conf
 touch /etc/proftpd.conf
-if ! grep -q "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" /etc/proftpd.conf; then echo "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" >> /etc/proftpd.conf; fi
+#if ! grep -q "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" /etc/proftpd.conf; then echo "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" >> /etc/proftpd.conf; fi
+rm -rf /etc/proftpd.conf
+ln -s /etc/zpanel/configs/proftpd/proftpd-mysql.conf /etc/proftpd.conf
 chmod -R 644 /var/zpanel/logs/proftpd
 serverhost=`hostname`
 
 # Apache HTTPD specific installation tasks...
 echo "Reconfigure Apache"
-if ! grep -q "Include /etc/zpanel/configs/apache/httpd.conf" /etc/httpd/conf/httpd.conf; then echo "Include /etc/zpanel/configs/apache/httpd.conf" >> /etc/httpd/conf/httpd.conf; fi
+#if ! grep -q "Include /etc/zpanel/configs/apache/httpd.conf" /etc/httpd/conf/httpd.conf; then echo "Include /etc/zpanel/configs/apache/httpd.conf" >> /etc/httpd/conf/httpd.conf; fi
+rm -rf /etc/httpd/conf/httpd.conf
+ln -s /etc/zpanel/configs/apache/httpd.conf /etc/httpd/conf/httpd.conf
 if ! grep -q "127.0.0.1 "$fqdn /etc/hosts; then echo "127.0.0.1 "$fqdn >> /etc/hosts; fi
 if ! grep -q "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" /etc/sudoers; then echo "apache ALL=NOPASSWD: /etc/zpanel/panel/bin/zsudo" >> /etc/sudoers; fi
-sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/httpd/conf/httpd.conf
+#sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/httpd/conf/httpd.conf
 chown -R apache:apache /var/zpanel/temp/
 #Set keepalive on (default is off)
-sed -i "s|KeepAlive Off|KeepAlive On|" /etc/httpd/conf/httpd.conf
+#sed -i "s|KeepAlive Off|KeepAlive On|" /etc/httpd/conf/httpd.conf
 
 # Permissions fix for Apache and ProFTPD (to enable them to play nicely together!)
 if ! grep -q "umask 002" /etc/sysconfig/httpd; then echo "umask 002" >> /etc/sysconfig/httpd; fi
