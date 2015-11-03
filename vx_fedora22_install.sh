@@ -140,7 +140,7 @@ firewall-cmd --set-default-zone=public
 firewall-cmd --permanent --zone=public --add-service=http
 firewall-cmd --permanent --zone=public --add-service=https
 firewall-cmd --permanent --zone=public --add-service=ftp
-firewall-cmd --permanent --zone=public --add-service=stmp
+firewall-cmd --permanent --zone=public --add-service=smtp
 firewall-cmd --reload
 
 # Generation of random passwords
