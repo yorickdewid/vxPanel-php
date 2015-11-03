@@ -38,7 +38,7 @@ $cfg['Servers'][$i]['controlpass']   = '';          // access to the "mysql/user
                                                     // The controluser is also
                                                     // used for all relational
                                                     // features (pmadb)
-$cfg['Servers'][$i]['auth_type']     = 'http';    // Authentication method (config, http or cookie based)?
+$cfg['Servers'][$i]['auth_type']     = 'cookie';    // Authentication method (config, http or cookie based)?
 $cfg['Servers'][$i]['user']          = '';          // MySQL user
 $cfg['Servers'][$i]['password']      = '';          // MySQL password (only needed
                                                     // with 'config' auth_type)
