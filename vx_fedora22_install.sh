@@ -132,14 +132,17 @@ dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-cu
 # Enable services to start
 systemctl enable mariadb
 systemctl enable httpd
+systemctl enable proftpd
 
 systemctl start mariadb
 systemctl start httpd
+systemctl start proftpd
 
 # Add exception to firewall
 firewall-cmd --set-default-zone=public
-firewall-cmd --permanent --zone=public --add-service=http 
+firewall-cmd --permanent --zone=public --add-service=http
 firewall-cmd --permanent --zone=public --add-service=https
+firewall-cmd --permanent --zone=public --add-service=ftp
 firewall-cmd --reload
 
 # Generation of random passwords
