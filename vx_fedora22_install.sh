@@ -119,7 +119,7 @@ uname -a
 echo -e ""
 
 # We now update the server software packages.
-dnf -y install mariadb mariadb-server.x86_64 gcc httpd expect firewalld ntp
+dnf -y install mariadb mariadb-server.x86_64 gcc httpd expect firewalld ntp at
 
 mkdir -p ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
@@ -133,6 +133,7 @@ dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-cu
 # At least start the database
 systemctl start mariadb
 systemctl start firewalld
+systemctl start atd
 
 # Add exception to firewall
 echo -e "Add exception to firewall"
@@ -179,6 +180,7 @@ ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
 chmod +x /etc/zpanel/panel/bin/zppy
 chmod +x /etc/zpanel/panel/bin/setso
 cp -R /etc/zpanel/panel/etc/build/config_packs/fedora_22/. /etc/zpanel/configs/
+cp -R /etc/zpanel/panel/etc/build/config_packs/sql/. /etc/zpanel/configs/sql/
 cc -O3 -o /etc/zpanel/panel/bin/zsudo /etc/zpanel/configs/bin/zsudo.c
 sudo chown root /etc/zpanel/panel/bin/zsudo
 chmod +s /etc/zpanel/panel/bin/zsudo
@@ -352,6 +354,7 @@ systemctl enable postfix
 systemctl enable dovecot
 systemctl enable proftpd
 systemctl enable firewalld
+systemctl enable atd
 
 echo "Starting services"
 systemctl start httpd
@@ -360,7 +363,7 @@ systemctl start dovecot
 systemctl reload crond
 systemctl restart mariadb
 systemctl start proftpd
-systemctl start atd
+systemctl restart atd
 php /etc/zpanel/panel/bin/daemon.php
 
 # We'll now remove the temporary install cache.
