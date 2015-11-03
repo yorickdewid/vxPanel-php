@@ -128,17 +128,19 @@ cd ../qp_install_cache/
 # Install required software and dependencies required by VXpanel.
 # We disable the DPKG prompts before we run the software install to enable fully automated install.
 dnf -y groupinstall "Development Tools" "Development Libraries"
-dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-curl php-pear php-imap php-xmlrpc php-xsl libdb-utils webalizer bash-completion dovecot-devel.x86_64 dovecot-mysql.x86_64 postfix cyrus-sasl-lib.x86_64 proftpd-mysql.x86_64 
+dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-curl php-pear php-imap php-xmlrpc php-xsl libdb-utils webalizer bash-completion dovecot-devel.x86_64 dovecot-mysql.x86_64 postfix cyrus-sasl-lib.x86_64 proftpd-mysql.x86_64 phpmyadmin
 
 # At least start the database
 systemctl enable mariadb
 systemctl start mariadb
 
 # Add exception to firewall
+echo -e "Add exception to firewall"
 firewall-cmd --set-default-zone=public
 firewall-cmd --permanent --zone=public --add-service=http
 firewall-cmd --permanent --zone=public --add-service=https
 firewall-cmd --permanent --zone=public --add-service=ftp
+firewall-cmd --permanent --zone=public --add-service=stmp
 firewall-cmd --reload
 
 # Generation of random passwords
@@ -163,14 +165,12 @@ chmod -R 777 /etc/zpanel/
 chmod -R 777 /var/zpanel/
 chmod -R 770 /var/zpanel/hostdata/
 chown -R apache:apache /var/zpanel/hostdata/
-# chmod 644 /etc/zpanel/panel/etc/apps/phpmyadmin/config.inc.php
 ln -s /etc/zpanel/panel/bin/zppy /usr/bin/zppy
 ln -s /etc/zpanel/panel/bin/setso /usr/bin/setso
 ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
 chmod +x /etc/zpanel/panel/bin/zppy
 chmod +x /etc/zpanel/panel/bin/setso
 cp -R /etc/zpanel/panel/etc/build/config_packs/fedora_22/. /etc/zpanel/configs/
-# set password after test connection
 cc -o /etc/zpanel/panel/bin/zsudo /etc/zpanel/configs/bin/zsudo.c
 sudo chown root /etc/zpanel/panel/bin/zsudo
 chmod +s /etc/zpanel/panel/bin/zsudo
@@ -318,6 +318,11 @@ chown -R apache:apache /var/spool/cron/
 # Webalizer specific installation tasks...
 echo "Configure webstatistics"
 rm -rf /etc/webalizer.conf
+
+# phpMyAdmin config
+echo "Configure phpMyAdmin"
+rm -rf /etc/phpMyAdmin/config.inc.php
+ln -s /etc/zpanel/configs/phpmyadmin/config.inc.php /etc/phpMyAdmin/config.inc.php
 
 # Roundcube specific installation tasks...
 echo "Configure RoundCube"
