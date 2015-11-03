@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #define MAX_ARGS 11 // Max. arguments : argv[0] + 10
 #define MIN_LEN 47 // strlen ("/bin/echo ' > /dev/null 2>&1' | /usr/bin/at now")
