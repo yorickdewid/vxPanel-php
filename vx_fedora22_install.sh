@@ -300,13 +300,13 @@ systemctl apache2 restart
 
 # PHP specific installation tasks...
 echo "Reconfigure PHP settings"
-sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php5/cli/php.ini
-sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php5/apache2/php.ini
-sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php5/cli/php.ini
-sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php5/apache2/php.ini
-sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 500M|" /etc/php5/apache2/php.ini
-sed -i "s|memory_limit = 128M|memory_limit = 256M|" /etc/php5/apache2/php.ini
-sed -i "s|expose_php = On|expose_php = Off|" /etc/php5/apache2/php.ini
+#sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php5/cli/php.ini
+sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php.ini
+#sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php5/cli/php.ini
+sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php.ini
+sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 500M|" /etc/php.ini
+sed -i "s|memory_limit = 128M|memory_limit = 256M|" /etc/php.ini
+sed -i "s|expose_php = On|expose_php = Off|" /etc/php.ini
 
 # Permissions fix for Apache and ProFTPD (to enable them to play nicely together!)
 if ! grep -q "umask 002" /etc/apache2/envvars; then echo "umask 002" >> /etc/apache2/envvars; fi
@@ -342,13 +342,13 @@ ln -s /etc/zpanel/configs/roundcube/db.inc.php /etc/zpanel/panel/etc/apps/webmai
 
 # Enable system services and start/restart them as required.
 echo "Restarting services"
-systemctl apache2 start
-systemctl postfix restart
-systemctl dovecot start
-systemctl cron reload
-systemctl mysql start
-systemctl proftpd start
-systemctl atd start
+systemctl restart httpd
+systemctl restart postfix
+systemctl restart dovecot
+systemctl reload crond
+systemctl restart mariadb
+systemctl restart proftpd
+systemctl restart atd
 php /etc/zpanel/panel/bin/daemon.php
 
 # We'll now remove the temporary install cache.
