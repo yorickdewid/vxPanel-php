@@ -132,6 +132,7 @@ dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-cu
 
 # At least start the database
 systemctl start mariadb
+systemctl start firewalld
 
 # Add exception to firewall
 echo -e "Add exception to firewall"
@@ -345,6 +346,7 @@ systemctl enable httpd
 systemctl enable postfix
 systemctl enable dovecot
 systemctl enable proftpd
+systemctl enable firewalld
 
 echo "Starting services"
 systemctl start httpd
