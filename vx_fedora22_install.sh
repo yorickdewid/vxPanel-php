@@ -179,15 +179,18 @@ sudo chown root /etc/zpanel/panel/bin/zsudo
 chmod +s /etc/zpanel/panel/bin/zsudo
 
 # MariaDB specific installation tasks...
-# Not required in actual script
-MYSQL_ROOT_PASSWORD=abcd1234
+MYSQL_ROOT_PASSWORD=$password
 SECURE_MYSQL=$(expect -c "
 set timeout 10
 spawn mysql_secure_installation
 expect \"Enter current password for root (enter for none):\"
-send \"$MYSQL\r\"
+send \"\r\"
 expect \"Change the root password?\"
-send \"n\r\"
+send \"y\r\"
+expect \"New password:\"
+send \"$password\r\"
+expect \"Re-enter new password:\"
+send \"$password\r\"
 expect \"Remove anonymous users?\"
 send \"y\r\"
 expect \"Disallow root login remotely?\"
