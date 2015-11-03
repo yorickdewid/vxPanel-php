@@ -95,6 +95,7 @@ publicip=`curl -s http://whatismijnip.nl | cut -d " " -f 5`
 
 # We need to disable SElinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+setenforce 0
 
 #a selection list for the time zone is not better now?
 dnf -y update
@@ -131,12 +132,10 @@ dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-cu
 
 # Enable services to start
 systemctl enable mariadb
-systemctl enable httpd
-systemctl enable proftpd
+#systemctl enable httpd
 
 systemctl start mariadb
-systemctl start httpd
-systemctl start proftpd
+#systemctl start httpd
 
 # Add exception to firewall
 firewall-cmd --set-default-zone=public
@@ -279,15 +278,15 @@ echo "Setup FTP"
 groupadd -g 2001 ftpgroup
 useradd -u 2001 -s /bin/false -d /bin/null -c "proftpd user" -g ftpgroup ftpuser
 sed -i "s|#SQLConnectInfo  zpanel_proftpd@localhost root password_here|SQLConnectInfo   zpanel_proftpd@localhost root $password|" /etc/zpanel/configs/proftpd/proftpd-mysql.conf
-rm -rf /etc/proftpd/proftpd.conf
-touch /etc/proftpd/proftpd.conf
-if ! grep -q "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" /etc/proftpd/proftpd.conf; then echo "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" >> /etc/proftpd/proftpd.conf; fi
+rm -rf /etc/proftpd.conf
+touch /etc/proftpd.conf
+if ! grep -q "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" /etc/proftpd.conf; then echo "include /etc/zpanel/configs/proftpd/proftpd-mysql.conf" >> /etc/proftpd.conf; fi
 chmod -R 644 /var/zpanel/logs/proftpd
 serverhost=`hostname`
 
 # Apache HTTPD specific installation tasks...
 echo "Reconfigure Apache"
-if ! grep -q "Include /etc/zpanel/configs/apache/httpd.conf" /etc/apache2/apache2.conf; then echo "Include /etc/zpanel/configs/apache/httpd.conf" >> /etc/apache2/apache2.conf; fi
+if ! grep -q "Include /etc/zpanel/configs/apache/httpd.conf" /etc/httpd/conf/httpd.conf; then echo "Include /etc/zpanel/configs/apache/httpd.conf" >> /etc/httpd/conf/httpd.conf; fi
 rm -rf /etc/apache2/conf-enabled/*
 rm -rf /etc/apache2/sites-enabled/*
 sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/apache2/apache2.conf
@@ -300,36 +299,34 @@ systemctl apache2 restart
 
 # PHP specific installation tasks...
 echo "Reconfigure PHP settings"
-#sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php5/cli/php.ini
 sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php.ini
-#sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php5/cli/php.ini
 sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php.ini
 sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 500M|" /etc/php.ini
 sed -i "s|memory_limit = 128M|memory_limit = 256M|" /etc/php.ini
 sed -i "s|expose_php = On|expose_php = Off|" /etc/php.ini
 
 # Permissions fix for Apache and ProFTPD (to enable them to play nicely together!)
-if ! grep -q "umask 002" /etc/apache2/envvars; then echo "umask 002" >> /etc/apache2/envvars; fi
+if ! grep -q "umask 002" /etc/sysconfig/httpd; then echo "umask 002" >> /etc/sysconfig/httpd; fi
 if ! grep -q "127.0.0.1 $serverhost" /etc/hosts; then echo "127.0.0.1 $serverhost" >> /etc/hosts; fi
 usermod -a -G apache ftpuser
 usermod -a -G ftpgroup apache
 
 # CRON specific installation tasks...
 echo "Setting up cron tasks"
-mkdir -p /var/spool/cron/crontabs/
+mkdir -p /var/spool/cron/
 mkdir -p /etc/cron.d/
-touch /var/spool/cron/crontabs/apache
+touch /var/spool/cron/apache
 touch /etc/cron.d/apache
-crontab -u apache /var/spool/cron/crontabs/apache
+crontab -u apache /var/spool/cron/apache
 cp /etc/zpanel/configs/cron/zdaemon /etc/cron.d/zdaemon
-chmod -R 644 /var/spool/cron/crontabs/
-chmod 744 /var/spool/cron/crontabs
+chmod 744 /var/spool/cron
+chmod 644 /var/spool/cron/apache
 chmod -R 644 /etc/cron.d/
-chown -R apache:apache /var/spool/cron/crontabs/
+chown -R apache:apache /var/spool/cron/
 
 # Webalizer specific installation tasks...
 echo "Configure webstatistics"
-rm -rf /etc/webalizer/webalizer.conf
+rm -rf /etc/webalizer.conf
 
 # Roundcube specific installation tasks...
 echo "Configure RoundCube"
