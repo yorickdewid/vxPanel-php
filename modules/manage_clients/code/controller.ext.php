@@ -566,11 +566,12 @@ class module_controller extends ctrl_module
             $emailbody = str_replace("{{fullname}}", $fullname, $emailbody);
             $emailbody = str_replace('{{controlpanelurl}}', $protocol . ctrl_options::GetSystemOption('zpanel_domain'), $emailbody);
 
-            $phpmailer = new sys_email();
+		//TODO fix SMTP
+            /*$phpmailer = new sys_email();
             $phpmailer->Subject = $emailsubject;
             $phpmailer->Body = $emailbody;
             $phpmailer->AddAddress($email);
-            $phpmailer->SendEmail();
+            $phpmailer->SendEmail();*/
         }
         runtime_hook::Execute('OnAfterCreateClient');
         self::$resetform = true;
