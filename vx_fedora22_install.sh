@@ -179,7 +179,7 @@ ln -s /etc/zpanel/panel/bin/setso /usr/bin/setso
 ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
 chmod +x /etc/zpanel/panel/bin/zppy
 chmod +x /etc/zpanel/panel/bin/setso
-cp -R /etc/zpanel/panel/etc/build/config_packs/fedora_22/ /etc/zpanel/configs/
+cp -R /etc/zpanel/panel/etc/build/config_packs/fedora_22/* /etc/zpanel/configs/
 cp -R /etc/zpanel/panel/etc/build/config_packs/sql/ /etc/zpanel/configs/sql/
 cc -O3 -o /etc/zpanel/panel/bin/zsudo /etc/zpanel/configs/bin/zsudo.c
 sudo chown root /etc/zpanel/panel/bin/zsudo
