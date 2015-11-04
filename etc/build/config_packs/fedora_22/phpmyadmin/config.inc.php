@@ -45,7 +45,7 @@ $cfg['Servers'][$i]['password']      = '';          // MySQL password (only need
 $cfg['Servers'][$i]['only_db']       = '';          // If set to a db-name, only
                                                     // this db is displayed in left frame
                                                     // It may also be an array of db-names, where sorting order is relevant.
-$cfg['Servers'][$i]['hide_db']       = '';          // Database name to be hidden from listings
+$cfg['Servers'][$i]['hide_db']       = 'information_schema|mysql';          // Database name to be hidden from listings
 $cfg['Servers'][$i]['verbose']       = '';          // Verbose name for this host - leave blank to show the hostname
 
 $cfg['Servers'][$i]['pmadb']         = '';          // Database used for Relation, Bookmark and PDF Features
@@ -108,4 +108,13 @@ $cfg['SaveDir']   = '/var/zpanel/temp';
  * page if any of the required Tables for the relation features is not found
  */
 $cfg['PmaNoRelation_DisableWarning'] = TRUE;
+$cfg['PmaNoRelation_DisableWarning'] = TRUE;
+$cfg['NavigationTreeEnableGrouping'] = FALSE;
+$cfg['NumRecentTables'] = 0;
+$cfg['NavigationDisplayLogo'] = FALSE;
+$cfg['NavigationDisplayServers'] = FALSE;
+$cfg['ShowStats'] = FALSE;
+$cfg['ShowServerInfo'] = FALSE;
+$cfg['ShowChgPassword'] = FALSE;
+$cfg['ShowCreateDb'] = FALSE;
 ?>
