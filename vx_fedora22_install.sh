@@ -179,7 +179,7 @@ ln -s /etc/zpanel/panel/bin/setso /usr/bin/setso
 ln -s /etc/zpanel/panel/bin/setzadmin /usr/bin/setzadmin
 chmod +x /etc/zpanel/panel/bin/zppy
 chmod +x /etc/zpanel/panel/bin/setso
-cp -R /etc/zpanel/panel/etc/build/config_packs/fedora_22/. /etc/zpanel/configs/
+cp -R /etc/zpanel/panel/etc/build/config_packs/fedora_22/ /etc/zpanel/configs/
 cp -R /etc/zpanel/panel/etc/build/config_packs/sql/ /etc/zpanel/configs/sql/
 cc -O3 -o /etc/zpanel/panel/bin/zsudo /etc/zpanel/configs/bin/zsudo.c
 sudo chown root /etc/zpanel/panel/bin/zsudo
@@ -212,7 +212,7 @@ echo "$SECURE_MYSQL"
 sed -i "s|YOUR_ROOT_MYSQL_PASSWORD|$password|" /etc/zpanel/panel/cnf/db.php
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User='root' AND Host != 'localhost'";
 mysql -u root -p$password -e "DELETE FROM mysql.user WHERE User=''";
-mysql -u root -p$passwoqrd -e "FLUSH PRIVILEGES";
+mysql -u root -p$password -e "FLUSH PRIVILEGES";
 mysql -u root -p$password -e "CREATE SCHEMA zpanel_roundcube";
 cat /etc/zpanel/configs/sql/*.sql | mysql -u root -p$password
 mysql -u root -p$password -e "UPDATE mysql.user SET Password=PASSWORD('$postfixpassword') WHERE User='postfix' AND Host='localhost';";
