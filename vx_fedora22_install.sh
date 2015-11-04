@@ -238,6 +238,7 @@ echo "Reconfigure PHP settings"
 sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php.ini
 sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php.ini
 sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 500M|" /etc/php.ini
+sed -i "s|post_max_size = 8M|post_max_size = 1G|" /etc/php.ini
 sed -i "s|memory_limit = 128M|memory_limit = 256M|" /etc/php.ini
 sed -i "s|expose_php = On|expose_php = Off|" /etc/php.ini
 sed -i "s|session.gc_maxlifetime = 1440|session.gc_maxlifetime = 7200|" /etc/php.ini
