@@ -186,11 +186,14 @@ class module_controller extends ctrl_module
 
     static function ExecuteCreateUser($uid, $username, $database, $access)
     {
+        try{
         global $zdbh;
         global $controller;
-        $currentuser = ctrl_users::GetUserDetail($uid);
+        $currentuser = ctrl_users::GetUserDetail($uid); // ARRAY
+        $prefix = $currentuser["username"]."_";
         // Check for spaces and remove if found...
         $username = strtolower(str_replace(' ', '', $username));
+        $username = $prefix.$username;
         // If errors are found, then exit before creating user...
         if (fs_director::CheckForEmptyValue(self::CheckCreateForErrors($username, $database, $access))) {
             return false;
@@ -263,6 +266,11 @@ class module_controller extends ctrl_module
         runtime_hook::Execute('OnAfterCreateDatabaseUser');
         self::$ok = true;
         return true;
+        }
+        catch(Exception $e)
+        {
+            echo $e->message;
+        }
     }
 
     static function CheckCreateForErrors($username, $database, $access)

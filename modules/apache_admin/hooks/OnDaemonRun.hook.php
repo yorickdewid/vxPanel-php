@@ -72,7 +72,8 @@ function WriteVhostConfigFile()
     while ( $rowport    = $portQuery->fetch() ) {
         $customPorts[ ] = $rowport[ 'vh_custom_port_in' ];
     }
-    $customPortList = array_unique($customPorts);
+    if ( count( $customPort ) > 0 )
+        $customPortList = array_unique($customPorts);
 
     /*
      * ##############################################################################################################
