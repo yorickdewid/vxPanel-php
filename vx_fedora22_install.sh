@@ -119,7 +119,7 @@ uname -a
 echo -e ""
 
 # We now update the server software packages.
-dnf -y install mariadb mariadb-server.x86_64 gcc httpd expect firewalld ntp at
+dnf -y install mariadb mariadb-server gcc httpd expect firewalld ntp at
 
 mkdir -p ../qp_install_cache/
 git checkout-index -a -f --prefix=../qp_install_cache/
@@ -128,7 +128,7 @@ cd ../qp_install_cache/
 # Install required software and dependencies required by VXpanel.
 # We disable the DPKG prompts before we run the software install to enable fully automated install.
 dnf -y groupinstall "Development Tools" "Development Libraries"
-dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-curl php-pear php-imap php-xmlrpc php-xsl php-soap-5.6.14-1.fc22.x86_64 libdb-utils webalizer bash-completion dovecot-devel.x86_64 dovecot-mysql.x86_64 postfix cyrus-sasl-lib.x86_64 proftpd-mysql.x86_64 phpmyadmin
+dnf install -y php php-common php-cli php-apc php-mysql php-gd php-mcrypt php-curl php-pear php-imap php-xmlrpc php-xsl php-soap libdb-utils webalizer bash-completion dovecot dovecot-mysql postfix cyrus-sasl-lib proftpd-mysql phpmyadmin
 
 # At least start the database
 systemctl start mariadb
