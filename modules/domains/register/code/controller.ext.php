@@ -58,12 +58,14 @@ class module_controller extends ctrl_module {
 		{
 			if (!self::$test_mode) {
 				$res = array();
-				$tldlist = Transip_DomainService::getAllTldInfos();
-				foreach ($tldlist as $idx) {
-					array_push($res, $idx->name);
-					self::$showPrice[$idx->name] = $idx->price;
+				global $zdbh;
+                		$sql = "SELECT * FROM x_tld";
+                		$result = $zdbh->prepare($sql);
+                		$result->execute();
+                		$tldList = $result->fetchAll(PDO::FETCH_ASSOC);
+				foreach ($tldList as $idx) {
+					array_push($res, $idx['tld']);
 				}
-
 				return $res;
 			} else {
 				$res = array('nl', 'be', 'com');
