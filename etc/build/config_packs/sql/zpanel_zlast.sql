@@ -79,3 +79,8 @@ ADD CONSTRAINT `x_profiles_detail_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `x_
 
 INSERT INTO `x_profiles_detail` (`firstname`, `lastname`, `street`, `number`, `city`, `postcode`, `phone`, `email`, `country`, `company_name`, `company_kvk`, `company_type`, `faxnumber`, `user_id`, `profile_detail_id`) VALUES
 ('ariekaass', 'kaas', 'kaasstraat', 33, 'blauwkaas', '', '', '', 'GB', NULL, NULL, NULL, NULL, 1, 1);
+
+CREATE TABLE `x_tld` (
+  `tld` varchar(30) NOT NULL,
+  `time_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

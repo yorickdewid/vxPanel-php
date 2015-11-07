@@ -180,5 +180,6 @@ static function createFakeWhoisContacts($type){
 //test::getDefaultDns();
 //test::getvhost();
 //test::getDomains();
-test::testCreateWallet();
+//test::testCreateWallet();
+require_once(__DIR__.'/modules/tld_cron/hooks/TldCron.php');
 ?>
