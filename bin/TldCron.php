@@ -1,5 +1,13 @@
 <?php
 
+require_once('/etc/zpanel/panel/etc/lib/api/transip/DomainService.php');
+require_once('/etc/zpanel/panel/dryden/db/driver.class.php');
+require_once('/etc/zpanel/panel/cnf/db.php');
+
+$zdbh = new db_driver("mysql:host=$host;dbname=$dbname", $user, $pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+$zdbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
 function getTldsForTable()
 {
 	try
@@ -24,7 +32,6 @@ function compareTldsToDatabase($tldsRetrieved){
 		$res->execute();
 		$result = $res->fetchAll(PDO::FETCH_ASSOC);
 		$newList = array();
-		print_r($result);
 		for($i = 0;$i < count($tldsRetrieved);$i++)
 		{
 			$tldApi = $tldsRetrieved[$i];
@@ -48,7 +55,6 @@ function compareTldsToDatabase($tldsRetrieved){
 function saveTldsToDatabase($tldList){
 	try{
 		global $zdbh;
-		print_r($tldList);
 		foreach($tldList as $row)
 		{
 			if(!isset($row['skip']))
