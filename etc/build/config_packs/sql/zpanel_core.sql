@@ -475,6 +475,54 @@ CREATE TABLE `x_mysql_users` (
 
 /*Data for the table `x_mysql_users` */
 
+/*Table structure for table `x_postgresql_databases` */
+
+DROP TABLE IF EXISTS `x_postgresql_databases`;
+
+CREATE TABLE `x_postgresql_databases` (
+  `my_id_pk` int(6) unsigned NOT NULL AUTO_INCREMENT,
+  `my_acc_fk` int(6) DEFAULT NULL,
+  `my_name_vc` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `my_usedspace_bi` bigint(50) DEFAULT '0',
+  `my_created_ts` int(30) DEFAULT NULL,
+  `my_deleted_ts` int(30) DEFAULT NULL,
+  PRIMARY KEY (`my_id_pk`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*Data for the table `x_postgresql_databases` */
+
+/*Table structure for table `x_postgresql_dbmap` */
+
+DROP TABLE IF EXISTS `x_postgresql_dbmap`;
+
+CREATE TABLE `x_postgresql_dbmap` (
+  `mm_id_pk` int(6) unsigned NOT NULL AUTO_INCREMENT,
+  `mm_acc_fk` int(6) DEFAULT NULL,
+  `mm_user_fk` int(6) DEFAULT NULL,
+  `mm_database_fk` int(6) DEFAULT NULL,
+  PRIMARY KEY (`mm_id_pk`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*Data for the table `x_postgresql_dbmap` */
+
+/*Table structure for table `x_postgresql_users` */
+
+DROP TABLE IF EXISTS `x_postgresql_users`;
+
+CREATE TABLE `x_postgresql_users` (
+  `mu_id_pk` int(6) unsigned NOT NULL AUTO_INCREMENT,
+  `mu_acc_fk` int(6) DEFAULT NULL,
+  `mu_name_vc` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `mu_database_fk` int(6) DEFAULT NULL,
+  `mu_access_vc` varchar(40) DEFAULT NULL,
+  `mu_pass_vc` varchar(40) DEFAULT NULL,
+  `mu_created_ts` int(30) DEFAULT NULL,
+  `mu_deleted_ts` int(30) DEFAULT NULL,
+  PRIMARY KEY (`mu_id_pk`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*Data for the table `x_postgresql_users` */
+
 /*Table structure for table `x_packages` */
 
 DROP TABLE IF EXISTS `x_packages`;
