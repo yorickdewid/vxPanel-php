@@ -475,6 +475,54 @@ CREATE TABLE `x_mysql_users` (
 
 /*Data for the table `x_mysql_users` */
 
+/*Table structure for table `x_postgresql_databases` */
+
+DROP TABLE IF EXISTS `x_postgresql_databases`;
+
+CREATE TABLE `x_postgresql_databases` (
+  `my_id_pk` int(6) unsigned NOT NULL AUTO_INCREMENT,
+  `my_acc_fk` int(6) DEFAULT NULL,
+  `my_name_vc` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `my_usedspace_bi` bigint(50) DEFAULT '0',
+  `my_created_ts` int(30) DEFAULT NULL,
+  `my_deleted_ts` int(30) DEFAULT NULL,
+  PRIMARY KEY (`my_id_pk`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*Data for the table `x_postgresql_databases` */
+
+/*Table structure for table `x_postgresql_dbmap` */
+
+DROP TABLE IF EXISTS `x_postgresql_dbmap`;
+
+CREATE TABLE `x_postgresql_dbmap` (
+  `mm_id_pk` int(6) unsigned NOT NULL AUTO_INCREMENT,
+  `mm_acc_fk` int(6) DEFAULT NULL,
+  `mm_user_fk` int(6) DEFAULT NULL,
+  `mm_database_fk` int(6) DEFAULT NULL,
+  PRIMARY KEY (`mm_id_pk`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*Data for the table `x_postgresql_dbmap` */
+
+/*Table structure for table `x_postgresql_users` */
+
+DROP TABLE IF EXISTS `x_postgresql_users`;
+
+CREATE TABLE `x_postgresql_users` (
+  `mu_id_pk` int(6) unsigned NOT NULL AUTO_INCREMENT,
+  `mu_acc_fk` int(6) DEFAULT NULL,
+  `mu_name_vc` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `mu_database_fk` int(6) DEFAULT NULL,
+  `mu_access_vc` varchar(40) DEFAULT NULL,
+  `mu_pass_vc` varchar(40) DEFAULT NULL,
+  `mu_created_ts` int(30) DEFAULT NULL,
+  `mu_deleted_ts` int(30) DEFAULT NULL,
+  PRIMARY KEY (`mu_id_pk`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*Data for the table `x_postgresql_users` */
+
 /*Table structure for table `x_packages` */
 
 DROP TABLE IF EXISTS `x_packages`;
@@ -494,6 +542,7 @@ CREATE TABLE `x_packages` (
 
 insert  into `x_packages`(`pk_id_pk`,`pk_name_vc`,`pk_reseller_fk`,`pk_enablephp_in`,`pk_enablecgi_in`,`pk_created_ts`,`pk_deleted_ts`) values (1,'Administration',1,1,1,NULL,NULL);
 insert  into `x_packages`(`pk_id_pk`,`pk_name_vc`,`pk_reseller_fk`,`pk_enablephp_in`,`pk_enablecgi_in`,`pk_created_ts`,`pk_deleted_ts`) values (2,'Demo',1,0,0,NULL,NULL);
+insert  into `x_packages`(`pk_id_pk`,`pk_name_vc`,`pk_reseller_fk`,`pk_enablephp_in`,`pk_enablecgi_in`,`pk_created_ts`,`pk_deleted_ts`) values (3,'Unlimited',1,1,0,NULL,NULL);
 
 /*Table structure for table `x_permissions` */
 
@@ -654,6 +703,7 @@ CREATE TABLE `x_quotas` (
 /*Data for the table `x_quotas` */
 
 insert  into `x_quotas`(`qt_id_pk`,`qt_package_fk`,`qt_domains_in`,`qt_subdomains_in`,`qt_parkeddomains_in`,`qt_mailboxes_in`,`qt_fowarders_in`,`qt_distlists_in`,`qt_ftpaccounts_in`,`qt_mysql_in`,`qt_diskspace_bi`,`qt_bandwidth_bi`,`qt_bwenabled_in`,`qt_dlenabled_in`,`qt_totalbw_fk`,`qt_minbw_fk`,`qt_maxcon_fk`,`qt_filesize_fk`,`qt_filespeed_fk`,`qt_filetype_vc`,`qt_modified_in`) values (1,1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,NULL,NULL,NULL,NULL,NULL,'*',1);
+insert  into `x_quotas`(`qt_id_pk`,`qt_package_fk`,`qt_domains_in`,`qt_subdomains_in`,`qt_parkeddomains_in`,`qt_mailboxes_in`,`qt_fowarders_in`,`qt_distlists_in`,`qt_ftpaccounts_in`,`qt_mysql_in`,`qt_diskspace_bi`,`qt_bandwidth_bi`,`qt_bwenabled_in`,`qt_dlenabled_in`,`qt_totalbw_fk`,`qt_minbw_fk`,`qt_maxcon_fk`,`qt_filesize_fk`,`qt_filespeed_fk`,`qt_filetype_vc`,`qt_modified_in`) values (2,3,-1,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,NULL,NULL,NULL,NULL,NULL,'*',0);
 
 /*Table structure for table `x_settings` */
 

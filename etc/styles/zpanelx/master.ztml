@@ -222,7 +222,7 @@
 
       </div><!--/page-content-->
     </div>
-    <div id="footer" >Copyright &copy; 2014-<# ui_tpl_year #> qPanel</div>
+    <div id="footer" >Copyright &copy; 2014-<# ui_tpl_year #> vxPanel</div>
     </div><!-- END CONTAINER -->
 
     <!-- javascript
