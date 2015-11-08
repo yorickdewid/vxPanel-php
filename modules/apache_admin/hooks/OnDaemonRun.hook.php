@@ -67,6 +67,7 @@ function WriteVhostConfigFile()
     }
 
     $customPort = array( );
+    $customPortList = array();
     $portQuery  = $zdbh->prepare( "SELECT vh_custom_port_in, vh_deleted_ts FROM zpanel_core.x_vhosts WHERE vh_custom_port_in IS NOT NULL AND vh_deleted_ts IS NULL" );
     $portQuery->execute();
     while ( $rowport    = $portQuery->fetch() ) {

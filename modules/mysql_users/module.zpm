@@ -168,11 +168,11 @@
                             </tr>
                             <tr>
                                 <th nowrap="nowrap"><: Remote Access :>:</th>
-                                <td><input name="inAccess" type="radio" id="inAccess" value="1" onclick="hide_div('showaccess');" CHECKED />&nbsp;<: Allow from any IP :></td>
+                                <td><input name="inAccess" type="radio" id="inAccess" value="1" onclick="hide_div('showaccess');" />&nbsp;<: Allow from any IP :></td>
                             </tr>
                             <tr>
                                 <th>&nbsp;</th>
-                                <td><input name="inAccess" type="radio" id="inAccess" value="2" onclick="show_div('showaccess');" />&nbsp;<: Only from single IP :></td>
+                                <td><input name="inAccess" type="radio" id="inAccess" value="2" onclick="show_div('showaccess');" CHECKED />&nbsp;<: Only from single IP :></td>
                             </tr>
                             <tr>
                                 <th>&nbsp;</th>
