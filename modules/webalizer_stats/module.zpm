@@ -32,7 +32,7 @@
             </table>
         </form>
         <% else %>
-        <p><: You currently do not have any domains configured. :> <a href="./?module=domains"><: Create a new domain :></a></p>
+        <p><: You currently do not have any domains configured. :> <a href="./?module=register"><: Create a new domain :></a></p>
         <% endif %>
 
     </div>

@@ -47,7 +47,7 @@ class ui_tpl_clientdomains {
             case 'domain':
                 $domain_type = 1;
                 $name = 'Domain';
-                $domain_url = 'domains';
+                $domain_url = 'register';
                 break;
             case 'subdomain':
                 $domain_type = 2;
