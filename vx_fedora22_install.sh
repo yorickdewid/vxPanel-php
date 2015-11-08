@@ -366,6 +366,8 @@ systemctl restart mariadb
 systemctl start proftpd
 systemctl restart atd
 php /etc/zpanel/panel/bin/daemon.php
+# Try to get tlds
+php /etc/zpanel/panel/bin/TldCron.php
 
 # We'll now remove the temporary install cache.
 echo "Cleanup..."
