@@ -52,17 +52,43 @@ function compareTldsToDatabase($tldsRetrieved){
 	}
 }
 
+function checkForLocalTld(){
+	global $zdbh;
+        $sql = "SELECT count(*) as count FROM x_tld WHERE tld = '.local'";
+        $res = $zdbh->prepare($sql);
+        $res->execute();
+        $result = $res->fetch(PDO::FETCH_ASSOC);
+	if($result['count'] == 1){
+		echo 'local tld present';
+		$sql = "DELETE FROM x_tld WHERE tld=:tld";
+		$sql = $zdbh->prepare($sql);
+		$tld = ".local";
+		$sql->bindParam(':tld', $tld);
+		$result = $sql->execute();
+		if($result == 1){
+			echo "Local tld  deleted";
+		}
+	}
+}
+
 function saveTldsToDatabase($tldList){
 	try{
 		global $zdbh;
 		foreach($tldList as $row)
 		{
+			try{
 			if(!isset($row['skip']))
 			{
 				$sql = "INSERT INTO x_tld (tld) VALUES (:tld)";
 				$prepared = $zdbh->prepare($sql);
 				$prepared->bindParam(':tld', $row['tld']);
 				$prepared->execute();
+			}
+			}
+			catch(PDOException $e){
+				if($e->getCode() == 23000){
+					echo "Duplicate entry, ignore";
+				}
 			}
 		}
 	}
@@ -73,6 +99,13 @@ function saveTldsToDatabase($tldList){
 }
 
 $res = getTldsForTable();
-$res = compareTldsToDatabase($res);
+if(!empty($res)){
+	$res = compareTldsToDatabase($res);
+	checkForLocalTld();
+}
+else{
+	echo "empty";
+	$res[0] = ['tld' => '.local'];
+}
 saveTldsToDatabase($res);
 ?>

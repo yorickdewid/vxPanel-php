@@ -6,8 +6,13 @@ if (isset($_POST['tld'])) {
 }
 
 function getTldPrice($tld) {
-	$object = Transip_DomainService::getTldInfo($tld);
-	return $object->price; //test value]
+	try{
+		$object = Transip_DomainService::getTldInfo($tld);
+		return $object->price; //test value]
+	}
+	catch(Exception $e){
+	  return -1;
+	}
 }
 
 ?>

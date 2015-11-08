@@ -122,7 +122,12 @@ $('#inTld').change(function(){
     $('#divPrice').append('Getting price...');
     var tld = $(this).find('option:selected').attr('value');
     var price = getPrice(tld);
-    $('#divPrice').append('<p>'+tld+' price : € '+price+'</p>');
+	if(price == -1){
+		$('#divPrice').append('<p>Unable to get price for tld..</p>');
+	}
+	else{
+   	 	$('#divPrice').append('<p>'+tld+' price : € '+price+'</p>');
+	}
 });
 </script>
 <script type="text/javascript">

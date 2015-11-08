@@ -81,6 +81,7 @@ INSERT INTO `x_profiles_detail` (`firstname`, `lastname`, `street`, `number`, `c
 ('ariekaass', 'kaas', 'kaasstraat', 33, 'blauwkaas', '', '', '', 'GB', NULL, NULL, NULL, NULL, 1, 1);
 
 CREATE TABLE `x_tld` (
-  `tld` varchar(30) NOT NULL,
-  `time_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ `tld` varchar(30) NOT NULL,
+ `time_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ PRIMARY KEY (`tld`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
