@@ -9,7 +9,7 @@
  * @link http://www.zpanelcp.com/
  * @license GPL (http://www.gnu.org/licenses/gpl.html)
  */
-$host = 'localhost';
-$dbname = 'zpanel_core';
-$user = 'root';
-$pass = 'YOUR_ROOT_MYSQL_PASSWORD';
+$host = getenv("DB_HOST");
+$dbname = getenv("DB_NAME");
+$user = getenv("DB_USER");
+$pass = getenv("DB_PASS");

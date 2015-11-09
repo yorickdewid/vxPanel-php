@@ -9,6 +9,9 @@
  * @link http://www.zpanelcp.com/
  * @license GPL (http://www.gnu.org/licenses/gpl.html)
  */
+require __DIR__ . '/vendor/autoload.php';
+$dotenv = new Dotenv\Dotenv(__DIR__);
+$dotenv->load();
 session_start();
 require_once 'dryden/loader.inc.php';
 require_once 'cnf/db.php';

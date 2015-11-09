@@ -16,11 +16,13 @@ $mtime = $mtime[1] + $mtime[0];
 $starttime = $mtime;
 $class_name = null;
 
-function __autoload($class_name)
+function customDrydenAutoload($class)
 {
-    $path = 'dryden/' . str_replace('_', '/', $class_name) . '.class.php';
+    $path = 'dryden/' . str_replace('_', '/', $class) . '.class.php';
     if (file_exists($path)) {
         require_once $path;
     }
 }
+
+spl_autoload_register('customDrydenAutoload');
 

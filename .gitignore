@@ -5,3 +5,6 @@
 /.vagrant
 .idea
 /*.log
+composer.phar
+vendor
+.env
